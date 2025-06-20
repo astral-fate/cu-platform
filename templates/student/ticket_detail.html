@@ -1,0 +1,267 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}تذكرة #{{ ticket.ticket_id }}{% endblock %}
+
+{% block main_content %}
+<style>
+/* --- Page-Specific Document Card Styles --- */
+.main-content .document-card {
+    margin-top: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+    height: auto; 
+}
+
+/* --- Card Header --- */
+.main-content .document-card .card-header,
+.main-content .document-card .card-header-with-actions {
+    padding: 0.75rem 1.25rem;
+    min-height: unset;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-content .document-card .card-header h3,
+.main-content .document-card .card-header-with-actions h3 {
+    margin-bottom: 0;
+    font-size: 1.15rem;
+}
+
+
+/* --- Card Body --- */
+.main-content .document-card .card-body {
+    padding: 1rem 1.25rem; 
+    height: auto !important; 
+    max-height: none !important;
+    overflow-y: visible !important;
+}
+
+.main-content .document-card .card-body h4 {
+    font-size: 1.05rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+</style>
+
+<div class="card document-card mb-6">
+    <div class="card-header-with-actions">
+        <div>
+            <h3>{{ ticket.subject }}</h3>
+            <p class="text-muted">رقم التذكرة: {{ ticket.ticket_id }}</p>
+        </div>
+        <span class="status-badge 
+            {% if ticket.status == 'Open' %}red
+            {% elif ticket.status == 'In Progress' %}yellow
+            {% elif ticket.status == 'Closed' %}green
+            {% endif %}">
+            {% if ticket.status == 'Open' %}مفتوحة
+            {% elif ticket.status == 'In Progress' %}قيد المعالجة
+            {% elif ticket.status == 'Closed' %}مغلقة
+            {% else %}{{ ticket.status }}{% endif %}
+        </span>
+    </div>
+    
+    <div class="card-body">
+        <div class="info-row">
+            <span class="info-label">تاريخ الإنشاء:</span>
+            <span class="info-value">{{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">آخر تحديث:</span>
+            <span class="info-value">
+                {% if ticket.messages %}
+                    {{ ticket.messages[-1].created_at.strftime('%Y-%m-%d %H:%M') }}
+                {% else %}
+                    {{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}
+                {% endif %}
+            </span>
+        </div>
+        {% if ticket.related_application %}
+            <div class="info-row">
+                <span class="info-label">طلب مرتبط:</span>
+                <span class="info-value">{{ ticket.related_application.app_id }} - {{ ticket.related_application.program }}</span>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card document-card">
+    <div class="card-body p-0">
+        <div class="chat-container">
+            <div class="chat-messages">
+                {% for message in ticket.messages|sort(attribute='created_at') %}
+                <div class="chat-message {% if message.sender == 'Admin' %}incoming{% else %}outgoing{% endif %}">
+                    <div class="message-content">
+                        <p class="message-text">{{ message.message|nl2br }}</p>
+                        <p class="message-time">
+                            <span class="message-sender">
+                                {% if message.sender == 'Admin' %}الموظف{% else %}أنت{% endif %}
+                            </span>
+                            - {{ message.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% if ticket.status != 'Closed' %}
+            <form id="student-reply-form" class="chat-form" data-ticket-id="{{ ticket.id }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="text" id="student-reply-message" name="message" placeholder="اكتب رسالتك هنا" required>
+                <button type="submit" class="btn primary">إرسال</button>
+            </form>
+            {% else %}
+            <div class="closed-ticket-message">
+                <p>تم إغلاق هذه التذكرة. لا يمكن إضافة المزيد من الردود.</p>
+                <button id="reopen-ticket" class="btn outline">إعادة فتح التذكرة</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="form-actions mt-4">
+    <a href="{{ url_for('student_support') }}" class="btn outline">العودة إلى التذاكر</a>
+    
+
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // استعراض الرسائل تلقائياً للأسفل عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatMessages = document.querySelector('.chat-messages');
+        if (chatMessages) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    });
+    
+    // التعامل مع الردود على التذكرة
+    const replyForm = document.getElementById('student-reply-form');
+    if (replyForm) {
+        replyForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const ticketId = this.getAttribute('data-ticket-id');
+            const messageInput = document.getElementById('student-reply-message');
+            const message = messageInput.value.trim();
+            const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+            
+            if (!message) return;
+            
+            // تعطيل النموذج أثناء الإرسال
+            messageInput.disabled = true;
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            // إنشاء بيانات النموذج مع رمز CSRF
+            const formData = new FormData();
+            formData.append('message', message);
+            formData.append('csrf_token', csrfToken);
+            
+            fetch(`/student/support/reply/${ticketId}`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // إضافة الرسالة الجديدة إلى المحادثة
+                    const chatMessages = document.querySelector('.chat-messages');
+                    
+                    const newMessage = document.createElement('div');
+                    newMessage.className = 'chat-message outgoing';
+                    newMessage.innerHTML = `
+                        <div class="message-content">
+                            <p class="message-text">${data.data.message}</p>
+                            <p class="message-time">
+                                <span class="message-sender">أنت</span>
+                                - ${data.data.created_at}
+                            </p>
+                        </div>
+                    `;
+                    
+                    chatMessages.appendChild(newMessage);
+                    
+                    // مسح الحقل وإعادة تفعيل النموذج
+                    messageInput.value = '';
+                    messageInput.disabled = false;
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'إرسال';
+                    messageInput.focus();
+                    
+                    // استعراض للأسفل
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                } else {
+                    throw new Error(data.message || 'فشل في إرسال الرسالة');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('فشل في إرسال الرسالة. حاول مرة أخرى.');
+                messageInput.disabled = false;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'إرسال';
+            });
+        });
+    }
+    
+    
+    // إغلاق النافذة عند الضغط خارجها
+    window.addEventListener('click', function(e) {
+        if (e.target === closeTicketModal) {
+            closeTicketModal.classList.add('hidden');
+        }
+    });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .p-0 {
+        padding: 0 !important;
+    }
+    
+    .border-t {
+        border-top: 1px solid #e5e7eb;
+    }
+    
+    /* أنماط المحادثة موجودة بالفعل في CSS الرئيسي، هنا فقط أي تعديلات خاصة */
+    .chat-container {
+        height: 50vh; /* ارتفاع مرن بدلا من ثابت */
+        display: flex;
+        flex-direction: column;
+    }
+    .chat-messages {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 1rem;
+    }
+    .message-text {
+        margin-bottom: 0.25rem;
+    }
+    .closed-ticket-message {
+        padding: 1rem;
+        text-align: center;
+        background-color: #f9fafb;
+        border-top: 1px solid #e5e7eb;
+    }
+</style>
+{% endblock %}

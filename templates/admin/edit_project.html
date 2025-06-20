@@ -1,0 +1,131 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}تعديل المشروع{% endblock %}
+
+{% block main_content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-gradient d-flex align-items-center justify-content-between">
+        <h3 class="m-0"><i class="fas fa-edit me-2"></i>تعديل المشروع</h3>
+        <a href="{{ url_for('admin_projects') }}" class="btn btn-outline-light btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> العودة للمشاريع
+        </a>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin_edit_project', project_id=project.id) }}" enctype="multipart/form-data" id="edit-project-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-4">
+                        <label for="title" class="form-label fw-bold">عنوان المشروع <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-lg" id="title" name="title" value="{{ project.title }}" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label fw-bold">وصف المشروع <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="description" name="description" rows="5" required>{{ project.description }}</textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="category" class="form-label fw-bold">الفئة <span class="text-danger">*</span></label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="">-- اختر الفئة --</option>
+                            {% set categories = ['Research', 'Development', 'Innovation', 'Analysis', 'Engineering', 'Social'] %}
+                            {% for cat in categories %}
+                                <option value="{{ cat }}" {% if project.category == cat %}selected{% endif %}>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="url" class="form-label fw-bold">رابط المشروع</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-link"></i></span>
+                            <input type="url" class="form-control" id="url" name="url" placeholder="https://example.com/project" value="{{ project.url or '' }}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="m-0"><i class="fas fa-image me-2"></i>صورة المشروع</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div id="image-preview" class="mb-3">
+                                <img src="{{ url_for('static', filename=project.image_path) if project.image_path else url_for('static', filename='img/default-project.jpg') }}" 
+                                     class="img-fluid rounded" 
+                                     style="max-height: 200px; width: auto;" 
+                                     id="preview-img">
+                            </div>
+                            <label for="image" class="form-label d-block">رفع صورة جديدة (اختياري)</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <div class="form-text text-muted mt-2">
+                                <small>اتركه فارغًا للاحتفاظ بالصورة الحالية.</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="m-0"><i class="fas fa-cog me-2"></i>إعدادات المشروع</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" {% if project.is_active %}checked{% endif %}>
+                                <label class="form-check-label" for="is_active">
+                                    <span class="fw-bold">نشط</span><br>
+                                    <small class="text-muted">سيظهر المشروع على الموقع</small>
+                                </label>
+                            </div>
+                            
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="is_popular" name="is_popular" {% if project.is_popular %}checked{% endif %}>
+                                <label class="form-check-label" for="is_popular">
+                                    <span class="fw-bold">مميز</span><br>
+                                    <small class="text-muted">عرض في الأقسام المميزة</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <hr>
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                        <i class="fas fa-save me-2"></i> حفظ التغييرات
+                    </button>
+                    <a href="{{ url_for('admin_projects') }}" class="btn btn-outline-secondary btn-lg px-5 ms-2">
+                        <i class="fas fa-times me-2"></i> إلغاء
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+// Image preview functionality
+document.getElementById('image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const fileSize = file.size / 1024 / 1024; // in MB
+        if (fileSize > 2) {
+            alert('يجب أن يكون حجم الصورة أقل من 2 ميجابايت');
+            this.value = ''; // Clear the file input
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('preview-img').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

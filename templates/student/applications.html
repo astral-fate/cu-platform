@@ -1,0 +1,275 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}طلباتي{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header-with-actions">
+        <h3>طلباتي</h3>
+        <a href="{{ url_for('student_new_application') }}" class="btn primary">تقديم طلب جديد</a>
+    </div>
+    
+    <div class="card-body">
+        {% if applications %}
+            <div class="table-container">
+                <table class="full-width-table">
+                    <thead>
+                        <tr>
+                            <th>رقم الطلب</th>
+                            <th>البرنامج</th>
+                            <th>تاريخ التقديم</th>
+                            <th>الحالة</th>
+                            <th>حالة الدفع</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for application in applications|sort(attribute='date_submitted', reverse=true) %}
+                            <tr>
+                                <td>{{ application.app_id }}</td>
+                                <td>{{ application.program }}</td>
+                                <td>{{ application.date_submitted.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    <!-- FIX: Check against Arabic statuses for CSS classes -->
+                                    <span class="status-badge 
+                                        {% if application.status == 'قيد المراجعة' %}yellow
+                                        {% elif application.status == 'مقبول مبدئياً' %}green
+                                        {% elif application.status == 'المستندات مرفوضة' %}red
+                                        {% elif application.status == 'مسجل' %}blue
+                                        {% else %}grey{% endif %}">
+                                        {{ application.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <!-- FIX: Check against Arabic statuses for CSS classes -->
+                                    <span class="status-badge 
+                                        {% if application.payment_status == 'بانتظار الدفع' %}yellow
+                                        {% elif application.payment_status == 'مدفوع' %}green
+                                        {% else %}grey{% endif %}">
+                                        {{ application.payment_status }}
+                                    </span>
+                                </td>
+                                <td class="actions-cell">
+                                    <a href="#" class="action-btn view-app-btn" data-id="{{ application.id }}">
+                                        <i class="fas fa-eye"></i> عرض
+                                    </a>
+                                    
+                                    <!-- FIX: Check against Arabic statuses for showing payment button -->
+                                    {% if application.status == 'مقبول مبدئياً' and application.payment_status == 'بانتظار الدفع' %}
+                                        <a href="{{ url_for('student_payment', app_id=application.id) }}" class="action-btn">
+                                            <i class="fas fa-credit-card"></i> دفع
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-10">
+                <p class="text-muted mb-4">لم تقم بتقديم أي طلبات حتى الآن.</p>
+                <a href="{{ url_for('student_new_application') }}" class="btn primary">تقديم طلب جديد</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Application Detail Modal -->
+<div id="application-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>تفاصيل الطلب</h3>
+            <button class="close-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div id="application-details">
+                <div class="info-row">
+                    <span class="info-label">رقم الطلب:</span>
+                    <span id="app-id" class="info-value"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">البرنامج:</span>
+                    <span id="app-program" class="info-value"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">تاريخ التقديم:</span>
+                    <span id="app-date" class="info-value"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">الحالة:</span>
+                    <span id="app-status" class="info-value"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">حالة الدفع:</span>
+                    <span id="app-payment" class="info-value"></span>
+                </div>
+                
+                <!-- Document requirements container -->
+                <div id="document-requirements" class="document-requirements mb-4">
+                    <h5 class="mb-2">المستندات المطلوبة:</h5>
+                    <div id="required-documents-list" class="required-documents-list">
+                        <!-- Required documents will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Documents for this application -->
+                <h4 class="mt-6 mb-3">المستندات المرفقة</h4>
+                <div id="document-list" class="document-list">
+                    <!-- Uploaded documents will be inserted here by JavaScript -->
+                </div>
+                
+                <!-- Missing documents section -->
+                <div id="missing-documents" class="mt-4">
+                  
+                    <ul id="missing-documents-list" class="missing-documents-list">
+                        <!-- Missing documents will be populated here -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn primary close-modal">إغلاق</button>
+            <div id="modal-actions">
+                <!-- Additional actions will be shown here based on application status -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // FIX: The Javascript is also updated to handle the Arabic statuses correctly.
+        const viewButtons = document.querySelectorAll('.view-app-btn');
+        const modal = document.getElementById('application-modal');
+        
+        const appIdEl = document.getElementById('app-id');
+        const appProgramEl = document.getElementById('app-program');
+        const appDateEl = document.getElementById('app-date');
+        const appStatusEl = document.getElementById('app-status');
+        const appPaymentEl = document.getElementById('app-payment');
+        const documentListEl = document.getElementById('document-list');
+        const modalActionsEl = document.getElementById('modal-actions');
+        
+        const docNameTranslations = {
+            'bachelor_degree': 'شهادة البكالوريوس',
+            'bachelor degree certificate': 'شهادة البكالوريوس',
+            'academic transcript': 'السجل الأكاديمي',
+            'transcript': 'السجل الأكاديمي',
+            'id card/passport': 'بطاقة الهوية/جواز السفر',
+            'id card': 'بطاقة الهوية',
+            'id_card': 'بطاقة الهوية',
+            'passport': 'جواز السفر',
+            'national id': 'بطاقة الرقم القومي',
+            'national_id': 'بطاقة الرقم القومي',
+            'military status': 'موقف التجنيد',
+            'cv': 'السيرة الذاتية',
+            'resume': 'السيرة الذاتية',
+            'personal photo': 'الصورة الشخصية',
+            'photo': 'الصورة الشخصية',
+            'proof of english proficiency': 'إثبات إجادة اللغة الإنجليزية',
+            'english proficiency test': 'إثبات إجادة اللغة الإنجليزية',
+            'recommendation': 'خطاب توصية',
+            'recommendation letter': 'خطاب توصية'
+        };
+
+        function getTranslatedDocName(name) {
+            const lowerName = (name || '').toLowerCase().trim();
+            return docNameTranslations[lowerName] || name;
+        }
+        
+        viewButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const applicationId = this.getAttribute('data-id');
+
+                // Reset and show modal
+                appIdEl.textContent = 'جاري التحميل...';
+                appProgramEl.textContent = '';
+                appDateEl.textContent = '';
+                appStatusEl.innerHTML = '';
+                appPaymentEl.innerHTML = '';
+                documentListEl.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>';
+                modalActionsEl.innerHTML = '';
+                modal.classList.remove('hidden');
+
+                fetch(`/student/application/${applicationId}/details`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const app = data.application;
+                            appIdEl.textContent = app.app_id;
+                            appProgramEl.textContent = app.program;
+                            appDateEl.textContent = app.date;
+
+                            let statusClass = 'grey';
+                            if (app.status === 'قيد المراجعة') statusClass = 'yellow';
+                            else if (app.status === 'مقبول مبدئياً') statusClass = 'green';
+                            else if (app.status === 'المستندات مرفوضة') statusClass = 'red';
+                            else if (app.status === 'مسجل') statusClass = 'blue';
+                            appStatusEl.innerHTML = `<span class="status-badge ${statusClass}">${app.status}</span>`;
+
+                            let paymentClass = 'grey';
+                            let paymentStatusText = app.payment_status;
+                            if (app.payment_status === 'مدفوع') {
+                                paymentClass = 'green';
+                            } else if (app.payment_status === 'بانتظار الدفع' || app.payment_status === 'Pending Payment') {
+                                paymentClass = 'yellow';
+                                paymentStatusText = 'بانتظار الدفع';
+                            }
+                            appPaymentEl.innerHTML = `<span class="status-badge ${paymentClass}">${paymentStatusText}</span>`;
+
+                            if (data.documents && data.documents.length > 0) {
+                                let docsHtml = '';
+                                data.documents.forEach(doc => {
+                                    docsHtml += `
+                                        <div class="document-item">
+                                            <span class="document-name">${getTranslatedDocName(doc.name)}</span>
+                                            <a href="${doc.file_path}" target="_blank" class="action-btn">
+                                                <i class="fas fa-eye"></i> عرض
+                                            </a>
+                                        </div>
+                                    `;
+                                });
+                                documentListEl.innerHTML = docsHtml;
+                            } else {
+                                documentListEl.innerHTML = '<p class="text-muted text-center py-4">لا توجد مستندات.</p>';
+                            }
+
+                            if (app.status === 'مقبول مبدئياً' && app.payment_status === 'بانتظار الدفع') {
+                                modalActionsEl.innerHTML = `
+                                    <a href="/student/payments/${applicationId}" class="btn primary">
+                                        <i class="fas fa-credit-card"></i> دفع الرسوم الآن
+                                    </a>
+                                `;
+                            }
+                        } else {
+                            appIdEl.textContent = 'خطأ';
+                            documentListEl.innerHTML = `<p class="error">${data.message}</p>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        appIdEl.textContent = 'خطأ';
+                        documentListEl.innerHTML = `<p class="error">فشل الاتصال بالخادم.</p>`;
+                    });
+            });
+        });
+
+        // Modal closing logic
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', () => modal.classList.add('hidden'));
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.add('hidden');
+        });
+    });
+</script>
+{% endblock %}

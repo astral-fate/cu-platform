@@ -1,0 +1,164 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}إنشاء تذكرة دعم{% endblock %}
+
+{% block main_content %}
+<style>
+/* --- Page-Specific Card Styles --- */
+.main-content .document-card {
+    margin-top: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+    height: auto; 
+    background-color: #fff;
+}
+
+/* --- Card Header --- */
+.main-content .document-card .card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.main-content .document-card .card-header h3 {
+    margin-bottom: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* --- Card Body --- */
+.main-content .document-card .card-body {
+    padding: 1.5rem; 
+    height: auto !important; 
+    max-height: none !important;
+    overflow-y: visible !important;
+}
+
+/* --- Improved Form Styling --- */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background-color: #f9fafb;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    background-color: #fff;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+textarea.form-input {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* --- Form Actions/Buttons --- */
+.form-actions {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end; /* Aligns buttons to the right */
+    gap: 0.75rem;
+}
+</style>
+
+<div class="card document-card">
+    <div class="card-header">
+        <h3>إنشاء تذكرة دعم جديدة</h3>
+    </div>
+    
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('student_new_ticket') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
+            <div class="form-group">
+                <label for="subject">الموضوع</label>
+                <input type="text" id="subject" name="subject" class="form-input" required
+                       placeholder="وصف مختصر لمشكلتك...">
+            </div>
+            
+            <div class="form-group">
+                <label for="category">الفئة</label>
+                <select id="category" name="category" class="form-input" required>
+                    <option value="">اختر الفئة</option>
+                    <option value="Application">إجراءات التقديم</option>
+                    <option value="Documents">مشاكل رفع المستندات</option>
+                    <option value="Payment">مشاكل الدفع</option>
+                    <option value="Certificate">طلبات الشهادات</option>
+                    <option value="ID">مشاكل بطاقة الطالب</option>
+                    <option value="Technical">مشاكل تقنية</option>
+                    <option value="Other">أخرى</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="priority">الأولوية</label>
+                <select id="priority" name="priority" class="form-input">
+                    <option value="Normal">عادي</option>
+                    <option value="High">عالي</option>
+                    <option value="Urgent">عاجل</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="message">الرسالة</label>
+                <textarea id="message" name="message" rows="6" class="form-input" required
+                          placeholder="يرجى وصف مشكلتك بالتفصيل..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="related_application">طلب مرتبط (اختياري)</label>
+                <select id="related_application" name="related_application" class="form-input">
+                    <option value="">غير مرتبط بطلب محدد</option>
+                    {% for application in current_user.applications %}
+                        <option value="{{ application.id }}">{{ application.app_id }} - {{ application.program }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{{ url_for('student_support') }}" class="btn outline">إلغاء</a>
+                <button type="submit" class="btn primary">إرسال التذكرة</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card document-card mt-6">
+    <div class="card-header">
+        <h3>معلومات الدعم</h3>
+    </div>
+    
+    <div class="card-body">
+        <h4 class="mb-4">قبل إرسال التذكرة</h4>
+        <p>إليك بعض الخطوات التي قد تساعدك في حل المشاكل الشائعة:</p>
+        
+        <ul class="mb-4 ml-6" style="list-style-type: disc; padding-right: 20px;">
+            <li class="mb-2">تحقق من <a href="{{ url_for('student_support') }}" class="btn-link">قسم الأسئلة الشائعة</a> للحصول على إجابات للأسئلة المتكررة.</li>
+            <li class="mb-2">تأكد من رفع جميع المستندات بالصيغ الصحيحة (PDF، JPG، أو PNG).</li>
+            <li class="mb-2">تأكد من إدخال بيانات الدفع بشكل صحيح.</li>
+            <li>حاول تحديث الصفحة أو استخدام متصفح آخر إذا واجهت مشاكل تقنية.</li>
+        </ul>
+        
+        <p>يهدف فريق الدعم لدينا إلى الرد على جميع التذاكر خلال 24 ساعة في أيام العمل.</p>
+    </div>
+</div>
+{% endblock %}

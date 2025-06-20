@@ -1,0 +1,121 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}News & Announcements{% endblock %}
+
+{% block main_content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-gradient d-flex align-items-center justify-content-between">
+        <h3 class="m-0"><i class="fas fa-newspaper me-2"></i>إضافة الأخبار والإعلانات</h3>
+        <a href="{{ url_for('admin_news_add') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> إضافة جديدة 
+        </a>
+    </div>
+    
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped m-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 100px;">الصورة</th>
+                        <th>العنوان</th>
+                        <th>النوع</th>
+                        <th>التاريخ</th>
+                        <th>الحالة</th>
+                        <th class="text-center">الإجراء</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in news_items %}
+                    <tr>
+                        <td>
+                            {% if item.image_path %}
+                            <img src="{{ url_for('static', filename=item.image_path) }}" 
+                                 alt="{{ item.title }}" 
+                                 class="img-fluid rounded"
+                                 style="width: 80px; height: 60px; object-fit: cover;">
+                            {% else %}
+                            <div class="d-flex align-items-center justify-content-center bg-light rounded" style="width: 80px; height: 60px;">
+                                <i class="fas fa-image text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="align-middle fw-bold">{{ item.title }}</td>
+                        <td class="align-middle">
+                            <span class="badge {% if item.type == 'news' %}bg-info{% else %}bg-success{% endif %}">
+                                {{ item.type | capitalize }}
+                            </span>
+                        </td>
+                        <td class="align-middle">{{ item.date.strftime('%b %d, %Y') }}</td>
+                        <td class="align-middle">
+                            {% if item.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}
+                            {% if item.is_featured %}<span class="badge bg-warning text-dark">Featured</span>{% endif %}
+                        </td>
+                        <td class="align-middle text-center">
+                            <a href="{{ url_for('admin_news_edit', id=item.id) }}" class="btn btn-sm btn-outline-primary" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <!-- This button now directly triggers the JS confirm dialog -->
+                            <button class="btn btn-sm btn-outline-danger delete-news-btn" data-id="{{ item.id }}" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <p class="text-muted mb-2">لا يوجد أخبار بعد</p>
+                            <a href="{{ url_for('admin_news_add') }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i> إضافة جديدة
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- The Bootstrap Modal has been removed. It is no longer needed. -->
+{% endblock %}
+
+
+{% block page_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get CSRF token from meta tag
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // Delete news item using a simple confirm dialog
+    document.querySelectorAll('.delete-news-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete this news item? This action cannot be undone.')) {
+                const newsId = this.getAttribute('data-id');
+                
+                fetch(`/admin/news/delete/${newsId}`, {
+                    method: 'POST', // Use POST for deletion for broader compatibility
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json' // Good practice
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the row from the table on success
+                        this.closest('tr').remove();
+                        // Optional: show a success message
+                        // alert('Item deleted successfully.');
+                    } else {
+                        alert('Error: ' + (data.message || 'Could not delete the item.'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Deletion Error:', error);
+                    alert('A critical error occurred while trying to delete the item.');
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

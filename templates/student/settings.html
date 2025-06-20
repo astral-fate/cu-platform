@@ -1,0 +1,349 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}إعدادات الحساب{% endblock %}
+
+{% block main_content %}
+<style>
+/* --- Page-Specific Card Styles --- */
+.main-content .document-card {
+    margin-top: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+    height: auto; 
+    background-color: #fff;
+}
+
+/* --- Card Header --- */
+.main-content .document-card .card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.main-content .document-card .card-header h3 {
+    margin-bottom: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* --- Card Body --- */
+.main-content .document-card .card-body {
+    padding: 1.5rem; 
+    height: auto !important; 
+    max-height: none !important;
+    overflow-y: visible !important;
+}
+
+/* --- Improved Form Styling --- */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background-color: #f9fafb;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    background-color: #fff;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+.form-actions {
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* --- Notification Toggles --- */
+.toggle-setting {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+.toggle-setting:last-of-type {
+    border-bottom: none;
+}
+
+/* --- Account Actions --- */
+.action-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+.action-item:last-child {
+    border-bottom: none;
+}
+.action-item > div {
+    margin-bottom: 0.5rem;
+}
+</style>
+
+<div class="card document-card mb-6">
+    <div class="card-header">
+        <h3>تغيير كلمة المرور</h3>
+    </div>
+    
+    <div class="card-body">
+        <form id="change-password-form" method="POST" action="{{ url_for('student_change_password') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label for="current_password">كلمة المرور الحالية</label>
+                <input type="password" id="current_password" name="current_password" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="new_password">كلمة المرور الجديدة</label>
+                <input type="password" id="new_password" name="new_password" class="form-input" required>
+                <p class="text-muted mt-1">يجب أن تتكون كلمة المرور من 8 أحرف على الأقل</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm_password">تأكيد كلمة المرور الجديدة</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-input" required>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn primary">تغيير كلمة المرور</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card document-card">
+    <div class="card-header">
+        <h3>تفضيلات الإشعارات</h3>
+    </div>
+    
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('student_update_notification_preferences') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="settings-options">
+                <div class="toggle-setting">
+                    <span>إشعارات البريد الإلكتروني</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="email_notifications" name="email_notifications" 
+                               class="toggle-checkbox" checked>
+                        <label for="email_notifications" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="toggle-setting">
+                    <span>إشعارات الرسائل القصيرة</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="sms_notifications" name="sms_notifications" 
+                               class="toggle-checkbox" checked>
+                        <label for="sms_notifications" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="toggle-setting">
+                    <span>تحديثات الطلبات</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="application_updates" name="application_updates" 
+                               class="toggle-checkbox" checked>
+                        <label for="application_updates" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="toggle-setting">
+                    <span>تأكيدات الدفع</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="payment_confirmations" name="payment_confirmations" 
+                               class="toggle-checkbox" checked>
+                        <label for="payment_confirmations" class="toggle-label"></label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn primary">حفظ التفضيلات</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card document-card mt-6">
+    <div class="card-header">
+        <h3>إجراءات الحساب</h3>
+    </div>
+    
+    <div class="card-body">
+        <div class="account-actions">
+            <div class="action-item">
+                <div>
+                    <h4>تنزيل البيانات الشخصية</h4>
+                    <p class="text-muted">تنزيل نسخة من جميع بياناتك الشخصية المخزنة في نظامنا.</p>
+                </div>
+                <button id="download-data-btn" class="btn outline">تنزيل البيانات</button>
+            </div>
+            
+            <div class="action-item">
+                <div>
+                    <h4>مسح الإشعارات</h4>
+                    <p class="text-muted">مسح جميع الإشعارات المقروءة من حسابك.</p>
+                </div>
+                <button id="clear-notifications-btn" class="btn outline">مسح الإشعارات</button>
+            </div>
+            
+            <div class="action-item border-red" style="border-top: 1px solid #fee2e2;">
+                <div>
+                    <h4 class="text-red">حذف الحساب</h4>
+                    <p class="text-muted">حذف حسابك نهائيًا وجميع البيانات المرتبطة به.</p>
+                </div>
+                <button id="delete-account-btn" class="btn danger">حذف الحساب</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة تأكيد حذف الحساب -->
+<div id="delete-account-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>حذف الحساب</h3>
+            <button class="close-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="alert danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <h4>تحذير: لا يمكن التراجع عن هذا الإجراء</h4>
+                    <p>سيؤدي حذف حسابك إلى إزالة جميع بياناتك نهائيًا، بما في ذلك الطلبات والمستندات والشهادات وتذاكر الدعم.</p>
+                </div>
+            </div>
+            
+            <p class="mt-4">للتأكيد، يرجى إدخال كلمة المرور الخاصة بك:</p>
+            <div class="form-group">
+                <input type="password" id="confirm-delete-password" class="form-input" placeholder="أدخل كلمة المرور">
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn outline close-modal">إلغاء</button>
+            <button id="confirm-delete-btn" class="btn danger">حذف حسابي</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // التحقق من كلمة المرور
+    const passwordForm = document.getElementById('change-password-form');
+    if (passwordForm) {
+        const newPassword = document.getElementById('new_password');
+        const confirmPassword = document.getElementById('confirm_password');
+        
+        passwordForm.addEventListener('submit', function(e) {
+            if (newPassword.value !== confirmPassword.value) {
+                e.preventDefault();
+                alert('كلمات المرور الجديدة غير متطابقة.');
+            }
+            
+            if (newPassword.value.length < 8) {
+                e.preventDefault();
+                alert('يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.');
+            }
+        });
+    }
+    
+    // تنزيل البيانات
+    const downloadDataBtn = document.getElementById('download-data-btn');
+    if(downloadDataBtn) {
+        downloadDataBtn.addEventListener('click', function() {
+            alert('يتم إعداد تنزيل بياناتك. سوف تتلقى رابطًا عبر البريد الإلكتروني قريبًا.');
+        });
+    }
+    
+    // مسح الإشعارات
+    const clearNotificationsBtn = document.getElementById('clear-notifications-btn');
+    if(clearNotificationsBtn) {
+        clearNotificationsBtn.addEventListener('click', function() {
+            fetch('/mark_notifications_read', {
+                method: 'POST'
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('تم مسح جميع الإشعارات.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('حدث خطأ. يرجى المحاولة مرة أخرى.');
+            });
+        });
+    }
+    
+    // نافذة حذف الحساب
+    const deleteAccountBtn = document.getElementById('delete-account-btn');
+    const deleteAccountModal = document.getElementById('delete-account-modal');
+    const closeModalBtns = document.querySelectorAll('.close-modal');
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    
+    if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', function() {
+            deleteAccountModal.classList.remove('hidden');
+        });
+    }
+    
+    closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            if(deleteAccountModal) {
+               deleteAccountModal.classList.add('hidden');
+               const passInput = document.getElementById('confirm-delete-password');
+               if(passInput) passInput.value = '';
+            }
+        });
+    });
+    
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function() {
+            const password = document.getElementById('confirm-delete-password').value;
+            
+            if (!password) {
+                alert('يرجى إدخال كلمة المرور لتأكيد حذف الحساب.');
+                return;
+            }
+            
+            alert('هذا عرض توضيحي. في التطبيق الحقيقي، سيتم حذف حسابك الآن.');
+            deleteAccountModal.classList.add('hidden');
+        });
+    }
+
+    window.addEventListener('click', function(e) {
+        if (e.target === deleteAccountModal) {
+            deleteAccountModal.classList.add('hidden');
+            const passInput = document.getElementById('confirm-delete-password');
+            if(passInput) passInput.value = '';
+        }
+    });
+</script>
+{% endblock %}

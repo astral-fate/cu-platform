@@ -1,0 +1,326 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}مستنداتي{% endblock %}
+
+{% block main_content %}
+<style>
+/* --- Page-Specific Document Card Styles ---
+  By using a more specific selector (.main-content .document-card), 
+  we can ensure these styles override the general styles from external CSS files 
+  without needing to use !important everywhere.
+*/
+
+/* --- Document Card Container --- */
+.main-content .document-card {
+    margin-top: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+    /* We set height to auto to allow the content to define the height */
+    height: auto; 
+}
+
+/* --- Card Header --- */
+.main-content .document-card .card-header {
+    padding: 0.75rem 1.25rem;
+    min-height: unset;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-content .document-card .card-header h3 {
+    margin-bottom: 0;
+    font-size: 1.15rem;
+}
+
+/* --- Card Body (Crucial Fix) --- */
+.main-content .document-card .card-body {
+    /* Reducing padding to make the card body shorter */
+    padding: 1rem 1.25rem; 
+    /* Overriding any fixed height from external stylesheets */
+    height: auto !important; 
+    max-height: none !important;
+    overflow-y: visible !important;
+}
+
+.main-content .document-card .card-body h4 {
+    font-size: 1.05rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* --- List Styling --- */
+.main-content .document-card .card-body ul {
+    margin-bottom: 1rem;
+    padding-right: 1.5rem; 
+    padding-left: 0;
+    list-style-position: outside;
+}
+.main-content .document-card .card-body ul li {
+    margin-bottom: 0.3rem;
+}
+
+/* --- Table Styles --- */
+.main-content .document-card .table-container {
+    margin-bottom: 0;
+}
+.main-content .document-card .full-width-table th,
+.main-content .document-card .full-width-table td {
+    /* Reducing padding in table cells for a more compact look */
+    padding: 0.6rem; 
+    vertical-align: middle;
+}
+
+/* --- Action Button Spacing --- */
+.main-content .document-card .actions-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* This provides consistent spacing */
+    flex-wrap: wrap; 
+}
+
+.main-content .document-card .actions-cell .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+/* --- Modal Footer Button Spacing --- */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem; /* Adds space between Cancel and Delete buttons */
+}
+</style>
+
+{% set doc_names_map = {
+    'bachelor degree certificate': 'شهادة البكالوريوس',
+    'academic transcript': 'السجل الأكاديمي',
+    'transcript': 'السجل الأكاديمي',
+    'id card/passport': 'بطاقة الهوية/جواز السفر',
+    'id card': 'بطاقة الهوية',
+    'passport': 'جواز السفر',
+    'national id': 'بطاقة الرقم القومي',
+    'national_id': 'بطاقة الرقم القومي',
+    'military status': 'موقف التجنيد',
+    'cv': 'السيرة الذاتية',
+    'resume': 'السيرة الذاتية',
+    'personal photo': 'الصورة الشخصية',
+    'photo': 'الصورة الشخصية',
+    'proof of english proficiency': 'إثبات إجادة اللغة الإنجليزية',
+    'english proficiency test': 'إثبات إجادة اللغة الإنجليزية',
+    'recommendation': 'خطاب توصية',
+    'recommendation letter': 'خطاب توصية',
+    'bachelor_degree': 'شهادة البكالوريوس'
+} %}
+
+<!-- Added the 'document-card' class to make our styles apply -->
+<div class="card document-card">
+    <div class="card-header">
+        <h3>مستنداتي</h3>
+        <a href="{{ url_for('student_upload_document') }}" class="btn primary">رفع مستند جديد</a>
+    </div>
+    
+    <div class="card-body">
+        {% if documents %}
+            <div class="table-container">
+                <table class="full-width-table">
+                    <thead>
+                        <tr>
+                            <th>اسم المستند</th>
+                            <th>الطلب</th>
+                            <th>تاريخ الرفع</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for document in documents|sort(attribute='uploaded_at', reverse=true) %}
+                            <tr>
+                                <td>
+                                    {% set doc_name_lower = document.name|default('')|lower %}
+                                    {{ doc_names_map.get(doc_name_lower, document.name) }}
+                                </td>
+                                <td>
+                                    {% if document.application %}
+                                        {{ document.application.app_id }} - {{ document.application.program }}
+                                    {% else %}
+                                        غير مرتبط بطلب
+                                    {% endif %}
+                                </td>
+                                <td>{{ document.uploaded_at.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    <span class="status-badge 
+                                        {% if document.status == 'Uploaded' or document.status == 'تم الرفع' %}blue
+                                        {% elif document.status == 'Verified' or document.status == 'مقبول' %}green
+                                        {% elif document.status == 'Rejected' or document.status == 'مرفوض' %}red
+                                        {% endif %}">
+                                        {{ document.status }}
+                                    </span>
+                                </td>
+                                <td class="actions-cell">
+                                    <a href="{{ url_for('static', filename=document.file_path) }}" target="_blank" class="action-btn">
+                                        <i class="fas fa-eye"></i> عرض
+                                    </a>
+                                    
+                                    {% if document.status in ['Uploaded', 'تم الرفع', 'Rejected', 'مرفوض'] %}
+                                        <a href="{{ url_for('student_upload_document') }}?update={{ document.id }}" class="action-btn">
+                                            <i class="fas fa-upload"></i> تحديث
+                                        </a>
+                                    {% endif %}
+
+                                    <button class="action-btn delete-doc-btn" data-id="{{ document.id }}">
+                                        <i class="fas fa-trash"></i> حذف
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-10">
+                <p class="text-muted mb-4">لم تقم برفع أي مستندات حتى الآن.</p>
+                <a href="{{ url_for('student_upload_document') }}" class="btn primary">رفع مستند</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Added the 'document-card' class to make our styles apply -->
+<div class="card document-card mt-6">
+    <div class="card-header">
+        <h3>متطلبات المستندات</h3>
+    </div>
+    
+    <div class="card-body">
+        <h4>إرشادات رفع المستندات</h4>
+        <ul>
+            <li>يجب أن تكون جميع المستندات واضحة ومقروءة.</li>
+            <li>الصيغ المقبولة: PDF، JPG، PNG.</li>
+            <li>الحد الأقصى لحجم الملف: 10 ميجابايت لكل مستند.</li>
+            <li>قم بمسح الجهتين لأي بطاقات هوية أو شهادات.</li>
+            <li>تأكد من أن جميع النصوص والمعلومات ذات الصلة مرئية.</li>
+        </ul>
+        
+        <h4 class="mt-4">المستندات المطلوبة</h4>
+        <div class="table-container">
+            <table class="full-width-table">
+                <thead>
+                    <tr>
+                        <th>المستند</th>
+                        <th>الوصف</th>
+                        <th>مطلوب</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>شهادة البكالوريوس</td>
+                        <td>نسخة رسمية من شهادة البكالوريوس الخاصة بك</td>
+                        <td><span class="status-badge red">مطلوب</span></td>
+                    </tr>
+                    <tr>
+                        <td>السجل الأكاديمي</td>
+                        <td>سجل أكاديمي رسمي يظهر جميع المواد والدرجات</td>
+                        <td><span class="status-badge red">مطلوب</span></td>
+                    </tr>
+                    <tr>
+                        <td>بطاقة الهوية/جواز السفر</td>
+                        <td>بطاقة الهوية للطلاب المصريين، جواز السفر للطلاب الدوليين</td>
+                        <td><span class="status-badge red">مطلوب</span></td>
+                    </tr>
+        
+                    <tr>
+                        <td>موقف التجنيد</td>
+                        <td>الموقف من التجنيد والخدمة العسكرية للذكور المصريين</td>
+                        <td><span class="status-badge red">مطلوب</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>السيرة الذاتية</td>
+                        <td>السيرة الذاتية الحالية الخاصة بك</td>
+                        <td><span class="status-badge red">مطلوب</span></td>
+                    </tr>
+                    <tr>
+                        <td>الصورة الشخصية</td>
+                        <td>صورة شخصية حديثة بحجم جواز السفر بخلفية بيضاء</td>
+                        <td><span class="status-badge red">مطلوب</span></td>
+                    </tr>
+                    
+                    <tr>
+                        <td>إثبات إجادة اللغة الإنجليزية</td>
+                        <td>نتائج اختبار TOEFL أو IELTS أو ما يعادلها</td>
+                        <td><span class="status-badge yellow">اختياري</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="delete-doc-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>تأكيد الحذف</h3>
+            <button class="close-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <p>هل أنت متأكد أنك تريد حذف هذا المستند؟ لا يمكن التراجع عن هذا الإجراء.</p>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn outline close-modal">إلغاء</button>
+            <form id="delete-doc-form" method="POST" action="{{ url_for('student_delete_document', doc_id=0) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn danger">حذف</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // تأكيد حذف المستند
+    const deleteDocBtns = document.querySelectorAll('.delete-doc-btn');
+    const deleteDocModal = document.getElementById('delete-doc-modal');
+    const deleteDocForm = document.getElementById('delete-doc-form');
+    const closeModalBtns = document.querySelectorAll('.close-modal');
+    
+    deleteDocBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const docId = this.getAttribute('data-id');
+            
+            // تحديث رابط النموذج بالمعرف الصحيح للمستند
+            deleteDocForm.action = "{{ url_for('student_delete_document', doc_id=0) }}".replace('0', docId);
+            
+            // عرض النافذة
+            deleteDocModal.classList.remove('hidden');
+        });
+    });
+    
+    // إغلاق النافذة
+    closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            deleteDocModal.classList.add('hidden');
+        });
+    });
+    
+    // إغلاق النافذة عند النقر خارجها
+    window.addEventListener('click', function(e) {
+        if (e.target === deleteDocModal) {
+            deleteDocModal.classList.add('hidden');
+        }
+    });
+</script>
+{% endblock %}

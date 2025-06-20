@@ -1,0 +1,245 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}طلبات الشهادات{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header-with-actions">
+        <h3>إدارة طلبات الشهادات</h3>
+        <div class="header-actions">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="ابحث في الشهادات..." class="form-input">
+            </div>
+            <select id="status-filter" class="form-input">
+                <option value="">كل الحالات</option>
+                <option value="بانتظار الدفع">بانتظار الدفع</option>
+                <option value="قيد التجهيز">قيد المعالجة</option>
+                <option value="جاهزة للاستلام">جاهزة للاستلام</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="full-width-table">
+            <thead>
+                <tr>
+                    <th>معرف الشهادة</th>
+                    <th>الطالب</th>
+                    <th>الرقم الجامعي</th>
+                    <th>النوع</th>
+                    <th>تاريخ الطلب</th>
+                    <th>الحالة</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for certificate in certificates %}
+                    <tr>
+                        <td>{{ certificate.cert_id }}</td>
+                        <td>{{ certificate.user.full_name }}</td>
+                        <td>
+                            {% set student_id = namespace(value='غير متوفر') %}
+                            {% for app in certificate.user.applications %}
+                                {% if app.student_id and student_id.value == 'غير متوفر' %}
+                                    {% set student_id.value = app.student_id.student_id %}
+                                {% endif %}
+                            {% endfor %}
+                            {{ student_id.value }}
+                        </td>
+                        <td>{{ certificate.type }}</td>
+                        <td>{{ certificate.request_date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <span class="status-badge 
+                                {% if certificate.status == 'بانتظار الدفع' %}yellow
+                                {% elif certificate.status == 'قيد التجهيز' %}blue
+                                {% elif certificate.status == 'جاهزة للاستلام' %}green
+                                {% endif %}">
+                                {{ certificate.status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if certificate.status == 'بانتظار الدفع' %}
+                                <button class="btn disabled" title="لا يمكن اتخاذ إجراء حتى يدفع الطالب الرسوم">
+                                    بانتظار الدفع
+                                </button>
+                            {% elif certificate.status == 'قيد التجهيز' %}
+                                <button class="btn primary process-cert-btn" 
+                                    data-id="{{ certificate.id }}"
+                                    data-cert-id="{{ certificate.cert_id }}">
+                                    تحديد كجاهزة
+                                </button>
+                            {% elif certificate.status == 'جاهزة للاستلام' %}
+                                <button class="btn disabled">
+                                    تمت المعالجة
+                                </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">لا توجد طلبات شهادات</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Certificate Detail Modal -->
+<div id="certificate-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>تفاصيل الشهادة</h3>
+            <button class="close-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div id="certificate-details">
+                <!-- سيتم ملؤها بواسطة JavaScript -->
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn outline close-modal">إلغاء</button>
+            <button id="process-certificate-btn" class="btn primary">تحديد كجاهزة للاستلام</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Highlight row from URL param
+    const urlParams = new URLSearchParams(window.location.search);
+    const highlightCertId = urlParams.get('cert_id');
+    if (highlightCertId) {
+        document.querySelectorAll('tbody tr').forEach(row => {
+            if (row.cells[0]?.textContent.trim() === highlightCertId) {
+                row.classList.add('highlight-row');
+                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    }
+
+    // Search functionality
+    document.getElementById('search-input').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase().trim();
+        document.querySelectorAll('tbody tr').forEach(row => {
+            const rowText = row.textContent.toLowerCase();
+            row.style.display = rowText.includes(searchValue) ? '' : 'none';
+        });
+    });
+    
+    // Status filter
+    document.getElementById('status-filter').addEventListener('change', function() {
+        const filterValue = this.value;
+        document.querySelectorAll('tbody tr').forEach(row => {
+            if (!filterValue) {
+                row.style.display = '';
+                return;
+            }
+            const statusText = row.querySelector('td:nth-child(6) .status-badge')?.textContent.trim();
+            row.style.display = (statusText === filterValue) ? '' : 'none';
+        });
+    });
+
+    const certificateModal = document.getElementById('certificate-modal');
+    if (!certificateModal) return;
+
+    // --- Modal Handling ---
+    const closeModalBtns = document.querySelectorAll('.close-modal');
+    const processFromModalBtn = document.getElementById('process-certificate-btn');
+
+    // Function to open and populate the modal
+    function openCertificateModal(btn) {
+        const certId = btn.getAttribute('data-id');
+        const row = btn.closest('tr');
+        
+        const certIdText = row.cells[0].textContent.trim();
+        const student = row.cells[1].textContent.trim();
+        const studentId = row.cells[2].textContent.trim();
+        const type = row.cells[3].textContent.trim();
+        const requestDate = row.cells[4].textContent.trim();
+        const status = row.cells[5].querySelector('.status-badge').textContent.trim();
+        
+        document.getElementById('certificate-details').innerHTML = `
+            <div class="info-row"><span class="info-label">معرف الشهادة:</span><span class="info-value">${certIdText}</span></div>
+            <div class="info-row"><span class="info-label">الطالب:</span><span class="info-value">${student}</span></div>
+            <div class="info-row"><span class="info-label">الرقم الجامعي:</span><span class="info-value">${studentId}</span></div>
+            <div class="info-row"><span class="info-label">النوع:</span><span class="info-value">${type}</span></div>
+            <div class="info-row"><span class="info-label">تاريخ الطلب:</span><span class="info-value">${requestDate}</span></div>
+            <div class="info-row"><span class="info-label">الحالة الحالية:</span><span class="status-badge blue">${status}</span></div>
+        `;
+        
+        processFromModalBtn.setAttribute('data-id', certId);
+        certificateModal.classList.remove('hidden');
+    }
+
+    // Function to close the modal
+    function closeTheModal() {
+        certificateModal.classList.add('hidden');
+    }
+
+    // Attach event listeners for opening and closing the modal
+    document.querySelectorAll('.process-cert-btn').forEach(btn => {
+        btn.addEventListener('click', () => openCertificateModal(btn));
+    });
+
+    closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', closeTheModal);
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === certificateModal) {
+            closeTheModal();
+        }
+    });
+
+    // Handle the "Mark as Ready" action from the modal
+    processFromModalBtn.addEventListener('click', function() {
+        const certId = this.getAttribute('data-id');
+        this.disabled = true;
+        this.textContent = 'جاري المعالجة...';
+
+        // --- CHANGE START: Corrected Fetch Request ---
+        fetch(`/admin/certificates/update/${certId}`, {
+            method: 'POST',
+            // No body is needed as the backend only uses the cert_id from the URL
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                // Correctly inject the CSRF token using Jinja2
+                'X-CSRFToken': '{{ csrf_token() }}'
+            }
+        })
+        // --- CHANGE END ---
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Find and update the certificate row
+                const row = document.querySelector(`.process-cert-btn[data-id='${certId}']`)?.closest('tr');
+                if (row) {
+                    row.cells[5].innerHTML = '<span class="status-badge green">جاهزة للاستلام</span>';
+                    row.cells[6].innerHTML = '<button class="btn disabled">تمت المعالجة</button>';
+                }
+                closeTheModal();
+                alert('تم تحديد الشهادة كجاهزة للاستلام بنجاح!');
+            } else {
+                alert('خطأ: ' + (data.message || 'خطأ غير معروف'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('حدث خطأ أثناء معالجة الشهادة.');
+        })
+        .finally(() => {
+            this.disabled = false;
+            this.textContent = 'تحديد كجاهزة للاستلام';
+        });
+    });
+});
+</script>
+{% endblock %}

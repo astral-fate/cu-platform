@@ -1,0 +1,86 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}مقرراتي{% endblock %}
+
+{% block main_content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="mb-4">مقرراتي</h2>
+            
+            <!-- Enrolled Courses Section -->
+            <div class="card mb-6">
+                <div class="card-header">
+                    <h3>المقررات المسجلة</h3>
+                </div>
+                <div class="card-body">
+                    {% if enrolled_courses %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>رمز المقرر</th>
+                                        <th>اسم المقرر</th>
+                                        <th>عدد الساعات</th>
+                                        <th>الفصل الدراسي</th>
+                                        <th>الحالة</th>
+                                        <th>التقدير بالحروف</th>
+                                        <th>الدرجة الرقمية</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in enrolled_courses %}
+                                        <tr>
+                                            <td>{{ item.course.code }}</td>
+                                            <td>{{ item.course.title }}</td>
+                                            <td>{{ item.course.credits }}</td>
+                                            <td>{{ item.semester }}</td>
+                                            <td>{{ item.enrollment.status }}</td>
+                                            <td>{{ item.enrollment.grade or 'لم يتم التقييم بعد' }}</td>
+                                            <td>{{ item.enrollment.grade_numeric if item.enrollment.grade_numeric != None else 'غير متوفر' }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">لم تقم بالتسجيل في أي مقرر بعد.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+          
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+// Existing enrollCourse function
+function enrollCourse(courseId) {
+    if (confirm('هل أنت متأكد أنك تريد التسجيل في هذا المقرر؟')) {
+        fetch(`/student/courses/enroll/${courseId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}' // Ensure CSRF token is available
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('تم التسجيل في المقرر بنجاح!');
+                location.reload(); // Reload to see changes
+            } else {
+                alert(data.message || 'حدث خطأ أثناء التسجيل في المقرر');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('حدث خطأ أثناء التسجيل في المقرر');
+        });
+    }
+}
+</script>
+{% endblock %}

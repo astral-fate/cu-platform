@@ -1,0 +1,120 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}إعدادات النظام{% endblock %}
+
+{% block main_content %}
+<div class="card mb-6">
+    <div class="card-header">
+        <h3>إعدادات الرسوم</h3>
+    </div>
+    
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin_settings') }}">
+            <div class="form-group">
+                <label for="local_fee">رسوم الطالب المحلي (بالجنيه المصري)</label>
+                <input type="number" id="local_fee" name="local_fee" value="{{ settings.local_fee }}" required class="form-input">
+                <p class="text-muted">رسوم الطلاب المصريين</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="international_fee">رسوم الطالب الدولي (بالجنيه المصري)</label>
+                <input type="number" id="international_fee" name="international_fee" value="{{ settings.international_fee }}" required class="form-input">
+                <p class="text-muted">رسوم الطلاب الدوليين</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="certificate_fee">رسوم طلب الشهادة (بالجنيه المصري)</label>
+                <input type="number" id="certificate_fee" name="certificate_fee" value="{{ settings.certificate_fee }}" required class="form-input">
+                <p class="text-muted">رسوم طلبات الشهادات</p>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" name="fee_settings" class="btn primary">حفظ إعدادات الرسوم</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mb-6">
+    <div class="card-header">
+        <h3>إعدادات الإشعارات</h3>
+    </div>
+    
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin_settings') }}">
+            <div class="settings-options">
+                <div class="toggle-setting">
+                    <span>إشعارات البريد الإلكتروني</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="email_notifications" name="email_notifications" 
+                               class="toggle-checkbox" {% if settings.email_notifications %}checked{% endif %}>
+                        <label for="email_notifications" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="toggle-setting">
+                    <span>إشعارات الرسائل القصيرة (SMS)</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="sms_notifications" name="sms_notifications" 
+                               class="toggle-checkbox" {% if settings.sms_notifications %}checked{% endif %}>
+                        <label for="sms_notifications" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="toggle-setting">
+                    <span>إشعارات الدفع (Push)</span>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="push_notifications" name="push_notifications" 
+                               class="toggle-checkbox" {% if settings.push_notifications %}checked{% endif %}>
+                        <label for="push_notifications" class="toggle-label"></label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" name="notification_settings" class="btn primary">حفظ إعدادات الإشعارات</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>صيانة النظام</h3>
+    </div>
+    
+    <div class="card-body">
+        <div class="form-group">
+            <button id="backup-btn" class="btn primary">نسخ احتياطي لقاعدة البيانات</button>
+            <p class="text-muted mt-3">إنشاء نسخة احتياطية من قاعدة بيانات النظام.</p>
+        </div>
+        
+        <div class="form-group">
+            <button id="clear-notifications-btn" class="btn outline">مسح جميع الإشعارات</button>
+            <p class="text-muted mt-3">إزالة جميع الإشعارات المقروءة من النظام.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Backup Database
+    document.getElementById('backup-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        // في تطبيق حقيقي، سيؤدي هذا إلى تشغيل عملية نسخ احتياطي لقاعدة البيانات
+        alert('تم إنشاء نسخة احتياطية لقاعدة البيانات بنجاح!');
+    });
+    
+    // Clear Notifications
+    document.getElementById('clear-notifications-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        if (confirm('هل أنت متأكد من رغبتك في مسح جميع الإشعارات المقروءة؟ لا يمكن التراجع عن هذا الإجراء.')) {
+            // في تطبيق حقيقي، سيؤدي هذا إلى استدعاء نقطة نهاية API لمسح الإشعارات
+            alert('تم مسح جميع الإشعارات المقروءة.');
+        }
+    });
+</script>
+{% endblock %}

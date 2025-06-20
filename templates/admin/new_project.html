@@ -1,0 +1,157 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}إضافة مشروع جديد{% endblock %}
+
+{% block main_content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-gradient d-flex align-items-center justify-content-between">
+        <h3 class="m-0"><i class="fas fa-plus-circle me-2"></i>إضافة مشروع جديد</h3>
+        <a href="{{ url_for('admin_projects') }}" class="btn btn-outline-light btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> العودة للمشاريع
+        </a>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin_new_project') }}" enctype="multipart/form-data" id="new-project-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-4">
+                        <label for="title" class="form-label fw-bold">عنوان المشروع <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-lg" id="title" name="title" required>
+                        <div class="form-text text-muted">اختر عنوانًا وصفيًا لمشروعك</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label fw-bold">وصف المشروع <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+                        <div class="form-text text-muted">قدم معلومات تفصيلية عن أهداف المشروع، منهجيته، ونتائجه</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="category" class="form-label fw-bold">الفئة <span class="text-danger">*</span></label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="">-- اختر الفئة --</option>
+                            <option value="Research">بحث أكاديمي</option>
+                            <option value="Development">تطوير برمجيات</option>
+                            <option value="Innovation">ابتكار وريادة أعمال</option>
+                            <option value="Analysis">تحليل بيانات</option>
+                            <option value="Engineering">هندسة</option>
+                            <option value="Social">أثر اجتماعي</option>
+                        </select>
+                        <div class="form-text text-muted">اختر الفئة الأنسب لمشروعك</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="url" class="form-label fw-bold">رابط المشروع</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-link"></i></span>
+                            <input type="url" class="form-control" id="url" name="url" placeholder="https://example.com/project">
+                        </div>
+                        <div class="form-text text-muted">اختياري: أضف رابط لموقع المشروع أو المستودع</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="m-0"><i class="fas fa-image me-2"></i>صورة المشروع</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3 text-center">
+                                <div id="image-preview" class="mb-3">
+                                    <img src="{{ url_for('static', filename='img/default-project.jpg') }}" 
+                                         class="img-fluid rounded" 
+                                         style="max-height: 200px; width: auto;" 
+                                         id="preview-img">
+                                </div>
+                                <label for="image" class="form-label d-block">رفع صورة</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                <div class="form-text text-muted mt-2">
+                                    <small>الحجم الموصى به: 800×600 بكسل<br>الحجم الأقصى: 2 ميجابايت<br>الصيغ: JPG, PNG, GIF</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="m-0"><i class="fas fa-cog me-2"></i>إعدادات المشروع</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                                <label class="form-check-label" for="is_active">
+                                    <span class="fw-bold">نشط</span><br>
+                                    <small class="text-muted">سيظهر المشروع على الموقع</small>
+                                </label>
+                            </div>
+                            
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="is_popular" name="is_popular">
+                                <label class="form-check-label" for="is_popular">
+                                    <span class="fw-bold">مميز</span><br>
+                                    <small class="text-muted">عرض في الصفحة الرئيسية والأقسام المميزة</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <hr>
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                        <i class="fas fa-save me-2"></i> حفظ المشروع
+                    </button>
+                    <a href="{{ url_for('admin_projects') }}" class="btn btn-outline-secondary btn-lg px-5 ms-2">
+                        <i class="fas fa-times me-2"></i> إلغاء
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Image preview functionality
+document.getElementById('image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        // Validate file size
+        const fileSize = file.size / 1024 / 1024; // Convert to MB
+        if (fileSize > 2) {
+            alert('يجب أن يكون حجم الصورة أقل من 2 ميجابايت');
+            this.value = ''; // Clear the file input
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('preview-img').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+// Form validation
+document.getElementById('new-project-form').addEventListener('submit', function(e) {
+    // Additional validation can be added here
+    const title = document.getElementById('title').value.trim();
+    const description = document.getElementById('description').value.trim();
+    
+    if (title.length < 3) {
+        e.preventDefault();
+        alert('يجب أن يكون عنوان المشروع 3 أحرف على الأقل');
+        return;
+    }
+    
+    if (description.length < 10) {
+        e.preventDefault();
+        alert('يرجى تقديم وصف أكثر تفصيلاً للمشروع');
+        return;
+    }
+});
+</script>
+{% endblock %}

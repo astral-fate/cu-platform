@@ -1,0 +1,643 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}التقديمات{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header-with-actions">
+        <h3>إدارة الطلبات</h3>
+        <div class="header-actions">
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="بحث في الطلبات..." class="form-input">
+            </div>
+            <select id="status-filter" class="form-input">
+                <option value="">كل الحالات</option>
+                <option value="قيد المراجعة">قيد المراجعة</option>
+                <option value="مقبول مبدئياً">مقبول مبدئياً</option>
+                <option value="المستندات مرفوضة">المستندات مرفوضة</option>
+                <option value="مسجل">مسجل</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="full-width-table">
+            <thead>
+                <tr>
+                    <th>رقم الطلب</th>
+                    <th>مقدم الطلب</th>
+                    <th>البرنامج</th>
+                    <th>التاريخ</th>
+                    <th>الحالة</th>
+                    <th>الدفع</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                    <tr>
+                        <td>{{ application.app_id }}</td>
+                        <td>{{ application.user.full_name }}</td>
+                        <td>{{ application.program }}</td>
+                        <td>{{ application.date_submitted.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <!-- Correctly checking Arabic status for badge color -->
+                            <span class="status-badge 
+                                {% if application.status == 'قيد المراجعة' %}yellow
+                                {% elif application.status == 'مقبول مبدئياً' %}green
+                                {% elif application.status == 'المستندات مرفوضة' %}red
+                                {% elif application.status == 'مسجل' %}blue
+                                {% else %}grey{% endif %}">
+                                {{ application.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge 
+                                {% if application.payment_status == 'بانتظار الدفع' %}yellow
+                                {% elif application.payment_status == 'مدفوع' %}green
+                                {% else %}grey{% endif %}">
+                                {{ application.payment_status }}
+                            </span>
+                        </td>
+                        <td class="actions-cell">
+                            <button class="action-btn admin-action-btn" data-action="view" data-id="{{ application.id }}">
+                                <i class="fas fa-eye"></i> عرض
+                            </button>
+                            
+                            <button type="button" class="action-btn note" data-id="{{ application.id }}" data-applicant="{{ application.user.full_name }}" data-app-id="{{ application.app_id }}" onclick="openNoteModal(this);">
+                                <i class="fas fa-comment"></i> ملاحظة
+                            </button>
+                            
+                            <!-- Correctly checking Arabic status to show buttons -->
+                            {% if application.status == 'قيد المراجعة' %}
+                                <!-- The onclick attribute correctly calls the handleAction function -->
+                                <button type="button" class="action-btn approve" data-id="{{ application.id }}" onclick="handleAction(event, 'approve', this.dataset.id)">
+                                    <i class="fas fa-check"></i> قبول
+                                </button>
+                                <button type="button" class="action-btn reject" data-id="{{ application.id }}" onclick="handleAction(event, 'reject', this.dataset.id)">
+                                    <i class="fas fa-times"></i> رفض
+                                </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">لم يتم العثور على طلبات</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Application Detail Modal -->
+<div id="application-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>تفاصيل الطلب</h3>
+            <button class="close-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div id="application-details">
+                <!-- Will be filled by JavaScript -->
+            </div>
+            
+            <h4 class="mt-4">المستندات</h4>
+            <div id="document-list" class="mt-3">
+                <!-- Will be filled by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn outline close-modal">إغلاق</button>
+            <div id="modal-actions">
+                <!-- Will be filled by JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Document viewer modal - enhanced for better preview -->
+<div id="document-viewer-modal" class="modal hidden">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3 id="document-viewer-title">عارض المستندات</h3>
+            <button class="close-doc-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="ai-advisor-container">
+                <button id="ai-advisor-btn" class="action-btn ai-assistant">
+                    <i class="fas fa-robot"></i> مساعد الذكاء الاصطناعي - تحليل السجل الأكاديمي
+                </button>
+            </div>
+            
+            <div class="file-type-indicator" id="file-type-indicator"></div>
+            
+            <div id="document-viewer-container">
+                <div id="preview-fallback" class="preview-fallback hidden">
+                    <i class="fas fa-file-alt fa-3x"></i>
+                    <p>لا يمكن معاينة هذا النوع من الملفات مباشرة. يرجى التنزيل للعرض.</p>
+                </div>
+                <iframe id="document-viewer-frame" width="100%" height="500px" frameborder="0"></iframe>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn outline close-doc-modal">إغلاق</button>
+            <a id="download-document-btn" href="#" class="btn primary" download>تنزيل المستند</a>
+        </div>
+    </div>
+</div>
+
+<!-- Add this new modal for adding notes -->
+<div id="add-note-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="note-modal-title">إضافة ملاحظة للطالب</h3>
+            <button class="close-note-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="note-subject">الموضوع</label>
+                <input type="text" id="note-subject" name="subject" class="form-input" placeholder="موضوع الملاحظة">
+            </div>
+            <div class="form-group">
+                <label for="note-message">الرسالة</label>
+                <textarea id="note-message" name="message" class="form-input" rows="5" placeholder="أدخل ملاحظتك للطالب بخصوص مستندات طلبه..."></textarea>
+            </div>
+            <input type="hidden" id="note-application-id">
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn outline close-note-modal">إلغاء</button>
+            <button id="send-note-btn" class="btn primary">إرسال الملاحظة</button>
+        </div>
+    </div>
+</div>
+
+<!-- AI Assistant Results Modal -->
+<div id="ai-assistant-modal" class="modal hidden">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3 id="ai-modal-title">تحليل السجل الأكاديمي بواسطة الذكاء الاصطناعي</h3>
+            <button class="close-ai-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div id="ai-analysis-content">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>جاري تحليل السجل الأكاديمي، يرجى الانتظار...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn outline close-ai-modal">إغلاق</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Global variables for modals ---
+        let currentApplicationId = null;
+
+        // --- Core Action Handler (Approve/Reject) ---
+        window.handleAction = function(event, action, appId) {
+            event.preventDefault();
+            event.stopPropagation();
+            const button = event.currentTarget;
+            if (button.disabled) return;
+
+            if (confirm(`هل أنت متأكد أنك تريد ${action === 'approve' ? 'قبول' : 'رفض'} هذا الطلب؟`)) {
+                button.disabled = true;
+                const originalContent = button.innerHTML;
+                button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري...`;
+                
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                
+                fetch(`/admin/application/${appId}/${action}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message || `تم ${action === 'approve' ? 'قبول' : 'رفض'} الطلب بنجاح`);
+                        window.location.reload();
+                    } else {
+                        alert('خطأ: ' + (data.message || 'خطأ غير معروف'));
+                        button.disabled = false;
+                        button.innerHTML = originalContent;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('حدث خطأ أثناء معالجة الطلب.');
+                    button.disabled = false;
+                    button.innerHTML = originalContent;
+                });
+            }
+        };
+
+        // --- Search and Filter ---
+        document.getElementById('search-input').addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase().trim();
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                row.style.display = rowText.includes(searchValue) ? '' : 'none';
+            });
+        });
+
+        document.getElementById('status-filter').addEventListener('change', function() {
+            const filterValue = this.value;
+            document.querySelectorAll('tbody tr').forEach(row => {
+                if (!filterValue) {
+                    row.style.display = '';
+                    return;
+                }
+                // Compare with the text inside the status badge
+                const status = row.querySelector('td:nth-child(5) .status-badge').textContent.trim();
+                row.style.display = (status === filterValue) ? '' : 'none';
+            });
+        });
+
+        // --- Application Details Modal ---
+        const mainModal = document.getElementById('application-modal');
+        const applicationDetails = document.getElementById('application-details');
+        const documentList = document.getElementById('document-list');
+        const modalActions = document.getElementById('modal-actions');
+
+        const docTranslations = {
+            'bachelor degree certificate': 'شهادة البكالوريوس',
+            'bachelor_degree': 'شهادة البكالوريوس',
+            'bachelor_certificate': 'شهادة البكالوريوس',
+            'academic transcript': 'السجل الأكاديمي',
+            'transcript': 'السجل الأكاديمي',
+            'id card/passport': 'بطاقة الهوية/جواز السفر',
+            'id card': 'بطاقة الهوية',
+            'id_card': 'بطاقة الهوية',
+            'passport': 'جواز السفر',
+            'national id': 'بطاقة الرقم القومي',
+            'national_id': 'الهوية الوطنية',
+            'military status': 'موقف التجنيد',
+            'cv': 'السيرة الذاتية',
+            'resume': 'السيرة الذاتية',
+            'personal photo': 'الصورة الشخصية',
+            'personal_photo': 'الصورة الشخصية',
+            'photo': 'الصورة الشخصية',
+            'proof of english proficiency': 'إثبات إجادة اللغة الإنجليزية',
+            'english proficiency test': 'إثبات إجادة اللغة الإنجليزية',
+            'english_proficiency_test': 'اختبار إجادة اللغة الإنجليزية',
+            'recommendation': 'خطاب توصية',
+            'recommendation letter': 'خطاب توصية',
+            'high_school_certificate': 'شهادة الثانوية العامة',
+            'master_certificate': 'شهادة الماجستير',
+            'other_documents': 'مستندات أخرى'
+        };
+
+        function getTranslatedDocName(originalName) {
+            const lowerName = (originalName || '').toLowerCase().trim();
+            return docTranslations[lowerName] || docTranslations[lowerName.replace(/ /g, '_')] || originalName;
+        }
+
+        document.querySelectorAll('[data-action="view"]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const appId = this.getAttribute('data-id');
+                currentApplicationId = appId;
+
+                applicationDetails.innerHTML = `<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i><p>جاري تحميل البيانات...</p></div>`;
+                documentList.innerHTML = '';
+                modalActions.innerHTML = '';
+                mainModal.classList.remove('hidden');
+
+                fetch(`/admin/application/${appId}/details`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const app = data.application;
+                            
+                            // Determine badge colors based on Arabic status from backend
+                            let statusClass;
+                            if (app.status === 'قيد المراجعة') statusClass = 'yellow';
+                            else if (app.status === 'مقبول مبدئياً') statusClass = 'green';
+                            else if (app.status === 'المستندات مرفوضة') statusClass = 'red';
+                            else if (app.status === 'مسجل') statusClass = 'blue';
+                            else statusClass = 'grey';
+
+                            let paymentClass;
+                            if (app.payment_status === 'مدفوع') paymentClass = 'green';
+                            else if (app.payment_status === 'بانتظار الدفع') paymentClass = 'yellow';
+                            else paymentClass = 'grey';
+
+                            applicationDetails.innerHTML = `
+                                <div class="info-row"><span>رقم الطلب:</span><span>${app.app_id}</span></div>
+                                <div class="info-row"><span>مقدم الطلب:</span><span>${app.applicant}</span></div>
+                                <div class="info-row"><span>البريد الإلكتروني:</span><span>${app.email}</span></div>
+                                <div class="info-row"><span>البرنامج:</span><span>${app.program}</span></div>
+                                <div class="info-row"><span>تاريخ التقديم:</span><span>${app.date}</span></div>
+                                <div class="info-row"><span>الحالة:</span><span class="status-badge ${statusClass}">${app.status}</span></div>
+                                <div class="info-row"><span>الدفع:</span><span class="status-badge ${paymentClass}">${app.payment_status}</span></div>
+                            `;
+
+                            if (data.documents && data.documents.length > 0) {
+                                let docsHtml = '<ul class="document-list">';
+                                data.documents.forEach(doc => {
+                                    const translatedName = getTranslatedDocName(doc.name);
+                                    docsHtml += `
+                                        <li class="document-item">
+                                            <div class="document-info">
+                                                <span class="document-name">${translatedName}</span>
+                                                <span class="document-date">تم الرفع: ${doc.uploaded_at}</span>
+                                            </div>
+                                            <div class="document-actions">
+                                                <button class="action-btn view-document" data-url="${doc.file_path}" data-name="${translatedName}"><i class="fas fa-eye"></i> عرض</button>
+                                            </div>
+                                        </li>
+                                    `;
+                                });
+                                documentList.innerHTML = docsHtml + '</ul>';
+                            } else {
+                                documentList.innerHTML = '<p class="no-documents">لا توجد مستندات مرفقة بهذا الطلب.</p>';
+                            }
+
+                            if (app.status === 'قيد المراجعة') {
+                                modalActions.innerHTML = `
+                                    <button class="btn success" onclick="handleAction(event, 'approve', ${appId})"><i class="fas fa-check"></i> قبول المستندات</button>
+                                    <button class="btn danger" onclick="handleAction(event, 'reject', ${appId})"><i class="fas fa-times"></i> رفض المستندات</button>
+                                `;
+                            }
+                        } else {
+                            applicationDetails.innerHTML = `<p class="error-message">${data.message}</p>`;
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Fetch error:', err);
+                        applicationDetails.innerHTML = `<p class="error-message">حدث خطأ أثناء جلب البيانات.</p>`;
+                    });
+            });
+        });
+
+        // --- Document Viewer and AI Modal Logic ---
+        const docViewerModal = document.getElementById('document-viewer-modal');
+        document.body.addEventListener('click', function(e) {
+            if (e.target.closest('.view-document')) {
+                const button = e.target.closest('.view-document');
+                openDocumentViewer(button.dataset.url, button.dataset.name);
+            }
+        });
+
+        function openDocumentViewer(docUrl, docName) {
+            document.getElementById('document-viewer-title').textContent = docName;
+            const downloadBtn = document.getElementById('download-document-btn');
+            downloadBtn.href = docUrl;
+            downloadBtn.setAttribute('download', docName);
+
+            const frame = document.getElementById('document-viewer-frame');
+            const fallback = document.getElementById('preview-fallback');
+            const fileExt = docUrl.split('.').pop().toLowerCase();
+            const previewableTypes = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'txt'];
+            const canPreview = previewableTypes.includes(fileExt);
+
+            document.getElementById('file-type-indicator').textContent = `نوع الملف: ${fileExt.toUpperCase()}`;
+            frame.style.display = canPreview ? 'block' : 'none';
+            fallback.classList.toggle('hidden', canPreview);
+            if (canPreview) {
+                // Add cache-buster to force reload of iframe content
+                frame.src = `${docUrl}?t=${new Date().getTime()}`;
+            }
+
+            // More robust transcript detection using keywords
+            const aiBtn = document.getElementById('ai-advisor-btn');
+            const docNameLower = (docName || '').toLowerCase();
+            const transcriptKeywords = ['transcript', 'academic record', 'grades', 'سجل', 'كشف', 'بيان درجات'];
+            const isTranscript = transcriptKeywords.some(keyword => docNameLower.includes(keyword));
+
+            aiBtn.style.display = isTranscript ? 'block' : 'none';
+            if (isTranscript) {
+                // The docUrl is a full URL, we need to extract the relative path for the API
+                aiBtn.dataset.docPath = docUrl.replace(window.location.origin, '').replace('/static/', '');
+                aiBtn.dataset.appId = currentApplicationId;
+            }
+            docViewerModal.classList.remove('hidden');
+        }
+        
+        const aiModal = document.getElementById('ai-assistant-modal');
+        const aiAnalysisContent = document.getElementById('ai-analysis-content');
+
+        function formatAiResponse(text) {
+            if (typeof text !== 'string') return '';
+            const lines = text.split('\n');
+            let html = '';
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.startsWith('# ')) {
+                    html += `<h3>${escapeHtml(line.substring(2))}</h3>`;
+                } else if (line) {
+                    const parts = line.split('**');
+                    let pLine = '';
+                    for (let i = 0; i < parts.length; i++) {
+                        if (i % 2 === 1) {
+                            pLine += `<strong>${escapeHtml(parts[i])}</strong>`;
+                        } else {
+                            pLine += escapeHtml(parts[i]);
+                        }
+                    }
+                    html += `<p>${pLine}</p>`;
+                }
+            });
+            return html;
+        }
+
+        document.getElementById('ai-advisor-btn').addEventListener('click', function() {
+            aiAnalysisContent.innerHTML = `<div class="loading-spinner"><i class="fas fa-spinner fa-spin fa-2x"></i><p style="margin-top: 15px;">جاري تحليل السجل الأكاديمي...</p></div>`;
+            aiModal.classList.remove('hidden');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            fetch('/admin/analyze_transcript_pdf', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+                body: JSON.stringify({ document_path: this.dataset.docPath, application_id: this.dataset.appId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    aiAnalysisContent.innerHTML = `<div class="ai-result-text">${formatAiResponse(data.analysis_text)}</div>`;
+                } else {
+                    aiAnalysisContent.innerHTML = `<p class="error-message">${escapeHtml(data.message)}</p>`;
+                }
+            })
+            .catch(err => {
+                aiAnalysisContent.innerHTML = `<p class="error-message">فشل الاتصال بالخادم: ${escapeHtml(err.message)}</p>`;
+            });
+        });
+
+        // --- Note Modal Logic ---
+        const noteModal = document.getElementById('add-note-modal');
+        window.openNoteModal = function(button) {
+            event.stopPropagation(); // Prevent other clicks
+            document.getElementById('note-application-id').value = button.dataset.id;
+            document.getElementById('note-subject').value = `بخصوص الطلب رقم ${button.dataset.appId}`;
+            document.getElementById('note-modal-title').textContent = `إرسال ملاحظة إلى ${button.dataset.applicant}`;
+            document.getElementById('note-message').value = '';
+            noteModal.classList.remove('hidden');
+        };
+
+        document.getElementById('send-note-btn').addEventListener('click', function() {
+            const applicationId = document.getElementById('note-application-id').value;
+            const subject = document.getElementById('note-subject').value;
+            const message = document.getElementById('note-message').value;
+            if (!subject.trim() || !message.trim()) {
+                alert('يرجى ملء حقلي الموضوع والرسالة.');
+                return;
+            }
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            fetch('/admin/application/send-note', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+                body: JSON.stringify({ application_id: applicationId, subject: subject, message: message })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                if (data.success) {
+                    noteModal.classList.add('hidden');
+                }
+            }).catch(err => alert('حدث خطأ أثناء الإرسال.'));
+        });
+
+        // --- Generic Modal Closing ---
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal || e.target.closest('.close-modal, .close-doc-modal, .close-note-modal, .close-ai-modal')) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+
+        function escapeHtml(unsafe) {
+            if (typeof unsafe !== 'string') return '';
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    });
+</script>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<!-- Styles are unchanged and correct -->
+<style>
+    .table-container { overflow-x: auto; }
+    .full-width-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .full-width-table th, .full-width-table td { padding: 12px 15px; text-align: right; border-bottom: 1px solid #e5e7eb; }
+    .full-width-table th { background-color: #f9fafb; font-weight: 600; color: #374151; direction: rtl; }
+    .full-width-table tbody tr:hover { background-color: #f9fafb; }
+    .actions-cell { white-space: nowrap; text-align: center; }
+    .actions-cell .action-btn { margin-left: 5px; margin-right: 0; }
+    .status-badge { padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; text-transform: capitalize; display: inline-block; }
+    .status-badge.green { background-color: #d1fae5; color: #065f46; }
+    .status-badge.yellow { background-color: #fef3c7; color: #92400e; }
+    .status-badge.red { background-color: #fee2e2; color: #991b1b; }
+    .status-badge.blue { background-color: #dbeafe; color: #1e40af; }
+    .status-badge.grey { background-color: #e5e7eb; color: #4b5563; }
+    .action-btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; transition: all 0.2s; color: white; display: inline-flex; align-items: center; justify-content: center; }
+    .action-btn i { margin-left: 5px; }
+    .action-btn:disabled { cursor: not-allowed; opacity: 0.6; }
+    .action-btn.view-details { background-color: #3b82f6; }
+    .action-btn.view-details:hover { background-color: #2563eb; }
+    .action-btn.note { background-color: #8b5cf6; }
+    .action-btn.note:hover { background-color: #7c3aed; }
+    .action-btn.approve { background-color: #10b981; }
+    .action-btn.approve:hover { background-color: #059669; }
+    .action-btn.reject { background-color: #ef4444; }
+    .action-btn.reject:hover { background-color: #dc2626; }
+    .action-btn.download { background-color: #6b7280; }
+    .action-btn.download:hover { background-color: #4b5563; }
+    .action-btn.ai-assistant { background-color: #5b21b6; font-weight: bold; display: none; margin: 0 auto 15px auto; }
+    .action-btn.ai-assistant:hover:not(:disabled) { background-color: #4c1d95; }
+    .action-btn.view-document { background-color: #3b82f6; }
+    .action-btn.view-document:hover { background-color: #2563eb; }
+    .action-btn.admin-action-btn { background-color: #3b82f6; }
+    .action-btn.admin-action-btn:hover { background-color: #2563eb; }
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1050; padding: 15px; direction: rtl; }
+    .modal:not(.hidden) { display: flex; }
+    .modal-content { background-color: #fff; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; flex-direction: column; width: 90%; max-height: 90vh; overflow: hidden; }
+    .modal-content.modal-large { max-width: 1000px; }
+    .modal-content:not(.modal-large) { max-width: 700px; }
+    .modal-header { padding: 15px 20px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { margin: 0; font-size: 1.25rem; }
+    .modal-body { padding: 20px; overflow-y: auto; flex-grow: 1; text-align: right; }
+    .modal-footer { padding: 15px 20px; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-start; gap: 10px; background-color: #f9fafb; }
+    .btn-icon { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #6b7280; }
+    .btn-icon:hover { color: #1f2937; }
+    .card-header-with-actions { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #e5e7eb; }
+    .info-row { display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed #eee; }
+    .document-list { list-style: none; padding: 0; margin: 0; }
+    .document-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 10px; }
+    .document-info { display: flex; flex-direction: column; gap: 2px; }
+    .document-name { font-weight: 500; }
+    .document-date { font-size: 12px; color: #6b7280; }
+    .document-actions { display: flex; gap: 8px; }
+    .no-documents { text-align: center; color: #6b7280; padding: 20px; }
+    #document-viewer-container { width: 100%; min-height: 500px; height: 65vh; border: 1px solid #e5e7eb; border-radius: 6px; overflow: hidden; position: relative; }
+    #document-viewer-frame { width: 100%; height: 100%; border: none; }
+    .preview-fallback { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #6b7280; }
+    .preview-fallback.hidden { display: none; }
+    .file-type-indicator { background-color: #f3f4f6; padding: 5px 10px; border-radius: 4px; display: inline-block; margin-bottom: 10px; font-size: 12px; color: #4b5563; }
+    .ai-result-text {
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 15px;
+        max-height: 60vh;
+        overflow-y: auto;
+        text-align: right;
+        direction: rtl;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    .ai-result-text h3 {
+        color: #1e40af;
+        margin-top: 1.2rem;
+        margin-bottom: 0.6rem;
+        padding-bottom: 0.3rem;
+        border-bottom: 1px solid #dbeafe;
+    }
+    .ai-result-text p {
+        margin-bottom: 0.8rem;
+    }
+    .ai-result-text strong {
+        color: #065f46;
+        font-weight: 600;
+    }
+    .loading-spinner { text-align: center; padding: 40px 20px; color: #6b7280; }
+    .error-message { text-align: center; color: #dc2626; padding: 20px; background-color: #fee2e2; border: 1px solid #fecaca; border-radius: 6px; margin: 10px 0; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; text-align: right; }
+    .form-group .form-input { width: 100%; text-align: right; }
+</style>
+{% endblock %}

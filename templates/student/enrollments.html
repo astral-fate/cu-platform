@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>كلية الدراسات العليا للبحوث الإحصائية</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4f46e5; /* اللون الأساسي */
+      --secondary-color: #556df7; /* اللون الثانوي */
+      --dark-color: #1a1a1a; /* اللون الداكن */
+      --light-color: #f8f9fa; /* اللون الفاتح */
+      --transition: all 0.3s ease; /* الانتقال */
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden; /* منع التمرير الأفقي */
+    }
+
+    /* أنماط شريط التنقل */
+    .navbar {
+      background-color: var(--primary-color);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 0.8rem 1rem;
+    }
+
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white !important;
+    }
+
+    .nav-link {
+      color: white !important;
+      margin: 0 0.3rem;
+      font-weight: 500;
+      position: relative;
+      padding: 0.5rem 0.8rem !important;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: white;
+      transition: var(--transition);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .btn-login {
+      background-color: transparent;
+      border: 1px solid white;
+      color: white !important;
+      transition: var(--transition);
+    }
+
+    .btn-login:hover {
+      background-color: white;
+      color: var(--primary-color) !important;
+    }
+
+    .btn-apply {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11);
+    }
+
+    .btn-apply:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1);
+    }
+
+    /* قسم البطل (Hero Section) */
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 5rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-section::after {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: radial-gradient(rgba(255, 255, 255, 0.1), transparent);
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-img {
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      transition: var(--transition);
+    }
+
+    .hero-img:hover {
+      transform: scale(1.02);
+    }
+
+    /* قسم الميزات */
+    .feature-card {
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-icon {
+      color: var(--primary-color);
+      transition: var(--transition);
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: scale(1.1);
+    }
+
+    /* مستودع المشاريع */
+    .project-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+
+    .project-card {
+      flex: 0 0 calc(33.333% - 1.5rem);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      border: none;
+      margin-bottom: 1.5rem;
+      background-color: white; /* تمت الإضافة لضمان الخلفية */
+      padding: 1.5rem; /* تمت الإضافة لضمان التباعد الداخلي */
+    }
+
+    .project-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .project-img {
+      height: 200px;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .project-card:hover .project-img {
+      transform: scale(1.05);
+    }
+
+    .project-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--dark-color);
+    }
+
+    .project-btn {
+      background-color: var(--primary-color);
+      border: none;
+      transition: var(--transition);
+      color: white; /* تمت الإضافة لضمان لون النص */
+      padding: 0.5rem 1rem; /* تمت الإضافة لضمان الحجم */
+      border-radius: 5px; /* تمت الإضافة لضمان الحواف الدائرية */
+      text-decoration: none; /* تمت الإضافة لإزالة الخط السفلي */
+    }
+
+    .project-btn:hover {
+      background-color: var(--secondary-color);
+    }
+
+    /* قسم الإحصائيات */
+    .statistics-section {
+      padding: 3rem 0;
+      background-color: var(--light-color);
+    }
+
+    .statistics-card {
+      text-align: center;
+      padding: 2rem;
+      border-radius: 12px;
+      background-color: white;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+    }
+
+    .statistics-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .statistics-card h3 {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+    }
+
+    .statistics-card p {
+      font-size: 1.2rem;
+      color: var(--dark-color);
+    }
+
+    /* قسم البرامج */
+    .programs-section {
+      padding: 3rem 0;
+    }
+
+    .program-card {
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      overflow: hidden;
+      text-align: center;
+      padding: 2rem;
+      background-color: white;
+    }
+
+    .program-card h3 {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+    }
+
+    .program-card p {
+      font-size: 1.2rem;
+      color: var(--dark-color);
+    }
+
+    .program-card a {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .program-card a:hover {
+      background-color: var(--secondary-color);
+    }
+
+    /* قسم عن الكلية */
+    .about-faculty-section {
+      padding: 3rem 0;
+    }
+
+    .about-faculty-content {
+      text-align: justify;
+    }
+
+    /* قسم الإعلانات */
+    .announcements-section {
+      padding: 3rem 0;
+    }
+
+    .announcement-card {
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+      overflow: hidden;
+      background-color: white;
+      padding: 1.5rem;
+    }
+
+    .announcement-card h5 {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--dark-color);
+    }
+
+    .announcement-card p {
+      color: var(--dark-color);
+    }
+
+    .announcement-card a {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .announcement-card a:hover {
+      background-color: var(--secondary-color);
+    }
+
+    /* التذييل */
+    .footer {
+      background-color: var(--dark-color);
+      color: white;
+      padding: 3rem 0 2rem;
+    }
+
+    .footer h5 {
+      position: relative;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    .footer h5::after {
+      content: '';
+      position: absolute;
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      bottom: 0;
+      /* تم التغيير إلى right ليتناسب مع dir="rtl" */
+      right: 0;
+    }
+
+    .footer a {
+      color: #a0aec0;
+      text-decoration: none;
+      transition: var(--transition);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer a:hover {
+      color: white;
+      /* تم التغيير إلى translateX(-5px) ليتناسب مع dir="rtl" */
+      transform: translateX(-5px);
+    }
+
+    .copyright {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    /* القائمة المنزلقة (غير مستخدمة في هذا السياق ولكن تم الاحتفاظ بالأنماط) */
+    .slide-menu {
+      position: fixed;
+      top: 0;
+      /* تم التغيير إلى right ليتناسب مع dir="rtl" */
+      right: -280px;
+      left: auto; /* تمت الإضافة */
+      width: 280px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      transition: var(--transition);
+      z-index: 1050;
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1); /* تم عكس الظل */
+      overflow-y: auto;
+      padding-top: 1rem;
+    }
+
+    .slide-menu.open {
+      /* تم التغيير إلى right ليتناسب مع dir="rtl" */
+      right: 0;
+      left: auto; /* تمت الإضافة */
+    }
+
+    .slide-menu-header {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slide-menu ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .slide-menu ul li {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .slide-menu ul li a {
+      color: white;
+      text-decoration: none;
+      padding: 1rem;
+      display: block;
+      transition: var(--transition);
+    }
+
+    .slide-menu ul li a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      /* تم التغيير إلى padding-right ليتناسب مع dir="rtl" */
+      padding-right: 1.5rem;
+      padding-left: 1rem; /* تمت الإضافة للحفاظ على التباعد الأصلي */
+    }
+
+    .close-menu {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* تعديلات الاستجابة */
+    @media (max-width: 992px) {
+      .navbar-collapse {
+        background-color: var(--primary-color);
+        padding: 1rem;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .project-card {
+        flex: 0 0 calc(50% - 1rem);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 3rem 0;
+      }
+
+      .hero-img {
+        margin-top: 2rem;
+      }
+
+      .project-card {
+        flex: 0 0 100%;
+      }
+
+      .footer h5 {
+        margin-top: 1.5rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .feature-card {
+        margin-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- شريط التنقل -->
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#home">كلية الدراسات العليا للبحوث الإحصائية</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#home">الرئيسية</a></li>
+          <li class="nav-item"><a class="nav-link" href="#programs">البرامج</a></li>
+          <li class="nav-item"><a class="nav-link" href="#projects">المشاريع</a></li>
+          <li class="nav-item"><a class="nav-link" href="#announcements">الإعلانات</a></li>
+        </ul>
+        <!-- تم التغيير إلى روابط إذا كان المستخدم مسجلاً دخوله -->
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('student_dashboard') }}" class="btn btn-login ms-3">لوحة التحكم</a>
+          <a href="{{ url_for('logout') }}" class="btn btn-apply btn-primary ms-2">تسجيل الخروج</a>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="btn btn-login ms-3">تسجيل الدخول</a>
+          <a href="{{ url_for('register') }}" class="btn btn-apply btn-primary ms-2">قدم الآن</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- قسم البطل -->
+  <section class="hero-section" id="home">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 hero-content">
+          <h1 class="display-4 fw-bold mb-4">كلية الدراسات العليا للبحوث الإحصائية</h1>
+          <p class="lead mb-4">تطوير البحث والتعليم الإحصائي من خلال برامج مبتكرة وأعضاء هيئة تدريس على مستوى عالٍ.</p>
+          <div class="d-flex gap-3">
+            <a href="{{ url_for('programs_list') }}" class="btn btn-light btn-lg">استكشف البرامج</a>
+            <a href="{{ url_for('register') }}" class="btn btn-outline-light btn-lg">تفاصيل التسجيل</a>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <img src="{{ url_for('static', filename='img/logo.png') }}" alt="كلية الدراسات العليا للبحوث الإحصائية" class="img-fluid rounded hero-img">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- قسم الإحصائيات -->
+  <section class="statistics-section" id="statistics">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-3">
+          <div class="statistics-card">
+            <h3>+100</h3>
+            <p>أعضاء هيئة التدريس</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="statistics-card">
+            <h3>5</h3>
+            <p>برامج الدكتوراه</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="statistics-card">
+            <h3>8</h3>
+            <p>برامج الماجستير</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="statistics-card">
+            <h3>12</h3>
+            <p>برامج الدبلوم</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- قسم عن الكلية -->
+    <section class="about-faculty-section" id="about-faculty">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <h2 class="mb-4">عن الكلية</h2>
+            <p class="about-faculty-content">
+              كلية الدراسات العليا للبحوث الإحصائية (FGSSR) هي واحدة من أقدم وأعرق المؤسسات في مصر للتعليم العالي في الإحصاء وعلوم الحاسب والمجالات ذات الصلة. لأكثر من 70 عامًا، كانت الكلية رائدة في التعليم الإحصائي والبحث.
+              تقدم الكلية مجموعة واسعة من البرامج المهنية المصممة لتزويد الطلاب بالمهارات الفنية والخبرة المطلوبة في سوق العمل اليوم. مع أكثر من 18 برنامجًا متخصصًا، تعد الكلية الخريجين للتميز في مجالات مختلفة بما في ذلك علم البيانات، هندسة البرمجيات، إدارة المخاطر، والمزيد.
+            </p>
+            <div class="d-flex gap-3">
+              <a href="#" class="btn btn-primary">تحميل الكتيب</a>
+              <!-- تم تعديل الرابط ليوجه إلى نظام التذاكر -->
+              <a href="{{ url_for('student_tickets') }}" class="btn btn-outline-primary">اتصل بنا (الدعم الفني)</a>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div id="facultyCarousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <img src="{{ url_for('static', filename='img/1.jpg') }}" class="d-block w-100" alt="صورة 1">
+                </div>
+                <div class="carousel-item">
+                  <img src="{{ url_for('static', filename='img/3.jpg') }}" class="d-block w-100" alt="صورة 2">
+                </div>
+                <div class="carousel-item">
+                  <img src="{{ url_for('static', filename='img/4.jpg') }}" class="d-block w-100" alt="صورة 3">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  <!-- قسم البرامج -->
+  <section class="programs-section" id="programs">
+    <div class="container">
+      <h2 class="text-center mb-4">البرامج الأكاديمية</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="program-card">
+            <h3>12</h3>
+            <p>برامج دبلوم مهنية ومخصصة</p>
+            <a href="{{ url_for('programs_list', degree_type='Diploma') }}">عرض البرامج</a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="program-card">
+            <h3>8</h3>
+            <p>برامج ماجستير تركز على البحث</p>
+            <a href="{{ url_for('programs_list', degree_type='Master') }}">عرض البرامج</a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="program-card">
+            <h3>5</h3>
+            <p>برامج بحثية دكتوراه متقدمة</p>
+            <a href="{{ url_for('programs_list', degree_type='PhD') }}">عرض البرامج</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- قسم الميزات -->
+  <section class="py-5 bg-light" id="features">
+    <div class="container">
+      <h2 class="text-center mb-2">الخدمات التي نقدمها</h2>
+      <p class="text-center text-muted mb-5">مصممة لجعل تجربتك الجامعية سلسة</p>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card feature-card h-100">
+            <div class="card-body text-center p-4">
+              <i class="fas fa-file-alt fa-3x mb-4 feature-icon"></i>
+              <h5 class="card-title fw-bold">طلب الالتحاق الإلكتروني</h5>
+              <p class="card-text">أكمل عملية التقديم عبر الإنترنت من خلال واجهتنا المبسطة.</p>
+              <a href="{{ url_for('student_new_application') }}" class="btn btn-sm btn-outline-primary mt-3">اعرف المزيد</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card feature-card h-100">
+            <div class="card-body text-center p-4">
+              <i class="fas fa-award fa-3x mb-4 feature-icon"></i>
+              <h5 class="card-title fw-bold">استخراج الشهادة</h5>
+              <p class="card-text">اطلب وتتبع شهاداتك من خلال نظام الشهادات الرقمي الخاص بنا.</p>
+              <a href="{{ url_for('student_certificates') }}" class="btn btn-sm btn-outline-primary mt-3">اعرف المزيد</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card feature-card h-100">
+            <div class="card-body text-center p-4">
+              <i class="fas fa-comments fa-3x mb-4 feature-icon"></i>
+              <h5 class="card-title fw-bold">الدعم الفني</h5>
+              <p class="card-text">احصل على المساعدة من خلال نظام التذاكر الخاص بنا مع أوقات استجابة سريعة.</p>
+              <a href="{{ url_for('student_tickets') }}" class="btn btn-sm btn-outline-primary mt-3">اعرف المزيد</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- قسم مستودع المشاريع -->
+  <section class="py-5" id="repository">
+    <div class="container">
+      <h2 class="text-center mb-2">استكشف مستودع المشاريع الخاص بنا</h2>
+      <p class="text-center text-muted mb-5">عرض الأبحاث المبتكرة ومشاريع الطلاب</p>
+
+      <div class="project-container">
+        <!-- مثال لمشروع 1 -->
+        <div class="project-card">
+          <img src="{{ url_for('static', filename='img/header.jpg') }}" class="card-img-top project-img" alt="مشروع ذكاء اصطناعي">
+          <div class="card-body p-4">
+            <h5 class="project-title">تحليل المشاعر المدعوم بالذكاء الاصطناعي</h5>
+            <p class="card-text">مشروع تعلم آلي لتحليل مشاعر النصوص العربية.</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <a href="#" class="btn project-btn">عرض المشروع</a>
+              <span class="badge bg-light text-dark">علوم الحاسب</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- مثال لمشروع 2 -->
+        <div class="project-card">
+          <img src="{{ url_for('static', filename='img/header.jpg') }}" class="card-img-top project-img" alt="مشروع أعمال">
+          <div class="card-body p-4">
+            <h5 class="project-title">ممارسات الأعمال المستدامة</h5>
+            <p class="card-text">بحث حول تطبيق الممارسات المستدامة في الشركات الصغيرة والمتوسطة المصرية.</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <a href="#" class="btn project-btn">عرض المشروع</a>
+              <span class="badge bg-light text-dark">إدارة أعمال</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- مثال لمشروع 3 -->
+        <div class="project-card">
+          <img src="{{ url_for('static', filename='img/header.jpg') }}" class="card-img-top project-img" alt="مشروع طاقة">
+          <div class="card-body p-4">
+            <h5 class="project-title">حلول الطاقة المتجددة</h5>
+            <p class="card-text">مشروع تصميم لتطبيق أنظمة الطاقة الحضرية.</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <a href="#" class="btn project-btn">عرض المشروع</a>
+              <span class="badge bg-light text-dark">هندسة</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- مثال لمشروع 4 -->
+        <div class="project-card">
+          <img src="{{ url_for('static', filename='img/header.jpg') }}" class="card-img-top project-img" alt="مشروع طب">
+          <div class="card-body p-4">
+            <h5 class="project-title">التشخيص الطبي بالذكاء الاصطناعي</h5>
+            <p class="card-text">خوارزميات تعلم الآلة للكشف المبكر عن الأمراض.</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <a href="#" class="btn project-btn">عرض المشروع</a>
+              <span class="badge bg-light text-dark">طب</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- مثال لمشروع 5 -->
+        <div class="project-card">
+          <img src="{{ url_for('static', filename='img/header.jpg') }}" class="card-img-top project-img" alt="مشروع زراعة">
+          <div class="card-body p-4">
+            <h5 class="project-title">الزراعة المستدامة</h5>
+            <p class="card-text">تقنيات زراعية مبتكرة للبيئات القاحلة.</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <a href="#" class="btn project-btn">عرض المشروع</a>
+              <span class="badge bg-light text-dark">زراعة</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- مثال لمشروع 6 -->
+        <div class="project-card">
+          <img src="{{ url_for('static', filename='img/header.jpg') }}" class="card-img-top project-img" alt="مشروع إنترنت الأشياء">
+          <div class="card-body p-4">
+            <h5 class="project-title">الحرم الجامعي الذكي بإنترنت الأشياء</h5>
+            <p class="card-text">تطبيق إنترنت الأشياء لمرافق الجامعة.</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <a href="#" class="btn project-btn">عرض المشروع</a>
+              <span class="badge bg-light text-dark">تكنولوجيا</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="{{ url_for('projects_list') }}" class="btn btn-lg btn-outline-primary">عرض كل المشاريع</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- قسم الإعلانات -->
+  <section class="announcements-section" id="announcements">
+    <div class="container">
+      <h2 class="text-center mb-4">أحدث الإعلانات</h2>
+      <div class="row g-4">
+        <!-- مثال لإعلان 1 -->
+        <div class="col-md-6">
+          <div class="announcement-card">
+            <h5>التسجيل مفتوح الآن</h5>
+            <p>يمكن للطلاب التسجيل من خلال بوابة الطالب.</p>
+            <a href="#">عرض التفاصيل</a>
+          </div>
+        </div>
+        <!-- مثال لإعلان 2 -->
+        <div class="col-md-6">
+          <div class="announcement-card">
+            <h5>إعلان هام بخصوص الامتحانات</h5>
+            <p>يرجى مراجعة جدول الامتحانات النهائي.</p>
+            <a href="#">عرض التفاصيل</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- التذييل -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-6">
+          <h5>كلية الدراسات العليا للبحوث الإحصائية</h5>
+          <p>تطوير البحث والتعليم الإحصائي من خلال برامج مبتكرة وأعضاء هيئة تدريس على مستوى عالٍ.</p>
+          <div class="mt-4">
+            <a href="#" class="me-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+            <a href="#" class="me-3"><i class="fab fa-twitter fa-lg"></i></a>
+            <a href="#" class="me-3"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="#" class="me-3"><i class="fab fa-linkedin-in fa-lg"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <h5>روابط سريعة</h5>
+          <ul class="list-unstyled">
+            <li><a href="{{ url_for('programs_list') }}"><i class="fas fa-chevron-left me-2"></i> البرامج</a></li>
+            <li><a href="{{ url_for('register') }}"><i class="fas fa-chevron-left me-2"></i> القبول</a></li>
+            <li><a href="{{ url_for('student_dashboard') }}"><i class="fas fa-chevron-left me-2"></i> بوابة الطالب</a></li>
+            <li><a href="#announcements"><i class="fas fa-chevron-left me-2"></i> الأحداث والأخبار</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <h5>الموارد</h5>
+          <ul class="list-unstyled">
+            <li><a href="{{ url_for('projects_list') }}"><i class="fas fa-chevron-left me-2"></i> مستودع المشاريع</a></li>
+            <li><a href="#"><i class="fas fa-chevron-left me-2"></i> الأسئلة الشائعة</a></li>
+            <li><a href="#"><i class="fas fa-chevron-left me-2"></i> دليل الطالب</a></li>
+            <li><a href="#"><i class="fas fa-chevron-left me-2"></i> المكتبة</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <h5>اتصل بنا</h5>
+          <address>
+            <p><i class="fas fa-map-marker-alt me-2"></i> جامعة القاهرة<br>الجيزة، مصر</p>
+            <p><i class="fas fa-envelope me-2"></i> <a href="mailto:info@cu.edu.eg">info@cu.edu.eg</a></p>
+            <p><i class="fas fa-phone me-2"></i> <a href="tel:+20123456789">+20 123 456 789</a></p>
+          </address>
+        </div>
+      </div>
+      <div class="text-center copyright">
+        <p>&copy; 2024 كلية الدراسات العليا للبحوث الإحصائية. جميع الحقوق محفوظة.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // تهيئة الكاروسيل
+    const facultyCarouselElement = document.getElementById('facultyCarousel');
+    if (facultyCarouselElement) {
+        const facultyCarousel = new bootstrap.Carousel(facultyCarouselElement, {
+        interval: 3000,
+        wrap: true
+        });
+    }
+
+    // (اختياري) إضافة منطق لفتح/إغلاق القائمة المنزلقة إذا كنت ستستخدمها
+    // const menuToggle = document.getElementById('menu-toggle'); // افترض وجود زر لفتح القائمة
+    // const closeMenuBtn = document.getElementById('close-menu');
+    // const slideMenu = document.getElementById('slide-menu');
+    //
+    // menuToggle?.addEventListener('click', () => {
+    //   slideMenu?.classList.toggle('open');
+    // });
+    //
+    // closeMenuBtn?.addEventListener('click', () => {
+    //   slideMenu?.classList.remove('open');
+    // });
+
+  </script>
+</body>
+</html>

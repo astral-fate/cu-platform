@@ -1,0 +1,215 @@
+
+{% extends "student_layout.html" %}
+
+{% block page_title %}{% if document_to_update %}تحديث مستند{% else %}رفع مستند جديد{% endif %}{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header">
+        {% if document_to_update %}
+            <h3>تحديث مستند: {{ document_to_update.name }}</h3>
+        {% else %}
+            <h3>رفع مستند جديد</h3>
+        {% endif %}
+    </div>
+    
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+            {{ form.csrf_token }}
+            
+            {# This is the crucial hidden input that enables the update logic on the backend. #}
+            {% if document_to_update %}
+                <input type="hidden" name="document_id_to_update" value="{{ document_to_update.id }}">
+            {% endif %}
+            
+            <div class="form-group">
+                <label for="document_type">نوع المستند</label>
+                {# When updating, disable this field to prevent changing the document's type. #}
+                <select id="document_type" name="document_type" class="form-input" required {% if document_to_update %}disabled{% endif %}>
+                    <option value="">-- اختر نوع المستند --</option>
+                    <option value="شهادة البكالوريوس" {% if document_to_update and document_to_update.name == 'شهادة البكالوريوس' %}selected{% endif %}>شهادة البكالوريوس</option>
+                    <option value="السجل الأكاديمي" {% if document_to_update and document_to_update.name == 'السجل الأكاديمي' %}selected{% endif %}>السجل الأكاديمي (كشف الدرجات)</option>
+                    <option value="بطاقة الهوية/جواز السفر" {% if document_to_update and document_to_update.name == 'بطاقة الهوية/جواز السفر' %}selected{% endif %}>بطاقة الهوية/جواز السفر</option>
+                    <option value="السيرة الذاتية" {% if document_to_update and document_to_update.name == 'السيرة الذاتية' %}selected{% endif %}>السيرة الذاتية</option>
+                    <option value="الصورة الشخصية" {% if document_to_update and document_to_update.name == 'الصورة الشخصية' %}selected{% endif %}>الصورة الشخصية</option>
+                    <option value="خطاب التوصية" {% if document_to_update and document_to_update.name == 'خطاب التوصية' %}selected{% endif %}>خطاب التوصية</option>
+                    <option value="شهادة إجادة اللغة الإنجليزية" {% if document_to_update and document_to_update.name == 'شهادة إجادة اللغة الإنجليزية' %}selected{% endif %}>شهادة إجادة اللغة الإنجليزية</option>
+                    <option value="مستندات أخرى" {% if document_to_update and document_to_update.name == 'مستندات أخرى' %}selected{% endif %}>مستندات أخرى</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="application_id">الطلب المرتبط (اختياري)</label>
+                {# Also disable the associated application field during an update. #}
+                <select id="application_id" name="application_id" class="form-input" {% if document_to_update %}disabled{% endif %}>
+                    <option value="">-- لا يوجد طلب مرتبط --</option>
+                    {% for application in applications %}
+                        <option value="{{ application.id }}" {% if document_to_update and document_to_update.application_id == application.id %}selected{% endif %}>{{ application.app_id }} - {{ application.program }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="document">{% if document_to_update %}اختر الملف الجديد{% else %}اختر الملف{% endif %}</label>
+                <div class="file-input-container">
+                    <input type="file" id="document" name="document" class="form-input file-input" required>
+                    <div class="file-input-overlay">
+                        <span id="file-name">لم يتم اختيار ملف</span>
+                        <button type="button" class="btn secondary">استعراض...</button>
+                    </div>
+                </div>
+                <small class="text-muted">الملفات المقبولة: PDF، JPG، PNG (الحد الأقصى: 10 ميجا بايت)</small>
+            </div>
+            
+            <div class="alert info mt-4">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <h4>إرشادات رفع المستندات</h4>
+                    <ul class="mt-2">
+                        <li>يجب أن تكون جميع المستندات واضحة ومقروءة</li>
+                        <li>تأكد من مسح صفحات المستندات بشكل كامل</li>
+                        <li>بالنسبة لبطاقات الهوية وجوازات السفر، يرجى تضمين صفحة البيانات الشخصية</li>
+                        <li>يجب أن تكون الصور الشخصية حديثة وذات خلفية بيضاء</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn primary">
+                    <i class="fas fa-upload"></i> {% if document_to_update %}تحديث المستند{% else %}رفع المستند{% endif %}
+                </button>
+                <a href="{{ url_for('student_documents') }}" class="btn outline">إلغاء</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    // Custom file input UI
+    const fileInput = document.getElementById('document');
+    const fileNameLabel = document.getElementById('file-name');
+    const fileButton = document.querySelector('.file-input-container button');
+    
+    fileButton.addEventListener('click', function() {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            fileNameLabel.textContent = this.files[0].name;
+        } else {
+            fileNameLabel.textContent = 'لم يتم اختيار ملف';
+        }
+    });
+    
+    // Form validation
+    const form = document.querySelector('.upload-form');
+    // Determine if the form is in 'update' mode by checking for the hidden input.
+    const isUpdateMode = !!form.querySelector('input[name="document_id_to_update"]');
+
+    form.addEventListener('submit', function(e) {
+        const fileInput = document.getElementById('document');
+        const fileTypeSelect = document.getElementById('document_type');
+        
+        // Only validate document type selection on a new upload, not on update (since it's disabled).
+        if (!isUpdateMode && !fileTypeSelect.value) {
+            e.preventDefault();
+            alert('يرجى اختيار نوع المستند.');
+            fileTypeSelect.focus();
+            return;
+        }
+        
+        // A file must always be chosen, for both new uploads and updates.
+        if (!fileInput.files || fileInput.files.length === 0) {
+            e.preventDefault();
+            alert('يرجى اختيار ملف جديد للرفع.');
+            return;
+        }
+        
+        const file = fileInput.files[0];
+        
+        // Check file size (limit to 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            e.preventDefault();
+            alert('حجم الملف كبير جدًا. يرجى اختيار ملف أصغر من 10 ميجا بايت.');
+            return;
+        }
+        
+        // Check file type
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+            e.preventDefault();
+            alert('نوع الملف غير مدعوم. يرجى استخدام PDF أو JPG أو PNG.');
+            return;
+        }
+    });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Custom file input styles */
+    .file-input-container {
+        position: relative;
+    }
+    
+    .file-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
+    
+    .file-input-overlay {
+        display: flex;
+        align-items: center;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        background-color: #f9fafb;
+    }
+    
+    .file-input-overlay span {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #6b7280;
+    }
+    
+    .text-muted {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    
+    /* Alert styles */
+    .alert.info {
+        display: flex;
+    }
+    
+    .alert.info i {
+        margin-left: 1rem;
+        margin-right: 0;
+        font-size: 1.5rem;
+    }
+    
+    .alert.info ul {
+        padding-right: 1.25rem;
+        margin-bottom: 0;
+    }
+    
+    /* RTL layout adjustments */
+    .file-input {
+        right: 0;
+        left: auto;
+    }
+</style>
+{% endblock %}

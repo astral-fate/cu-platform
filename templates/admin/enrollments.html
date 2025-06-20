@@ -1,0 +1,1177 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}تسجيلات الطلاب{% endblock %}
+
+{% block main_content %}
+{% set nationalities_map = {
+    
+    'afghan': 'أفغاني',
+    'albanian': 'ألباني',
+    'algerian': 'جزائري',
+    'american': 'أمريكي',
+    'andorran': 'أندوري',
+    'angolan': 'أنغولي',
+    'antiguan': 'أنتيغوي',
+    'argentine': 'أرجنتيني',
+    'armenian': 'أرميني',
+    'australian': 'أسترالي',
+    'austrian': 'نمساوي',
+    'azerbaijani': 'أذربيجاني',
+
+    
+    'bahamian': 'باهامي',
+    'bahraini': 'بحريني',
+    'bangladeshi': 'بنغلاديشي',
+    'barbadian': 'باربادوسي',
+    'belarusian': 'بيلاروسي',
+    'belgian': 'بلجيكي',
+    'belizean': 'بليزي',
+    'beninese': 'بنيني',
+    'bhutanese': 'بوتاني',
+    'bolivian': 'بوليفي',
+    'bosnian': 'بوسني',
+    'botswanan': 'بوتسواني',
+    'brazilian': 'برازيلي',
+    'british': 'بريطاني',
+    'bruneian': 'بروناوي',
+    'bulgarian': 'بلغاري',
+    'burkinabe': 'بوركيني',
+    'burundian': 'بوروندي',
+
+
+    'cambodian': 'كمبودي',
+    'cameroonian': 'كاميروني',
+    'canadian': 'كندي',
+    'cape verdean': 'الرأس الأخضر',
+    'central african': 'أفريقيا الوسطى',
+    'chadian': 'تشادي',
+    'chilean': 'تشيلي',
+    'chinese': 'صيني',
+    'colombian': 'كولومبي',
+    'comoran': 'قمري',
+    'congolese': 'كونغولي',
+    'costa rican': 'كوستاريكي',
+    'croatian': 'كرواتي',
+    'cuban': 'كوبي',
+    'cypriot': 'قبرصي',
+    'czech': 'تشيكي',
+
+  
+    'danish': 'دنماركي',
+    'djiboutian': 'جيبوتي',
+    'dominican': 'دومينيكاني',
+    'dutch': 'هولندي',
+
+ 
+    'east timorese': 'تيموري شرقي',
+    'ecuadorian': 'إكوادوري',
+    'egyptian': 'مصري',
+    'emirati': 'إماراتي',
+    'equatorial guinean': 'غيني استوائي',
+    'eritrean': 'إريتري',
+    'estonian': 'إستوني',
+    'ethiopian': 'إثيوبي',
+
+
+    'fijian': 'فيجي',
+    'filipino': 'فلبيني',
+    'finnish': 'فنلندي',
+    'french': 'فرنسي',
+
+ 
+    'gabonese': 'غابوني',
+    'gambian': 'غامبي',
+    'georgian': 'جورجي',
+    'german': 'ألماني',
+    'ghanaian': 'غاني',
+    'greek': 'يوناني',
+    'grenadian': 'غرينادي',
+    'guatemalan': 'غواتيمالي',
+    'guinean': 'غيني',
+    'guyanese': 'غياني',
+
+
+    'haitian': 'هايتي',
+    'honduran': 'هندوراسي',
+    'hungarian': 'مجري',
+
+
+    'icelandic': 'آيسلندي',
+    'indian': 'هندي',
+    'indonesian': 'إندونيسي',
+    'iranian': 'إيراني',
+    'iraqi': 'عراقي',
+    'irish': 'أيرلندي',
+    'israeli': 'إسرائيلي',
+    'italian': 'إيطالي',
+    'ivorian': 'إيفواري',
+
+
+    'jamaican': 'جامايكي',
+    'japanese': 'ياباني',
+    'jordanian': 'أردني',
+
+
+    'kazakhstani': 'كازاخستاني',
+    'kenyan': 'كيني',
+    'kuwaiti': 'كويتي',
+    'kyrgyz': 'قيرغيزي',
+
+ 
+    'laotian': 'لاوسي',
+    'latvian': 'لاتفي',
+    'lebanese': 'لبناني',
+    'lesothan': 'ليسوتوي',
+    'liberian': 'ليبيري',
+    'libyan': 'ليبي',
+    'liechtensteiner': 'ليختنشتايني',
+    'lithuanian': 'ليتواني',
+    'luxembourger': 'لوكسمبورغي',
+
+  
+    'macedonian': 'مقدوني',
+    'malagasy': 'ملغاشي',
+    'malawian': 'مالاوي',
+    'malaysian': 'ماليزي',
+    'maldivan': 'مالديفي',
+    'malian': 'مالي',
+    'maltese': 'مالطي',
+    'mauritanian': 'موريتاني',
+    'mauritian': 'موريشيوسي',
+    'mexican': 'مكسيكي',
+    'moldovan': 'مولدوفي',
+    'monacan': 'موناكي',
+    'mongolian': 'منغولي',
+    'montenegrin': 'الجبل الأسود',
+    'moroccan': 'مغربي',
+    'mozambican': 'موزمبيقي',
+    'myanmarese': 'ميانماري',
+
+
+    'namibian': 'ناميبي',
+    'nauruan': 'ناوروني',
+    'nepalese': 'نيبالي',
+    'new zealander': 'نيوزيلندي',
+    'nicaraguan': 'نيكاراغوي',
+    'nigerien': 'نيجري',
+    'nigerian': 'نيجيري',
+    'north korean': 'كوري شمالي',
+    'norwegian': 'نرويجي',
+
+   
+    'omani': 'عماني',
+
+ 
+    'pakistani': 'باكستاني',
+    'palauan': 'بالاوي',
+    'palestinian': 'فلسطيني',
+    'panamanian': 'بنمي',
+    'papua new guinean': 'بابوي غيني جديد',
+    'paraguayan': 'باراغواياني',
+    'peruvian': 'بيروفي',
+    'polish': 'بولندي',
+    'portuguese': 'برتغالي',
+
+   
+    'qatari': 'قطري',
+
+   
+    'romanian': 'روماني',
+    'russian': 'روسي',
+    'rwandan': 'رواندي',
+
+
+    'sammarinese': 'سان مارينوي',
+    'samoan': 'ساموي',
+    'sao tomean': 'ساو تومي',
+    'saudi': 'سعودي',
+    'senegalese': 'سنغالي',
+    'serbian': 'صربي',
+    'seychellois': 'سيشلي',
+    'sierra leonean': 'سيراليوني',
+    'singaporean': 'سنغافوري',
+    'slovak': 'سلوفاكي',
+    'slovenian': 'سلوفيني',
+    'solomon islander': 'جزر سليمان',
+    'somali': 'صومالي',
+    'south african': 'جنوب أفريقي',
+    'south korean': 'كوري جنوبي',
+    'south sudanese': 'جنوب سوداني',
+    'spanish': 'إسباني',
+    'sri lankan': 'سريلانكي',
+    'sudanese': 'سوداني',
+    'surinamer': 'سورينامي',
+    'swazi': 'سوازي',
+    'swedish': 'سويدي',
+    'swiss': 'سويسري',
+    'syrian': 'سوري',
+
+  
+    'taiwanese': 'تايواني',
+    'tajik': 'طاجيكي',
+    'tanzanian': 'تنزاني',
+    'thai': 'تايلاندي',
+    'togolese': 'توغولي',
+    'tongan': 'تونغي',
+    'trinidadian or tobagonian': 'ترينيدادي أو توباغوني',
+    'tunisian': 'تونسي',
+    'turkish': 'تركي',
+    'turkmen': 'تركماني',
+    'tuvaluan': 'توفالوي',
+
+    
+    'ugandan': 'أوغندي',
+    'ukrainian': 'أوكراني',
+    'uruguayan': 'أوروغواياني',
+    'uzbekistani': 'أوزبكستاني',
+
+ 
+    'vanuatu': 'فانواتوي',
+    'venezuelan': 'فنزويلي',
+    'vietnamese': 'فيتنامي',
+
+  
+    'yemeni': 'يمني',
+
+   
+    'zambian': 'زامبي',
+    'zimbabwean': 'زيمبابوي'
+} %}
+<div class="card">
+    <div class="card-header-with-actions">
+        <h3>إنشاء الرقم الجامعي للطالب</h3>
+        <div class="header-actions">
+            <div class="search-container">
+                <input type="text" id="search-pending" placeholder="بحث في المعلقين..." class="form-input">
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="full-width-table" id="pending-enrollments">
+            <thead>
+                <tr>
+                    <th>رقم الطلب</th>
+                    <th>اسم الطالب</th>
+                    <th>البرنامج</th>
+                    <th>الجنسية</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for enrollment in enrollments %}
+                {% set nat_lower = enrollment.user.nationality|default('')|lower %}
+                {% set nationality_display = nationalities_map.get(nat_lower, enrollment.user.nationality) %}
+                <tr>
+                    <td>{{ enrollment.app_id }}</td>
+                    <td>{{ enrollment.user.full_name }}</td>
+                    <td>{{ enrollment.program }}</td>
+                    <td>{{ nationality_display }}</td>
+                    <td>
+                        <button class="btn primary generate-id-btn" 
+                                data-id="{{ enrollment.id }}"
+                                data-student="{{ enrollment.user.full_name }}"
+                                data-program="{{ enrollment.program }}"
+                                data-nationality="{{ nationality_display }}"
+                                data-original-nationality="{{ enrollment.user.nationality }}">
+                            <i class="fas fa-id-card"></i> إنشاء رقم جامعي
+                        </button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">لا يوجد أرقام جامعية معلقة</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- نافذة إنشاء الهوية -->
+<div id="generate-id-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-id-card"></i> إنشاء الرقم الجامعي</h3>
+            <button class="close-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="confirmation-section">
+                <h4 class="mb-3">معلومات الطالب</h4>
+                <div id="student-info" class="info-grid"></div>
+                
+                <div class="prefix-section mt-4">
+                    <h4 class="mb-3">تخصيص الرقم الجامعي </h4>
+                    <div class="form-group">
+                        <label for="id-prefix" class="form-label">تخصيص الرقم الجامعي</label>
+                        <input type="text" 
+                               id="id-prefix" 
+                               class="form-input" 
+                               maxlength="5"
+                               placeholder="مثال: INT">
+                        <small class="form-text text-muted">5 أحرف كحد أقصى. اتركه فارغًا للرقم الجامعي الافتراضي.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn outline close-modal">إلغاء</button>
+            <button id="confirm-generate-id" class="btn primary">
+                <i class="fas fa-check"></i> إنشاء رقم جامعي
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-6">
+    <div class="card-header-with-actions">
+        <h3>الطلاب المسجلون</h3>
+        <div class="header-actions">
+            <div class="search-container">
+                <input type="text" id="search-enrolled" placeholder="بحث بالرقم الجامعي، الاسم، البرنامج..." class="form-input">
+            </div>
+            <select id="year-filter" class="form-input">
+                <option value="">كل السنوات</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <table class="full-width-table" id="enrolled-students">
+            <thead>
+                <tr>
+                    <th>الرقم الجامعي</th>
+                    <th>اسم الطالب</th>
+                    <th>البرنامج</th>
+                    <th>الجنسية</th>
+                    <th>تاريخ التسجيل</th>
+                    <th>الحالة</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application, student_id in enrolled_students %}
+                    {% set nat_lower = application.user.nationality|default('')|lower %}
+                    {% set nationality_display = nationalities_map.get(nat_lower, application.user.nationality) %}
+                    <tr>
+                        <td>{{ student_id.student_id }}</td>
+                        <td>{{ application.user.full_name }}</td>
+                        <td>{{ application.program }}</td>
+                        <td>{{ nationality_display }}</td>
+                        <td>{{ student_id.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td><span class="status-badge green">نشط</span></td>
+                        <td>
+                            <div class="actions-cell">
+                                <a href="#" class="action-btn view" onclick="viewStudentDetails('{{ student_id.student_id }}', '{{ application.user.full_name }}', '{{ application.program }}', '{{ nationality_display }}', '{{ student_id.created_at.strftime('%Y-%m-%d') }}', '{{ application.user.email }}', '{{ application.user.phone }}'); return false;">
+                                    <i class="fas fa-eye"></i> عرض
+                                </a>
+                                <a href="#" class="action-btn message" onclick="openMessageModal('{{ application.user_id }}', '{{ application.user.full_name }}'); return false;">
+                                    <i class="fas fa-envelope"></i> مراسلة
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">لم يتم العثور على طلاب مسجلين.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- إحصائيات التسجيل -->
+<div class="card mt-6">
+    <div class="card-header">
+        <h3>إحصائيات التسجيل</h3>
+    </div>
+    
+    <div class="card-body">
+        {# --- Calculation block for student stats --- #}
+        {% set stats = namespace(local=0, international=0) %}
+        {% for app, _ in enrolled_students %}
+            {% if app.user.nationality|lower in ['egyptian', 'مصري'] %}
+                {% set stats.local = stats.local + 1 %}
+            {% else %}
+                {% set stats.international = stats.international + 1 %}
+            {% endif %}
+        {% endfor %}
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div>
+                        <h3 class="stat-title">إجمالي المسجلين</h3>
+                        <p class="stat-value" id="stat-total-enrolled">{{ enrolled_students|length }}</p>
+                    </div>
+                    <div class="stat-icon blue">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div>
+                        <h3 class="stat-title">الطلاب المحليون</h3>
+                        <p class="stat-value">
+                            {{ stats.local }}
+                        </p>
+                    </div>
+                    <div class="stat-icon green">
+                        <i class="fas fa-flag"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div>
+                        <h3 class="stat-title">الطلاب الدوليون</h3>
+                        <p class="stat-value">
+                            {{ stats.international }}
+                        </p>
+                    </div>
+                    <div class="stat-icon yellow">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div>
+                        <h3 class="stat-title">الأرقام الجامعية المعلقة</h3>
+                        <p class="stat-value" id="stat-pending-ids">{{ enrollments|length }}</p>
+                    </div>
+                    <div class="stat-icon red">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-6">
+            <h4 class="mb-4">التسجيلات حسب البرنامج</h4>
+            <div class="table-container">
+                <table class="full-width-table">
+                    <thead>
+                        <tr>
+                            <th>البرنامج</th>
+                            <th>عدد المسجلين</th>
+                            <th>النسبة المئوية</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set programs = {} %}
+                        {% set total_enrolled = enrolled_students|length %}
+                        {% for app, _ in enrolled_students %}
+                            {% if app.program in programs %}
+                                {% set _ = programs.update({app.program: programs[app.program] + 1}) %}
+                            {% else %}
+                                {% set _ = programs.update({app.program: 1}) %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% for program, count in programs.items()|sort %}
+                            <tr>
+                                <td>{{ program }}</td>
+                                <td>{{ count }}</td>
+                                <td>
+                                    {% if total_enrolled > 0 %}
+                                        {{ ((count / total_enrolled) * 100)|round(1) }}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center">لا توجد بيانات برامج متاحة.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة تفاصيل الطالب -->
+<div id="student-modal" class="modal hidden">
+    <div class="modal-content large">
+        <div class="modal-header">
+            <h3>تفاصيل الطالب</h3>
+            <button class="close-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <h4>المعلومات الشخصية</h4>
+            <div id="student-details" class="info-grid mb-4"></div>
+            
+            <h4>المعلومات الأكاديمية</h4>
+            <div id="academic-info" class="info-grid"></div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn outline close-modal">إغلاق</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add New Send Message Modal -->
+<div id="send-message-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="message-modal-title">إرسال رسالة إلى الطالب</h3>
+            <button class="close-message-modal btn-icon">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="message-subject">الموضوع</label>
+                <input type="text" id="message-subject" name="subject" class="form-input" placeholder="موضوع الرسالة">
+            </div>
+            <div class="form-group">
+                <label for="message-body">الرسالة</label>
+                <textarea id="message-body" name="message" class="form-input" rows="5" placeholder="أدخل رسالتك للطالب..."></textarea>
+            </div>
+            <input type="hidden" id="message-student-id">
+        </div>
+        <div class="modal-footer">
+            <button class="btn outline close-message-modal">إلغاء</button>
+            <button id="send-message-btn" class="btn primary">إرسال الرسالة</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// التأكد من توفر رمز CSRF
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+if (!csrfToken) {
+    console.error('لم يتم العثور على رمز CSRF!');
+}
+
+// --- وظائف إنشاء الهوية ---
+class StudentIDGenerator {
+    constructor() {
+        this.modal = document.getElementById('generate-id-modal');
+        this.prefixInput = document.getElementById('id-prefix');
+        this.confirmBtn = document.getElementById('confirm-generate-id');
+        this.studentInfoDiv = document.getElementById('student-info');
+
+        if (!this.modal || !this.prefixInput || !this.confirmBtn || !this.studentInfoDiv) {
+            console.error('لم يتم العثور على عناصر نافذة إنشاء الهوية!');
+            return;
+        }
+
+        this.currentApplication = null;
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        const pendingTableBody = document.querySelector('#pending-enrollments tbody');
+        if (pendingTableBody) {
+            pendingTableBody.addEventListener('click', (e) => {
+                // تم تعديل المحدد ليتناسب مع الزر
+                const targetButton = e.target.closest('.generate-id-btn');
+                if (targetButton) {
+                    this.showModal(targetButton);
+                }
+            });
+        }
+
+        this.modal.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', () => this.hideModal());
+        });
+
+        this.confirmBtn.addEventListener('click', (e) => this.generateID(e));
+
+        this.modal.addEventListener('click', (e) => {
+            if (e.target === this.modal) {
+                this.hideModal();
+            }
+        });
+    }
+
+    showModal(button) {
+        const data = {
+            id: button.dataset.id,
+            student: button.dataset.student,
+            program: button.dataset.program,
+            nationality: button.dataset.nationality,
+            originalNationality: button.dataset.originalNationality
+        };
+
+        if (!data.id || !data.student || !data.program || !data.nationality || !data.originalNationality) {
+            console.error('سمات البيانات مفقودة في زر الإنشاء:', button);
+            Swal.fire('خطأ', 'تعذر تحميل بيانات الطالب. السمات المطلوبة مفقودة.', 'error');
+            return;
+        }
+
+        this.currentApplication = data;
+
+        this.studentInfoDiv.innerHTML = `
+            <div class="info-row">
+                <span class="info-label">رقم الطلب:</span>
+                <span class="info-value">${data.id}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">اسم الطالب:</span>
+                <span class="info-value">${data.student}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">البرنامج:</span>
+                <span class="info-value">${data.program}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">الجنسية:</span>
+                <span class="info-value">${data.nationality}</span>
+            </div>
+        `;
+
+        this.prefixInput.value = '';
+        this.modal.classList.remove('hidden');
+        this.modal.style.display = 'flex';
+    }
+
+    hideModal() {
+        this.modal.classList.add('hidden');
+        this.modal.style.display = 'none';
+        this.prefixInput.value = '';
+        this.currentApplication = null;
+        this.confirmBtn.disabled = false;
+        this.confirmBtn.innerHTML = '<i class="fas fa-check"></i> إنشاء رقم جامعي';
+    }
+
+    async generateID(event) {
+        event.preventDefault();
+
+        if (!this.currentApplication) {
+            Swal.fire('خطأ', 'لم يتم تحديد طلب أو البيانات مفقودة.', 'error');
+            return;
+        }
+        if (!csrfToken) {
+            Swal.fire('خطأ', 'رمز CSRF مفقود. لا يمكن المتابعة.', 'error');
+            return;
+        }
+
+        const prefix = this.prefixInput.value.trim();
+        this.confirmBtn.disabled = true;
+        this.confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جارٍ الإنشاء...';
+
+        try {
+            const response = await fetch(`/admin/generate_student_id/${this.currentApplication.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    prefix: prefix,
+                    program: this.currentApplication.program,
+                    nationality: this.currentApplication.originalNationality
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || `خطأ HTTP ${response.status}`);
+            }
+
+            if (data.success) {
+                const row = document.querySelector(`#pending-enrollments tbody .generate-id-btn[data-id="${this.currentApplication.id}"]`)?.closest('tr');
+                if (row) {
+                    row.remove();
+                }
+
+                this.updateStatsOnSuccess();
+
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'تم إنشاء الرقم الجامعي',
+                    text: data.message || `الرقم الجامعي الجديدة: ${data.student_id}`,
+                    confirmButtonText: 'حسناً'
+                });
+
+                window.location.reload(); // إعادة تحميل الصفحة لعرض الطالب في الجدول الآخر
+            } else {
+                throw new Error(data.message || 'فشل إنشاء الهوية. يرجى التحقق من سجلات الخادم.');
+            }
+
+        } catch (error) {
+            console.error('خطأ في إنشاء الهوية:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'فشل الإنشاء',
+                text: error.message || 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.',
+                confirmButtonText: 'حسناً'
+            });
+        } finally {
+            this.confirmBtn.disabled = false;
+            this.confirmBtn.innerHTML = '<i class="fas fa-check"></i> إنشاء رقم جامعي';
+            this.hideModal();
+        }
+    }
+
+    updateStatsOnSuccess() {
+        const pendingCountEl = document.getElementById('stat-pending-ids');
+        const enrolledCountEl = document.getElementById('stat-total-enrolled');
+        
+        // Get the current values from the statistics cards
+        let localCountEl = document.querySelector('.stat-card:nth-child(2) .stat-value');
+        let internationalCountEl = document.querySelector('.stat-card:nth-child(3) .stat-value');
+        
+        if (pendingCountEl) {
+            const currentCount = parseInt(pendingCountEl.textContent) || 0;
+            pendingCountEl.textContent = Math.max(0, currentCount - 1);
+        }
+        if (enrolledCountEl) {
+            const currentCount = parseInt(enrolledCountEl.textContent) || 0;
+            enrolledCountEl.textContent = currentCount + 1;
+        }
+        
+        // Update national or international count based on nationality
+        if (this.currentApplication && this.currentApplication.originalNationality) {
+            if (this.currentApplication.originalNationality.toLowerCase() === 'egyptian') {
+                if (localCountEl) {
+                    const currentCount = parseInt(localCountEl.textContent.trim()) || 0;
+                    localCountEl.textContent = currentCount + 1;
+                }
+            } else {
+                if (internationalCountEl) {
+                    const currentCount = parseInt(internationalCountEl.textContent.trim()) || 0;
+                    internationalCountEl.textContent = currentCount + 1;
+                }
+            }
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const idGenerator = new StudentIDGenerator();
+});
+
+function filterTable(tableId, filters) {
+    const tableBody = document.getElementById(tableId)?.querySelector('tbody');
+    if (!tableBody) return;
+    const rows = tableBody.querySelectorAll('tr');
+
+    rows.forEach(row => {
+        let match = true;
+        for (const key in filters) {
+            if (filters[key] && !filters[key](row)) {
+                match = false;
+                break;
+            }
+        }
+        row.style.display = match ? '' : 'none';
+    });
+}
+
+const currentFilters = {
+    pending: { search: '', program: '' },
+    enrolled: { search: '', year: '' }
+};
+
+const searchPendingInput = document.getElementById('search-pending');
+if (searchPendingInput) {
+    searchPendingInput.addEventListener('keyup', function() {
+        currentFilters.pending.search = this.value.toLowerCase();
+        applyPendingFilters();
+    });
+}
+
+const searchEnrolledInput = document.getElementById('search-enrolled');
+if (searchEnrolledInput) {
+    searchEnrolledInput.addEventListener('keyup', function() {
+        currentFilters.enrolled.search = this.value.toLowerCase();
+        applyEnrolledFilters();
+    });
+}
+
+const yearFilterSelect = document.getElementById('year-filter');
+if (yearFilterSelect) {
+    yearFilterSelect.addEventListener('change', function() {
+        currentFilters.enrolled.year = this.value;
+        applyEnrolledFilters();
+    });
+}
+
+function applyPendingFilters() {
+    const filters = {
+        search: (row) => {
+            if (!currentFilters.pending.search) return true;
+            const appId = row.cells[0]?.textContent.toLowerCase() || '';
+            const student = row.cells[1]?.textContent.toLowerCase() || '';
+            const program = row.cells[2]?.textContent.toLowerCase() || '';
+            return appId.includes(currentFilters.pending.search) ||
+                   student.includes(currentFilters.pending.search) ||
+                   program.includes(currentFilters.pending.search);
+        }
+    };
+    filterTable('pending-enrollments', filters);
+}
+
+function applyEnrolledFilters() {
+    const filters = {
+        search: (row) => {
+            if (!currentFilters.enrolled.search) return true;
+            const studentId = row.cells[0]?.textContent.toLowerCase() || '';
+            const student = row.cells[1]?.textContent.toLowerCase() || '';
+            const program = row.cells[2]?.textContent.toLowerCase() || '';
+            return studentId.includes(currentFilters.enrolled.search) ||
+                   student.includes(currentFilters.enrolled.search) ||
+                   program.includes(currentFilters.enrolled.search);
+        },
+        year: (row) => {
+            if (!currentFilters.enrolled.year) return true;
+            const enrollmentDate = row.cells[4]?.textContent.trim() || '';
+            const year = enrollmentDate.split('-')[0];
+            return year === currentFilters.enrolled.year;
+        }
+    };
+    filterTable('enrolled-students', filters);
+}
+
+const studentModal = document.getElementById('student-modal');
+const studentDetailsDiv = document.getElementById('student-details');
+const academicInfoDiv = document.getElementById('academic-info');
+
+if (studentModal) {
+    studentModal.querySelectorAll('.close-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+            studentModal.classList.add('hidden');
+            studentModal.style.display = 'none';
+        });
+    });
+    studentModal.addEventListener('click', (e) => {
+        if (e.target === studentModal) {
+            studentModal.classList.add('hidden');
+            studentModal.style.display = 'none';
+        }
+    });
+}
+
+window.viewStudentDetails = function(studentId, name, program, nationality, enrollDate, email = 'غير متوفر', phone = 'غير متوفر') {
+    if (!studentModal || !studentDetailsDiv || !academicInfoDiv) {
+        console.error('لم يتم العثور على عناصر نافذة تفاصيل الطالب.');
+        return;
+    }
+
+    studentDetailsDiv.innerHTML = `
+        <div class="info-row">
+            <span class="info-label">الرقم الجامعي:</span>
+            <span class="info-value">${studentId}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">الاسم:</span>
+            <span class="info-value">${name}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">البريد الإلكتروني:</span>
+            <span class="info-value">${email}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">الهاتف:</span>
+            <span class="info-value">${phone}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">الجنسية:</span>
+            <span class="info-value">${nationality}</span>
+        </div>
+    `;
+
+    academicInfoDiv.innerHTML = `
+        <div class="info-row">
+            <span class="info-label">البرنامج:</span>
+            <span class="info-value">${program}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">تاريخ التسجيل:</span>
+            <span class="info-value">${enrollDate}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">الحالة:</span>
+            <span class="status-badge green">نشط</span>
+        </div>
+    `;
+
+    studentModal.classList.remove('hidden');
+    studentModal.style.display = 'flex';
+};
+
+window.printStudentID = function(studentId) {
+    console.log(`بدء الطباعة الرقم الجامعي: ${studentId}`);
+    Swal.fire({
+        title: 'طباعة الرقم الجامعي',
+        text: `وظيفة الطباعة لـ ${studentId} غير مطبقة بالكامل في هذا العرض التوضيحي.`,
+        icon: 'info'
+    });
+};
+
+const messageModal = document.getElementById('send-message-modal');
+const messageSubjectInput = document.getElementById('message-subject');
+const messageBodyInput = document.getElementById('message-body');
+const messageStudentIdInput = document.getElementById('message-student-id');
+const messageModalTitle = document.getElementById('message-modal-title');
+const sendMessageBtn = document.getElementById('send-message-btn');
+
+window.openMessageModal = function(userId, studentName) {
+    if (!messageModal) {
+        console.error('نافذة إرسال الرسالة غير موجودة!');
+        return;
+    }
+    messageStudentIdInput.value = userId;
+    messageModalTitle.textContent = `إرسال رسالة إلى ${studentName}`;
+    messageSubjectInput.value = 'رسالة من الإدارة'; // Default subject
+    messageBodyInput.value = ''; // Clear previous message
+    messageModal.classList.remove('hidden');
+    messageModal.style.display = 'flex';
+};
+
+if (messageModal) {
+    messageModal.querySelectorAll('.close-message-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+            messageModal.classList.add('hidden');
+            messageModal.style.display = 'none';
+        });
+    });
+
+    messageModal.addEventListener('click', (e) => {
+        if (e.target === messageModal) {
+            messageModal.classList.add('hidden');
+            messageModal.style.display = 'none';
+        }
+    });
+
+    sendMessageBtn.addEventListener('click', async function() {
+        const studentId = messageStudentIdInput.value;
+        const subject = messageSubjectInput.value.trim();
+        const message = messageBodyInput.value.trim();
+
+        if (!studentId || !subject || !message) {
+            Swal.fire('خطأ', 'يرجى ملء جميع حقول الرسالة.', 'error');
+            return;
+        }
+        if (!csrfToken) {
+            Swal.fire('خطأ', 'رمز CSRF مفقود. لا يمكن المتابعة.', 'error');
+            return;
+        }
+
+        sendMessageBtn.disabled = true;
+        sendMessageBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جارٍ الإرسال...';
+
+        try {
+            const response = await fetch('/admin/send_message', { // Use the new endpoint
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    user_id: studentId,
+                    subject: subject,
+                    message: message
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || `خطأ HTTP ${response.status}`);
+            }
+
+            if (data.success) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'تم الإرسال!',
+                    text: data.message || 'تم إرسال الرسالة وإنشاء تذكرة دعم جديدة للطالب بنجاح.',
+                    confirmButtonText: 'حسناً'
+                });
+                messageModal.classList.add('hidden');
+                messageModal.style.display = 'none';
+            } else {
+                throw new Error(data.message || 'فشل إرسال الرسالة.');
+            }
+
+        } catch (error) {
+            console.error('خطأ في إرسال الرسالة:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'فشل الإرسال',
+                text: error.message || 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.',
+                confirmButtonText: 'حسناً'
+            });
+        } finally {
+            sendMessageBtn.disabled = false;
+            sendMessageBtn.innerHTML = 'إرسال الرسالة';
+        }
+    });
+}
+
+</script>
+
+<style>
+.confirmation-section {
+    padding: 1rem 1.5rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.75rem 1rem;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+.info-grid .info-label {
+    font-weight: 500;
+    color: #495057;
+}
+.info-grid .info-value {
+    color: #212529;
+}
+
+.prefix-section {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: #495057;
+}
+
+.form-text.text-muted {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.modal-content.large {
+    max-width: 800px;
+}
+
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Ensure modal styles are present if not already global */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    outline: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+.modal.hidden {
+    display: none;
+}
+.modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 90%; /* Responsive width */
+    max-width: 600px; /* Max width */
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0.5rem;
+    outline: 0;
+    max-height: 90vh; /* Limit height */
+}
+.modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+    border-top-left-radius: calc(0.5rem - 1px);
+    border-top-right-radius: calc(0.5rem - 1px);
+}
+.modal-header h3 {
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+.modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1.5rem;
+    overflow-y: auto; /* Enable scroll for long content */
+}
+.modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #dee2e6;
+    border-bottom-right-radius: calc(0.5rem - 1px);
+    border-bottom-left-radius: calc(0.5rem - 1px);
+}
+.modal-footer > * {
+    margin: 0.25rem;
+}
+.btn-icon { /* Style for close button */
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    line-height: 1;
+    color: #6c757d;
+}
+.btn-icon:hover {
+    color: #000;
+}
+
+/* Stat card icon alignment - right to left */
+.stat-content {
+    display: flex;
+    flex-direction: row-reverse; /* Reverse the direction to place icon on right */
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.stat-icon {
+    margin-left: 0;
+    margin-right: 1rem; /* Add space between icon and text */
+}
+
+</style>
+{% endblock %}

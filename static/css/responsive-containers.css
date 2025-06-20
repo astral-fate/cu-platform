@@ -1,0 +1,87 @@
+/* Responsive Container and Grid System */
+
+/* Breakpoints */
+:root {
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+}
+
+/* Main Container */
+.container, .container-fluid {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media (min-width: 576px) {
+    .container {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* Responsive Grid */
+.responsive-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+/* Default to 1 column */
+.responsive-grid {
+    grid-template-columns: 1fr;
+}
+
+/* 2 columns for small screens and up */
+@media (min-width: 576px) {
+    .grid-cols-sm-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 2 columns for medium screens and up */
+@media (min-width: 768px) {
+    .grid-cols-md-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-cols-md-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* 3 columns for large screens and up */
+@media (min-width: 992px) {
+    .grid-cols-lg-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .grid-cols-lg-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Auto-fit grid for cards */
+.card-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}

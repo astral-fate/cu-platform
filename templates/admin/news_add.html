@@ -1,0 +1,139 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}إضافة خبر/إعلان{% endblock %}
+
+{% block main_content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-gradient d-flex align-items-center justify-content-between">
+        <h3 class="m-0"><i class="fas fa-newspaper ms-2"></i>إضافة خبر/إعلان</h3>
+        <a href="{{ url_for('admin_news') }}" class="btn btn-outline-light btn-sm">
+            <i class="fas fa-arrow-right ms-1"></i> العودة إلى الأخبار
+        </a>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin_news_add') }}" enctype="multipart/form-data" id="news-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-4">
+                        <label for="title" class="form-label fw-bold">العنوان <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-lg" id="title" name="title" required>
+                        <div class="form-text text-muted">أدخل عنوانًا وصفيًا للخبر/الإعلان.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label fw-bold">المحتوى <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="description" name="description" rows="10" required></textarea>
+                        <div class="form-text text-muted">أدخل النص الكامل للمحتوى.</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="m-0"><i class="fas fa-cog ms-2"></i>تفاصيل النشر</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="type" class="form-label fw-bold">النوع <span class="text-danger">*</span></label>
+                                <select class="form-select" id="type" name="type" required>
+                                    <option value="" disabled selected>-- اختر نوعًا --</option>
+                                    <option value="news">خبر</option>
+                                    <option value="announcement">إعلان</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-0">
+                                <label for="date" class="form-label fw-bold">تاريخ النشر <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="date" name="date" required value="{{ now.strftime('%Y-%m-%d') }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="m-0"><i class="fas fa-image ms-2"></i>الصورة البارزة</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div id="image-preview" class="mb-3">
+                                <img src="{{ url_for('static', filename='img/news-placeholder.jpg') }}" 
+                                     class="img-fluid rounded" 
+                                     style="max-height: 200px; width: auto;" 
+                                     id="preview-img"
+                                     onerror="this.src='{{ url_for('static', filename='img/default-news.jpg') }}'">
+                            </div>
+                            <label for="image" class="form-label d-block">تحميل صورة</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <div class="form-text text-muted mt-2">
+                                <small>الحجم الأقصى: 2 ميجابايت. الصيغ: JPG, PNG.</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="m-0"><i class="fas fa-toggle-on ms-2"></i>الحالة</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                                <label class="form-check-label" for="is_active">
+                                    <span class="fw-bold">نشط</span><br>
+                                    <small class="text-muted">مرئي على الموقع.</small>
+                                </label>
+                            </div>
+                            
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured">
+                                <label class="form-check-label" for="is_featured">
+                                    <span class="fw-bold">مميز</span><br>
+                                    <small class="text-muted">عرض في الصفحة الرئيسية.</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4 border-top pt-4 text-end">
+                <a href="{{ url_for('admin_news') }}" class="btn btn-outline-secondary btn-lg px-5">
+                    <i class="fas fa-times ms-2"></i> إلغاء
+                </a>
+                <button type="submit" class="btn btn-primary btn-lg px-5 me-2">
+                    <i class="fas fa-save ms-2"></i> نشر
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Image preview functionality
+document.getElementById('image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        alert('الرجاء تحديد ملف صورة صالح.');
+        this.value = ''; // Clear file input
+        return;
+    }
+    
+    // Validate file size (2MB limit)
+    const fileSize = file.size / 1024 / 1024;
+    if (fileSize > 2) {
+        alert('يجب أن يكون حجم ملف الصورة أقل من 2 ميجابايت.');
+        this.value = ''; // Clear file input
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        document.getElementById('preview-img').src = event.target.result;
+    }
+    reader.readAsDataURL(file);
+});
+</script>
+{% endblock %}

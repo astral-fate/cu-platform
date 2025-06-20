@@ -1,0 +1,261 @@
+{% extends "admin_layout.html" %}
+
+{% block page_title %}لوحة تحكم مسؤول الشؤون الطلابية{% endblock %}
+
+{% block main_content %}
+<div class="stats-grid">
+    <!-- Stats cards row -->
+    <div class="stat-card">
+        <div class="stat-content">
+            <div>
+                <h3 class="stat-title">التقديمات الجديدة</h3>
+                <p class="stat-value">{{ applications_count }}</p>
+            </div>
+            <div class="stat-icon blue">
+                <i class="fas fa-file-alt"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-content">
+            <div>
+                <h3 class="stat-title">المدفوعات المعلقة</h3>
+                <p class="stat-value">{{ payment_pending_count }}</p>
+            </div>
+            <div class="stat-icon yellow">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-content">
+            <div>
+                <h3 class="stat-title">التذاكر المفتوحة</h3>
+                <p class="stat-value">{{ open_tickets }}</p>
+            </div>
+            <div class="stat-icon red">
+                <i class="fas fa-comment"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Grid -->
+<div class="dashboard-grid">
+    <!-- Recent Applications -->
+    <div class="card">
+        <div class="card-header">
+            <h3>التقديمات الأخيرة</h3>
+            <a href="{{ url_for('admin_applications') }}" class="view-all">عرض الكل</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>الاسم</th>
+                        <th>البرنامج</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in recent_applications %}
+                        <tr>
+                            <td>{{ app.app_id }}</td>
+                            <td>{{ app.user.full_name }}</td>
+                            <td>{{ app.program }}</td>
+                            <td>
+                                <span class="status-badge {{ app.status|lower|replace(' ', '-') }}">{{ app.status }}</span>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center">لا توجد طلبات حالية</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Recent Support Tickets -->
+    <div class="card">
+        <div class="card-header">
+            <h3>التذاكر الأخيرة</h3>
+            <a href="{{ url_for('admin_tickets') }}" class="view-all">عرض الكل</a>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>الموضوع</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in recent_tickets %}
+                        <tr>
+                            <td>{{ ticket.ticket_id }}</td>
+                            <td>{{ ticket.subject }}</td>
+                            <td>
+                                <span class="status-badge {{ ticket.status|lower|replace(' ', '-') }}">{{ ticket.status }}</span>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center">لا توجد تذاكر حديثة</td> {# No recent tickets #}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Certificates -->
+    <div class="card">
+        <div class="card-header">
+            <h3>طلبات الشهادة الأخيرة</h3>
+        </div>
+        <div class="card-body">
+            {% if recent_certificates %}
+                <ul class="recent-list">
+                    {% for certificate in recent_certificates %}
+                    <li class="recent-item">
+                        <div class="recent-item-header">
+                            <h4>{{ certificate.type }}</h4>
+                            <span class="status-badge {{ certificate.status|lower|replace(' ', '-') }}">
+                                {{ certificate.status }}
+                            </span>
+                        </div>
+                        <p>مقدم الطلب: {{ certificate.user.full_name }}</p> {# Requested by: #}
+                        <p>تاريخ الطلب: {{ certificate.request_date|format_date }}</p> {# Requested on: #}
+                        <div class="item-actions">
+                            <a href="{{ url_for('admin_certificates') }}?cert_id={{ certificate.cert_id }}" class="btn primary btn-sm">عرض التفاصيل</a> {# View Details #}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">لا توجد طلبات شهادات حديثة.</p> {# No recent certificate requests. #}
+            {% endif %}
+            <div class="text-center mt-4">
+                <a href="{{ url_for('admin_certificates') }}" class="view-all-link">
+                    عرض جميع طلبات الشهادات
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
+
+{% block page_scripts %} {# Changed from block scripts to block page_scripts #}
+<script>
+// View application details
+const viewButtons = document.querySelectorAll('[data-action="view"]');
+const modal = document.getElementById('application-modal');
+const modalTitle = document.getElementById('modal-title');
+const applicationDetails = document.getElementById('application-details');
+const documentList = document.getElementById('document-list');
+
+viewButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        const appId = this.dataset.id;
+        
+        // Show loading state
+        modalTitle.textContent = 'جارٍ تحميل تفاصيل الطلب...'; // Loading Application Details...
+        applicationDetails.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">جارٍ تحميل تفاصيل الطلب...</p></div>'; // Loading application details...
+        documentList.innerHTML = '';
+        
+        // Fetch application details from API
+        fetch(`/admin/application/${appId}/details`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Set modal title
+                    modalTitle.textContent = `طلب ${data.application.app_id}`; // Application
+                    
+                    // Fill application details
+                    let detailsHtml = `
+                        <div class="app-details">
+                            <div class="info-row"><span class="info-label">مقدم الطلب:</span><span class="info-value">${data.application.applicant}</span></div>
+                            <div class="info-row"><span class="info-label">البريد الإلكتروني:</span><span class="info-value">${data.application.email}</span></div>
+                            <div class="info-row"><span class="info-label">الهاتف:</span><span class="info-value">${data.application.phone}</span></div>
+                            <div class="info-row"><span class="info-label">البرنامج:</span><span class="info-value">${data.application.program}</span></div>
+                            <div class="info-row"><span class="info-label">الحالة:</span><span class="info-value"><span class="status-badge ${data.application.status.toLowerCase().replace(' ', '-')}">${data.application.status}</span></span></div>
+                            <div class="info-row"><span class="info-label">حالة الدفع:</span><span class="info-value"><span class="status-badge ${data.application.payment_status.toLowerCase().replace(' ', '-')}">${data.application.payment_status}</span></span></div>
+                            <div class="info-row"><span class="info-label">تاريخ التقديم:</span><span class="info-value">${data.application.date}</span></div>
+                        </div>
+                    `;
+                    applicationDetails.innerHTML = detailsHtml;
+                    
+                    // Fill documents list
+                    if (data.documents && data.documents.length > 0) {
+                        let documentsHtml = '<ul class="document-list">';
+                        
+                        data.documents.forEach(doc => {
+                            documentsHtml += `
+                                <li class="document-item">
+                                    <i class="fas fa-file-alt"></i>
+                                    <a href="${doc.file_path}" target="_blank">${doc.name}</a>
+                                    <span class="status-badge ${doc.status.toLowerCase().replace(' ', '-')}">${doc.status}</span>
+                                    <span class="upload-date">(${doc.uploaded_at})</span>
+                                </li>
+                            `;
+                        });
+                        
+                        documentsHtml += '</ul>';
+                        documentList.innerHTML = documentsHtml;
+                    } else {
+                        documentList.innerHTML = '<p class="text-muted">لم يتم رفع أي مستندات بعد.</p>'; // No documents uploaded yet.
+                    }
+                } else {
+                    applicationDetails.innerHTML = `<div class="alert alert-danger">${data.message || 'خطأ في جلب تفاصيل الطلب'}</div>`; // Error fetching application details
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                applicationDetails.innerHTML = '<div class="alert alert-danger">خطأ في تحميل تفاصيل الطلب. يرجى المحاولة مرة أخرى.</div>'; // Error loading application details. Please try again.
+            });
+    });
+});
+
+// Populate statistics programs
+document.addEventListener('DOMContentLoaded', function() {
+    const populateBtn = document.getElementById('populate-statistics-btn');
+    if (populateBtn) {
+        populateBtn.addEventListener('click', function() {
+            populateBtn.disabled = true;
+            populateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>جارٍ المعالجة...'; // Processing...
+            
+            fetch('/admin/populate-statistics', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('تم ملء برامج الإحصائيات بنجاح!'); // Statistics programs populated successfully!
+                } else {
+                    alert('خطأ: ' + data.message); // Error:
+                }
+            })
+            .catch(error => {
+                alert('خطأ: ' + error); // Error:
+            })
+            .finally(() => {
+                populateBtn.disabled = false;
+                populateBtn.innerHTML = '<i class="fas fa-database me-2"></i>ملء برامج الإحصائيات'; // Populate Statistics Programs
+            });
+        });
+    }
+});
+</script>
+{% endblock %} {# End of page_scripts block #}

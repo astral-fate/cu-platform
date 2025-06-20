@@ -1,0 +1,714 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}تقديم طلب جديد{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header">
+        <h3>تقديم طلب جديد</h3>
+    </div>
+    
+    <div class="card-body">
+        <form id="new-application-form" method="POST" action="{{ url_for('student_new_application') }}" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            
+            <!-- Step Indicator -->
+            <div class="steps-container mb-4">
+                <div class="step active" id="step-1">
+                    <div class="step-number">1</div>
+                    <div class="step-text">اختيار البرنامج</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step" id="step-2">
+                    <div class="step-number">2</div>
+                    <div class="step-text">رفع المستندات</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step" id="step-3">
+                    <div class="step-number">3</div>
+                    <div class="step-text">المراجعة والتقديم</div>
+                </div>
+            </div>
+            
+            <!-- Step 1: Program Selection -->
+            <div id="program-step" class="application-step active-step">
+                <div class="form-group">
+                    <label for="degree_type">نوع الدرجة العلمية</label>
+                    {{ form.degree_type(class="form-input", id="degree_type") }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="academic_year">العام الدراسي</label>
+                    {{ form.academic_year(class="form-input", id="academic_year") }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="semester">الفصل الدراسي</label>
+                    {{ form.semester(class="form-input", id="semester") }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="program">البرنامج</label>
+                    <select name="program" id="program" class="form-input" required disabled>
+                        <option value="">-- اختر البرنامج --</option>
+                    </select>
+                    <p id="loading-programs" class="loading-text hidden">
+                        <i class="fas fa-spinner fa-spin"></i> جاري تحميل البرامج...
+                    </p>
+                    <p class="text-muted small mt-1">يرجى اختيار نوع الدرجة العلمية أولاً لعرض البرامج المتاحة</p>
+                </div>
+                
+                <div id="program-details" class="hidden program-details-container mt-4">
+                    <h4>تفاصيل البرنامج</h4>
+                    <div id="program-info-loading" class="text-center my-4 hidden">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                        <p>جاري تحميل تفاصيل البرنامج...</p>
+                    </div>
+                    <div id="program-info-content" class="hidden">
+                        <div class="semester-courses mb-4">
+                            <h5>الفصل الدراسي الأول</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>كود المقرر</th>
+                                            <th>اسم المقرر</th>
+                                            <th>الساعات المعتمدة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="semester1-courses">
+                                        <!-- Will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="semester-courses">
+                            <h5>الفصل الدراسي الثاني</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>كود المقرر</th>
+                                            <th>اسم المقرر</th>
+                                            <th>الساعات المعتمدة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="semester2-courses">
+                                        <!-- Will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="credits-summary mt-3">
+                            <strong>إجمالي الساعات المعتمدة:</strong> <span id="total-credits">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions mt-4">
+                    <button type="button" id="step1-next-btn" class="btn primary" disabled>
+                        التالي <i class="fas fa-arrow-left ms-2"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Step 2: Document Upload -->
+            <div id="documents-step" class="application-step hidden">
+                <div id="required-documents">
+                    <h4 class="mb-3">المستندات المطلوبة</h4>
+                    <div class="alert info mb-4">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <p>يرجى رفع جميع المستندات المطلوبة. تأكد من أن المستندات واضحة ومقروءة.</p>
+                            <ul>
+                                <li>الصيغ المقبولة: PDF، JPG، PNG</li>
+                                <li>الحد الأقصى لحجم الملف: 10 ميجابايت</li>
+                                <li>تأكد من مسح صفحات المستندات بشكل كامل</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div id="documents-container">
+                        <!-- Will be populated dynamically with required documents -->
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>جاري تحميل قائمة المستندات المطلوبة...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions mt-4">
+                    <button type="button" id="step2-prev-btn" class="btn outline">
+                        <i class="fas fa-arrow-right me-2"></i> السابق
+                    </button>
+                    <button type="button" id="step2-next-btn" class="btn primary" disabled>
+                        التالي <i class="fas fa-arrow-left ms-2"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Review and Submit -->
+            <div id="review-step" class="application-step hidden">
+                <h4>مراجعة التقديم</h4>
+                
+                <div class="review-section">
+                    <h5>معلومات البرنامج</h5>
+                    <div class="review-item">
+                        <span class="review-label">نوع الدرجة العلمية:</span>
+                        <span id="review-degree-type" class="review-value"></span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">البرنامج:</span>
+                        <span id="review-program" class="review-value"></span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">العام الدراسي:</span>
+                        <span id="review-academic-year" class="review-value"></span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">الفصل الدراسي:</span>
+                        <span id="review-semester" class="review-value"></span>
+                    </div>
+                </div>
+                
+                <div class="review-section">
+                    <h5>المستندات المرفقة</h5>
+                    <div id="review-documents" class="review-documents">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="form-actions mt-4">
+                    <button type="button" id="step3-prev-btn" class="btn outline">
+                        <i class="fas fa-arrow-right me-2"></i> السابق
+                    </button>
+                    <button type="submit" id="submit-application-btn" class="btn primary">
+                        <i class="fas fa-check-circle me-2"></i> تقديم الطلب النهائي
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- In new_application.html, find the #document-upload-template -->
+<template id="document-upload-template">
+    <div class="document-upload-item mb-4" data-doc-type="">
+        <h5 class="document-name mb-2"></h5>
+        <div class="file-input-container">
+            <input type="file" class="form-input file-input document-file" name="document_files[]" accept=".pdf,.jpg,.jpeg,.png" required>
+            <!-- IMPORTANT: The value of this input will be set by JS to the Arabic name -->
+            <input type="hidden" class="document-type" name="document_types[]" value=""> 
+            <div class="file-input-overlay">
+                <span class="file-name">لم يتم اختيار ملف</span>
+                <button type="button" class="btn secondary browse-btn">استعراض...</button>
+            </div>
+        </div>
+        <div class="upload-status mt-2 hidden">
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+            <span class="status-text"></span>
+        </div>
+    </div>
+</template>
+
+
+{% endblock %}
+
+
+<!-- In new_application.html, replace the entire <script> block at the bottom with this new version -->
+
+{% block scripts %}
+{{ super() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Step navigation elements
+        const step1 = document.getElementById('program-step');
+        const step2 = document.getElementById('documents-step');
+        const step3 = document.getElementById('review-step');
+        
+        const stepIndicator1 = document.getElementById('step-1');
+        const stepIndicator2 = document.getElementById('step-2');
+        const stepIndicator3 = document.getElementById('step-3');
+        
+        // Step 1 elements
+        const degreeTypeSelect = document.getElementById('degree_type');
+        const programSelect = document.getElementById('program');
+        const academicYearSelect = document.getElementById('academic_year');
+        const semesterSelect = document.getElementById('semester');
+        const loadingPrograms = document.getElementById('loading-programs');
+        const programDetails = document.getElementById('program-details');
+        const programInfoLoading = document.getElementById('program-info-loading');
+        const programInfoContent = document.getElementById('program-info-content');
+        const step1NextBtn = document.getElementById('step1-next-btn');
+        
+        // Step 2 elements
+        const documentsContainer = document.getElementById('documents-container');
+        const step2PrevBtn = document.getElementById('step2-prev-btn');
+        const step2NextBtn = document.getElementById('step2-next-btn');
+        
+        // Step 3 elements
+        const step3PrevBtn = document.getElementById('step3-prev-btn');
+        const reviewDegreeType = document.getElementById('review-degree-type');
+        const reviewProgram = document.getElementById('review-program');
+        const reviewAcademicYear = document.getElementById('review-academic-year');
+        const reviewSemester = document.getElementById('review-semester');
+        const reviewDocuments = document.getElementById('review-documents');
+        
+        // Document template
+        const documentTemplate = document.getElementById('document-upload-template');
+        
+        // Store selected data
+        let selectedProgramData = null;
+        let requiredDocuments = [];
+        let uploadedDocuments = new Map(); // Use a Map for better tracking
+
+        // --- Step 1 Functions ---
+        
+        function loadPrograms(degreeType) {
+            if (!degreeType) {
+                programSelect.innerHTML = '<option value="">-- اختر البرنامج --</option>';
+                programSelect.disabled = true;
+                return;
+            }
+            loadingPrograms.classList.remove('hidden');
+            programSelect.disabled = true;
+            programDetails.classList.add('hidden');
+            
+            fetch(`/api/programs?degree_type=${degreeType}`)
+                .then(response => response.json())
+                .then(data => {
+                    programSelect.innerHTML = '<option value="">-- اختر البرنامج --</option>';
+                    if (data.success && data.programs.length > 0) {
+                        data.programs.forEach(program => {
+                            const programDataObj = { id: program.id, name: program.name, degree_type: program.degree_type, arabic_name: program.arabic_name || '' };
+                            const option = new Option(program.display_name, JSON.stringify(programDataObj));
+                            programSelect.appendChild(option);
+                        });
+                        programSelect.disabled = false;
+                    } else {
+                        programSelect.appendChild(new Option('لا توجد برامج متاحة', ''));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching programs:', error);
+                    programSelect.innerHTML = '<option value="">حدث خطأ</option>';
+                })
+                .finally(() => loadingPrograms.classList.add('hidden'));
+        }
+        
+        function loadProgramDetails(programJson) {
+            try {
+                selectedProgramData = JSON.parse(programJson);
+                if (!selectedProgramData || !selectedProgramData.name) throw new Error('Invalid program data');
+                
+                programDetails.classList.remove('hidden');
+                programInfoLoading.classList.remove('hidden');
+                programInfoContent.classList.add('hidden');
+                
+                const url = `/api/program-info?degree=${encodeURIComponent(selectedProgramData.degree_type)}&name=${encodeURIComponent(selectedProgramData.name)}`;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.program) {
+                            const p = data.program;
+                            document.getElementById('semester1-courses').innerHTML = p.semester1_courses.map(c => `<tr><td>${c.code}</td><td>${c.title}</td><td>${c.credits}</td></tr>`).join('') || '<tr><td colspan="3" class="text-center">لا توجد مقررات</td></tr>';
+                            document.getElementById('semester2-courses').innerHTML = p.semester2_courses.map(c => `<tr><td>${c.code}</td><td>${c.title}</td><td>${c.credits}</td></tr>`).join('') || '<tr><td colspan="3" class="text-center">لا توجد مقررات</td></tr>';
+                            document.getElementById('total-credits').textContent = p.total_credits || '0';
+                            programInfoContent.classList.remove('hidden');
+                            validateStep1();
+                        } else {
+                            throw new Error(data.message || 'Failed to load details');
+                        }
+                    })
+                    .catch(error => console.error('Error fetching program details:', error))
+                    .finally(() => programInfoLoading.classList.add('hidden'));
+            } catch (error) {
+                console.error('Error parsing program data:', error);
+                programDetails.classList.add('hidden');
+            }
+        }
+        
+        function validateStep1() {
+            const isValid = degreeTypeSelect.value && programSelect.value && academicYearSelect.value && semesterSelect.value;
+            step1NextBtn.disabled = !isValid;
+        }
+
+        // --- Step 2 Functions (MODIFIED) ---
+
+        function populateDocumentFields() {
+            if (!selectedProgramData) {
+                console.error('No program data for fetching docs');
+                return;
+            }
+            
+            documentsContainer.innerHTML = `
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>جاري تحميل قائمة المستندات المطلوبة...</p>
+                </div>`;
+            step2NextBtn.disabled = true;
+
+            // FETCH a dynamic list of documents from the new API
+            fetch(`/api/required-documents?degree_type=${selectedProgramData.degree_type}`)
+                .then(response => response.json())
+                .then(data => {
+                    documentsContainer.innerHTML = ''; // Clear spinner
+                    if (data.success && data.documents.length > 0) {
+                        requiredDocuments = data.documents;
+                        requiredDocuments.forEach(doc => {
+                            const docField = document.importNode(documentTemplate.content, true).firstElementChild;
+                            docField.querySelector('.document-name').textContent = doc.name;
+                            docField.setAttribute('data-doc-type', doc.type);
+                            // Store the document name (Arabic) in a hidden input
+                            const docTypeInput = docField.querySelector('.document-type');
+                            docTypeInput.value = doc.name; // Use the Arabic name for submission
+                            
+                            const fileInput = docField.querySelector('.file-input');
+                            const fileNameSpan = docField.querySelector('.file-name');
+                            const browseBtn = docField.querySelector('.browse-btn');
+
+                            // Restore previously uploaded file name if exists
+                            if (uploadedDocuments.has(doc.type)) {
+                                const prev = uploadedDocuments.get(doc.type);
+                                fileNameSpan.textContent = prev.file.name + " (سيتم إرساله عند التقديم)";
+                                // ملاحظة: لا يمكن إعادة تعيين قيمة input[type=file] برمجياً لأسباب أمنية
+                            }
+
+                            browseBtn.addEventListener('click', () => fileInput.click());
+
+                            fileInput.addEventListener('change', function() {
+                                const file = this.files[0];
+                                if (file) {
+                                    if (file.size > 10 * 1024 * 1024) {
+                                        alert('حجم الملف يتجاوز 10 ميجابايت. يرجى اختيار ملف أصغر.');
+                                        this.value = '';
+                                        return;
+                                    }
+                                    fileNameSpan.textContent = file.name;
+                                    uploadedDocuments.set(doc.type, { name: doc.name, file: file });
+                                } else {
+                                    // إذا أزال الملف، نعيد الاسم السابق إن وجد
+                                    if (uploadedDocuments.has(doc.type)) {
+                                        const prev = uploadedDocuments.get(doc.type);
+                                        fileNameSpan.textContent = prev.file.name + " (سيتم إرساله عند التقديم)";
+                                    } else {
+                                        fileNameSpan.textContent = 'لم يتم اختيار ملف';
+                                    }
+                                    // لا نحذف من uploadedDocuments إلا إذا أزال الملف فعلياً
+                                }
+                                validateStep2();
+                            });
+                            documentsContainer.appendChild(docField);
+                        });
+                        validateStep2();
+                    } else {
+                        documentsContainer.innerHTML = `<div class="alert danger"><p>لم يتم العثور على قائمة المستندات. ${data.message || ''}</p></div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching required documents:', error);
+                    documentsContainer.innerHTML = `<div class="alert danger"><p>حدث خطأ أثناء تحميل قائمة المستندات المطلوبة.</p></div>`;
+                });
+        }
+        
+        function validateStep2() {
+            const allUploaded = requiredDocuments.every(doc => uploadedDocuments.has(doc.type));
+            step2NextBtn.disabled = !allUploaded;
+        }
+
+        // --- Step 3 Functions ---
+        function populateReviewPage() {
+            reviewDegreeType.textContent = degreeTypeSelect.options[degreeTypeSelect.selectedIndex].text;
+            reviewAcademicYear.textContent = academicYearSelect.value;
+            reviewSemester.textContent = semesterSelect.options[semesterSelect.selectedIndex].text;
+            reviewProgram.textContent = selectedProgramData ? (selectedProgramData.arabic_name || selectedProgramData.name) : "غير معروف";
+            
+            reviewDocuments.innerHTML = '';
+            uploadedDocuments.forEach(doc => {
+                const docItem = document.createElement('div');
+                docItem.className = 'review-document-item';
+                docItem.innerHTML = `<div class="document-icon"><i class="fas fa-file-alt"></i></div> <div class="document-details"><div class="document-name">${doc.name}</div><div class="document-filename">${doc.file.name}</div></div>`;
+                reviewDocuments.appendChild(docItem);
+            });
+        }
+
+        // --- Navigation ---
+        function goToStep(stepNum) {
+            [step1, step2, step3].forEach(s => s.classList.add('hidden'));
+            [stepIndicator1, stepIndicator2, stepIndicator3].forEach(s => s.classList.remove('active'));
+            
+            if (stepNum === 1) {
+                step1.classList.remove('hidden');
+                stepIndicator1.classList.add('active');
+            } else if (stepNum === 2) {
+                step2.classList.remove('hidden');
+                [stepIndicator1, stepIndicator2].forEach(s => s.classList.add('active'));
+                populateDocumentFields();
+            } else if (stepNum === 3) {
+                step3.classList.remove('hidden');
+                [stepIndicator1, stepIndicator2, stepIndicator3].forEach(s => s.classList.add('active'));
+                populateReviewPage();
+            }
+        }
+        
+        // Event Listeners
+        degreeTypeSelect.addEventListener('change', function() { loadPrograms(this.value); validateStep1(); });
+        programSelect.addEventListener('change', function() { if (this.value) loadProgramDetails(this.value); validateStep1(); });
+        academicYearSelect.addEventListener('change', validateStep1);
+        semesterSelect.addEventListener('change', validateStep1);
+        
+        step1NextBtn.addEventListener('click', () => goToStep(2));
+        step2PrevBtn.addEventListener('click', () => goToStep(1));
+        step2NextBtn.addEventListener('click', () => goToStep(3));
+        step3PrevBtn.addEventListener('click', () => goToStep(2));
+        
+        // Initial load
+        if (degreeTypeSelect.value) {
+            loadPrograms(degreeTypeSelect.value);
+        }
+    });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .application-step {
+        margin-bottom: 2rem;
+    }
+    
+    .application-step.hidden {
+        display: none;
+    }
+    
+    .steps-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 0 auto 2rem;
+        max-width: 600px;
+    }
+    
+    .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .step-number {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: #e5e7eb;
+        color: #4b5563;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    
+    .step.active .step-number {
+        background-color: #4f46e5;
+        color: white;
+    }
+    
+    .step-connector {
+        flex: 1;
+        height: 2px;
+        background-color: #e5e7eb;
+        z-index: 0;
+    }
+    
+    .hidden {
+        display: none !important;
+    }
+    
+    .loading-text {
+        color: #6b7280;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.25rem;
+    }
+    
+    .program-details-container {
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+    }
+    
+    .semester-courses {
+        margin-bottom: 1.5rem;
+    }
+    
+    .semester-courses h5 {
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: #374151;
+    }
+    
+    .table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.875rem;
+    }
+    
+    .table th, .table td {
+        padding: 0.5rem;
+        text-align: right;
+    }
+    
+    .credits-summary {
+        background-color: #f3f4f6;
+        padding: 0.75rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Document upload styles */
+    .document-upload-item {
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        background-color: #f9fafb;
+    }
+    
+    .file-input-container {
+        position: relative;
+    }
+    
+    .file-input {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
+    
+    .file-input-overlay {
+        display: flex;
+        align-items: center;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        background-color: white;
+    }
+    
+    .file-input-overlay .file-name {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #6b7280;
+    }
+    
+    .progress-container {
+        height: 6px;
+        background-color: #e5e7eb;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background-color: #4f46e5;
+        width: 0;
+    }
+    
+    /* Review step styles */
+    .review-section {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+    }
+    
+    .review-section h5 {
+        margin-bottom: 1rem;
+        font-weight: 600;
+        color: #374151;
+    }
+    
+    .review-item {
+        display: flex;
+        margin-bottom: 0.5rem;
+    }
+    
+    .review-label {
+        font-weight: 500;
+        min-width: 8rem;
+    }
+    
+    .review-documents {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .review-document-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+    }
+    
+    .document-icon {
+        font-size: 1.5rem;
+        color: #4f46e5;
+    }
+    
+    .document-details {
+        flex: 1;
+    }
+    
+    .document-filename {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+    
+    /* Alert styles */
+    .alert {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+    }
+    
+    .alert i {
+        margin-left: 1rem;
+        font-size: 1.25rem;
+    }
+    
+    .alert.info {
+        background-color: #eff6ff;
+        border: 1px solid #dbeafe;
+        color: #1e40af;
+    }
+    
+    .alert.danger {
+        background-color: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+    }
+    
+    .alert ul {
+        padding-right: 1.25rem;
+        margin: 0.5rem 0;
+    }
+</style>
+{% endblock %}

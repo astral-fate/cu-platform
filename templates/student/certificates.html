@@ -1,0 +1,292 @@
+{% extends "student_layout.html" %}
+{% block page_title %}شهاداتي{% endblock %}
+
+{% block main_content %}
+<style>
+/* --- Page-Specific Document Card Styles ---
+  By using a more specific selector (.main-content .document-card), 
+  we can ensure these styles override the general styles from external CSS files 
+  without needing to use !important everywhere.
+*/
+
+/* --- Document Card Container --- */
+.main-content .document-card {
+    margin-top: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+    /* We set height to auto to allow the content to define the height */
+    height: auto; 
+}
+
+/* --- Card Header --- */
+.main-content .document-card .card-header,
+.main-content .document-card .card-header-with-actions {
+    padding: 0.75rem 1.25rem;
+    min-height: unset;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-content .document-card .card-header h3 {
+    margin-bottom: 0;
+    font-size: 1.15rem;
+}
+
+/* --- Card Body (Crucial Fix) --- */
+.main-content .document-card .card-body {
+    /* Reducing padding to make the card body shorter */
+    padding: 1rem 1.25rem; 
+    /* Overriding any fixed height from external stylesheets */
+    height: auto !important; 
+    max-height: none !important;
+    overflow-y: visible !important;
+}
+
+.main-content .document-card .card-body h4 {
+    font-size: 1.05rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* --- Table Styles --- */
+.main-content .document-card .table-container {
+    margin-bottom: 0;
+}
+.main-content .document-card .full-width-table th,
+.main-content .document-card .full-width-table td {
+    /* Reducing padding in table cells for a more compact look */
+    padding: 0.6rem; 
+    vertical-align: middle;
+}
+</style>
+
+<div class="card document-card">
+    <div class="card-header-with-actions">
+        <h3>طلب الشهادات</h3>
+        <a href="{{ url_for('student_request_certificate') }}" class="btn primary">طلب شهادة</a>
+    </div>
+    
+    <div class="card-body">
+        {% if certificates %}
+            <div class="table-container">
+                <table class="full-width-table">
+                    <thead>
+                        <tr>
+                            <th>رقم الشهادة</th>
+                            <th>النوع</th>
+                            <th>تاريخ الطلب</th>
+                            <th>الحالة</th>
+                            <th>الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for certificate in certificates|sort(attribute='request_date', reverse=true) %}
+                            <tr>
+                                <td>{{ certificate.cert_id }}</td>
+                                <td>{{ certificate.type }}</td>
+                                <td>{{ certificate.request_date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    <span class="status-badge 
+                                        {% if certificate.status == 'بانتظار الدفع' %}yellow
+                                        {% elif certificate.status == 'قيد التجهيز' %}blue
+                                        {% elif certificate.status == 'جاهزة للاستلام' %}green
+                                        {% endif %}">
+                                        {{ certificate.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if certificate.status == 'بانتظار الدفع' %}
+                                        <a href="{{ url_for('student_certificate_payment', cert_id=certificate.id) }}" class="btn primary btn-sm">
+                                            دفع الرسوم
+                                        </a>
+                                    {% elif certificate.status == 'قيد التجهيز' %}
+                                        <span class="text-muted">قيد التجهيز</span>
+                                    {% elif certificate.status == 'جاهزة للاستلام' %}
+                                        <span class="text-success">جاهزة بمكتب الإدارة</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-10">
+                <p class="text-muted mb-4">لم تقم بطلب أي شهادة بعد</p>
+                <a href="{{ url_for('student_request_certificate') }}" class="btn primary">طلب شهادة</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card document-card mt-6">
+    <div class="card-header">
+        <h3>معلومات الشهادة</h3>
+    </div>
+    
+    <div class="card-body">
+        <h4 class="mb-4">أنواع الشهادات المتاحة</h4>
+        <div class="table-container">
+            <table class="full-width-table">
+                <thead>
+                    <tr>
+                        <th>نوع الشهادة</th>
+                        <th>الوصف</th>
+                        <th>تاريخ المعالجة</th>
+                        <th>رسوم الخدمة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>شهادة الالتحاق</td>
+                        <td>تؤكد تسجيلك في البرنامج</td>
+                        <td>1-2 يوم عمل</td>
+                        <td>200 جنيه</td>
+                    </tr>
+                    <tr>
+                        <td>شهادة كشف الدرجات</td>
+                        <td>سجل رسمي لجميع المواد والدرجات</td>
+                        <td>2-3 يوم عمل</td>
+                        <td>200 جنيه</td>
+                    </tr>
+                    <tr>
+                        <td>شهادة التخرج</td>
+                        <td>تؤكد إتمام البرنامج</td>
+                        <td>3-5 يوم عمل</td>
+                        <td>200 جنيه</td>
+                    </tr>
+                    <tr>
+                        <td>شهادة حسن الأداء</td>
+                        <td>تؤكد أنك طالب ذو أداء أكاديمي جيد</td>
+                        <td>1-2 يوم عمل</td>
+                        <td>200 جنيه</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="alert info mt-6">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <h4>معلومات استلام الشهادة</h4>
+                <p>بمجرد أن تكون شهادتك جاهزة للاستلام، يرجى زيارة مكتب الإدارة مع هويتك الجامعية لاستلامها.</p>
+                <p class="mt-2"><strong>ساعات العمل:</strong> الأحد إلى الخميس، من 9:00 صباحًا إلى 3:00 مساءً</p>
+                <p><strong>الموقع:</strong> مبنى الإدارة، غرفة 102</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if certificates %}
+<div class="card document-card mt-6">
+    <div class="card-header">
+        <h3>سجل طلبات الشهادات</h3>
+    </div>
+    
+    <div class="card-body">
+        <div class="timeline">
+            {% for certificate in certificates|sort(attribute='request_date', reverse=true)|slice(0, 5) %}
+                <div class="timeline-item">
+                    <div class="timeline-marker 
+                        {% if certificate.status == 'بانتظار الدفع' %}yellow
+                        {% elif certificate.status == 'قيد التجهيز' %}blue
+                        {% elif certificate.status == 'جاهزة للاستلام' %}green
+                        {% endif %}">
+                    </div>
+                    <div class="timeline-content">
+                        <h4 class="timeline-title">{{ certificate.type }}</h4>
+                        <p class="timeline-date">{{ certificate.request_date.strftime('%Y-%m-%d') }}</p>
+                        <p>رقم الشهادة: {{ certificate.cert_id }}</p>
+                        <span class="status-badge 
+                            {% if certificate.status == 'بانتظار الدفع' %}yellow
+                            {% elif certificate.status == 'قيد التجهيز' %}blue
+                            {% elif certificate.status == 'جاهزة للاستلام' %}green
+                            {% endif %}">
+                            {{ certificate.status }}
+                        </span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Timeline styles */
+    .timeline {
+        position: relative;
+        margin: 1rem 0;
+        padding-left: 2rem;
+    }
+    
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0.5rem;
+        width: 2px;
+        background-color: #e5e7eb;
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+    
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .timeline-marker {
+        position: absolute;
+        top: 0;
+        left: -2rem;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background-color: #d1d5db;
+    }
+    
+    .timeline-marker.yellow {
+        background-color: #fbbf24;
+    }
+    
+    .timeline-marker.blue {
+        background-color: #3b82f6;
+    }
+    
+    .timeline-marker.green {
+        background-color: #10b981;
+    }
+    
+    .timeline-content {
+        padding: 0.5rem 1rem;
+        background-color: #f9fafb;
+        border-radius: 0.5rem;
+    }
+    
+    .timeline-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .timeline-date {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
