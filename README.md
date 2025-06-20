@@ -1,1 +1,1 @@
-# cu-platform
+# Cairo-University-Portal

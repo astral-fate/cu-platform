@@ -1,0 +1,19 @@
+.card-header {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1em;
+}
+
+.card-body ul {
+    list-style: none;
+    padding: 0;
+}
