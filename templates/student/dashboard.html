@@ -4,317 +4,346 @@
 
 {% block extra_css %}
 <style>
-    /* ==================================================================
-      Dashboard Redesign (v3.0) - Final Fix
-      ==================================================================
-      Scoped all styles to a unique wrapper (.dashboard-content-area)
-      to create a self-contained component and prevent any conflicts
-      from parent templates or global stylesheets. This ensures
-      predictable styling and correct text colors.
-    */
-
-    :root {
-        --primary-color: #4f46e5;
-        --primary-hover: #4338ca;
-        --bg-color: #f3f4f6; /* Light gray page background */
-        --card-bg-color: #ffffff;
-        --card-border-color: #e5e7eb;
-        --text-primary: #111827; /* Near black for headings and main text */
-        --text-secondary: #6b7280; /* Gray for labels/muted text */
-        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-        --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
-        --border-radius: 12px;
+    /* تنسيق الشريط الجانبي */
+    .sidebar-profile {
+        text-align: center;
+        padding: 1.5rem 1rem;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        border-radius: 12px;
+        margin: 0 1rem 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
-
-    /* Main content wrapper */
-    .dashboard-content-area {
-        padding: 1.5rem;
-        background-color: var(--bg-color);
-    }
-
-    /* Welcome Header Bar */
-    .dashboard-content-area .welcome-header {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-        color: #fff;
-        border-radius: var(--border-radius);
-        padding: 1.5rem 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
-    }
-
-    .dashboard-content-area .welcome-header h3 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        margin: 0;
-        color: #fff; /* Explicitly set color */
-    }
-
-    /* Responsive Grid for Cards */
-    .dashboard-content-area .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 1.5rem;
-    }
-
-    /* Enhanced Card Styling */
-    .dashboard-content-area .card {
-        background-color: var(--card-bg-color);
-        border-radius: var(--border-radius);
-        border: 1px solid var(--card-border-color);
-        box-shadow: var(--card-shadow);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    .sidebar-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
         display: flex;
-        flex-direction: column;
-    }
-
-    .dashboard-content-area .card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--card-shadow-hover);
-    }
-
-    .dashboard-content-area .card-header {
-        background-color: transparent;
-        border-bottom: 1px solid var(--card-border-color);
-        padding: 1.25rem 1.5rem;
-    }
-
-    .dashboard-content-area .card-header h3 {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin: 0;
-    }
-
-    .dashboard-content-area .card-body {
-        padding: 1.5rem;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    /* Info Rows within cards */
-    .dashboard-content-area .info-row {
-        display: flex;
-        justify-content: space-between;
         align-items: center;
-        padding: 0.85rem 0;
-        border-bottom: 1px solid #f3f4f6; /* Lighter separator */
-    }
-    .dashboard-content-area .info-row:first-of-type { padding-top: 0; }
-    .dashboard-content-area .info-row:last-of-type { border-bottom: none; }
-
-    /* Card-specific text colors, now properly scoped */
-    .dashboard-content-area .info-label { color: var(--text-secondary); font-size: 0.9rem; }
-    .dashboard-content-area .info-value, 
-    .dashboard-content-area .document-item > span:first-child, 
-    .dashboard-content-area .ticket-subject {
-        font-weight: 500;
-        color: var(--text-primary);
-        font-size: 0.9rem;
-    }
-
-    /* List styling for 'Documents' & 'Tickets' */
-    .dashboard-content-area .document-list, .dashboard-content-area .ticket-list {
-        margin: 0;
-        padding: 0;
-        list-style-type: none;
-        flex-grow: 1;
-    }
-
-    .dashboard-content-area .document-item, .dashboard-content-area .ticket-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 0.25rem;
-        border-bottom: 1px solid #f3f4f6;
-    }
-    .dashboard-content-area .document-item:last-child, .dashboard-content-area .ticket-item:last-child { border-bottom: none; }
-    .dashboard-content-area .ticket-details { text-align: right; }
-    .dashboard-content-area .ticket-date { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem; }
-
-    /* Empty State Styling */
-    .dashboard-content-area .empty-state {
-        display: flex;
-        flex-direction: column;
         justify-content: center;
+        font-size: 2rem;
+        font-weight: 600;
+        margin: 0 auto 1rem;
+    }
+    
+    .sidebar-name {
+        color: white;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+    
+    .sidebar-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .info-item {
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        text-align: center;
-        flex-grow: 1;
-        padding: 1rem 0;
+        gap: 0.25rem;
     }
-    .dashboard-content-area .empty-state p { color: var(--text-secondary); margin-bottom: 1.25rem; }
-
-    /* Status Badge General Style */
-    .dashboard-content-area .status-badge {
-        padding: 0.3rem 0.85rem;
-        border-radius: 9999px;
+    
+    .info-label {
+        color: rgba(255, 255, 255, 0.8);
         font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: capitalize;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
-    .dashboard-content-area .status-badge.yellow { background-color: #fef9c3; color: #713f12; }
-    .dashboard-content-area .status-badge.green { background-color: #dcfce7; color: #166534; }
-    .dashboard-content-area .status-badge.red { background-color: #fee2e2; color: #991b1b; }
-    .dashboard-content-area .status-badge.blue { background-color: #dbeafe; color: #1e40af; }
-
-    /* Button Styles */
-    .dashboard-content-area .btn.primary {
-        display: inline-block;
-        text-align: center;
-        background-color: var(--primary-color);
-        color: #fff !important; /* Ensure button text is white */
+    
+    .info-value {
+        color: white;
+        font-weight: 500;
+    }
+    
+    .info-value.small {
+        font-size: 0.875rem;
+    }
+    
+    .gpa-badge {
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+    
+    .sidebar-divider {
+        border-color: rgba(255, 255, 255, 0.1);
+        margin: 1rem 0;
+    }
+    
+    /* إشعار الشهادات */
+    .alert.success {
+        position: relative;
+    }
+    
+    .close-alert {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: none;
         border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: background-color 0.2s ease, transform 0.2s ease;
+        color: #10b981;
         cursor: pointer;
+        font-size: 0.875rem;
     }
-    .dashboard-content-area .btn.primary:hover {
-        background-color: var(--primary-hover);
-        transform: translateY(-2px);
+    
+    .close-alert:hover {
+        color: #047857;
     }
-    .dashboard-content-area .btn.primary.full-width {
+
+    /* إصلاح لوحة الإشعارات */
+    .notifications-panel {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 5px;
+        width: min(320px, 90vw);  /* Use the smaller of 320px or 90% of viewport width */
+        max-width: 90vw;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        overflow: hidden;
+        max-height: 80vh;  /* Limit height to 80% of viewport height */
+        overflow-y: auto;  /* Add vertical scrolling if needed */
+    }
+    
+    /* Ensure the panel doesn't go off-screen on small screens */
+    @media (max-width: 576px) {
+        .notifications-panel {
+            right: -50px;  /* Adjust the position on very small screens */
+            width: 280px;
+        }
+    }
+    
+    .notifications-panel.hidden {
+        display: none;
+    }
+    
+    .notifications-header {
+        padding: 12px 15px;
+        background-color: #4f46e5;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        text-align: left;
+    }
+    
+    .notifications-list {
+        max-height: 350px;
+        overflow-y: auto;
+    }
+    
+    .notification-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #e5e7eb;
+        transition: background-color 0.2s;
+        text-align: left;
+    }
+    
+    .notification-item:hover {
+        background-color: #f9fafb;
+    }
+    
+    .notification-item.unread {
+        background-color: #eff6ff;
+    }
+    
+    .notification-time {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 4px;
         display: block;
-        width: 100%;
-        margin-top: auto; /* Push button to the bottom of the card */
     }
 </style>
 {% endblock %}
 
 {% block main_content %}
-<!-- This new wrapper isolates the dashboard styles -->
-<div class="dashboard-content-area">
-
-    <div class="welcome-header">
-        <h3>مرحباً، {{ current_user.full_name }}!</h3>
-    </div>
-    
-    <!-- Alerts are now outside the grid -->
-    {% if payment_required %}
-    <div class="alert warning">
-        <i class="fas fa-exclamation-triangle"></i>
-        <div>
-            <h4>الدفع مطلوب</h4>
-            <p>تمت الموافقة على طلبك! يرجى متابعة الدفع لإكمال التسجيل.</p>
-            {% for application in applications if application.status == 'Documents Approved' and application.payment_status == 'Pending' %}
-                {% if loop.first %}
-                <a href="{{ url_for('student_payment', app_id=application.id) }}" class="btn primary">إكمال الدفع</a>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-    
-    {% if certificate_ready %}
-    <div class="alert success" id="certificate-notification">
-        <i class="fas fa-check-circle"></i>
-        <div>
-            <h4>الشهادة جاهزة</h4>
-            <p>شهادتك جاهزة للاستلام! يرجى زيارة مكتب الإدارة لاستلامها.</p>
-        </div>
-        <button class="close-alert" onclick="dismissCertificateNotification()">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-    {% endif %}
-
-    <div class="dashboard-grid">
-        <!-- Application Status Card -->
-        <div class="card">
-            <div class="card-header">
-                <h3>حالة الطلب</h3>
+<div class="dashboard-container">
+    <!-- محتوى لوحة التحكم الرئيسية -->
+    <div class="dashboard-main">
+        <div class="welcome-card">
+            <h3>مرحباً، {{ current_user.full_name }}!</h3>
+            
+            {% if payment_required %}
+            <div class="alert warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <h4>الدفع مطلوب</h4>
+                    <p>تمت الموافقة على طلبك! يرجى متابعة الدفع لإكمال التسجيل.</p>
+                    {% for application in applications if application.status == 'Documents Approved' and application.payment_status == 'Pending' %}
+                        {% if loop.first %}
+                        <a href="{{ url_for('student_payment', app_id=application.id) }}" class="btn primary mt-3">إكمال الدفع</a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
-            <div class="card-body">
-                {% if applications %}
-                    {% set latest_app = applications|sort(attribute='date_submitted', reverse=true)|first %}
-                    <div style="flex-grow: 1;">
+            {% endif %}
+            
+            {% if certificate_ready %}
+            <div class="alert success" id="certificate-notification">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <h4>الشهادة جاهزة</h4>
+                    <p>شهادتك جاهزة للاستلام! يرجى زيارة مكتب الإدارة لاستلامها.</p>
+                </div>
+                <button class="close-alert" onclick="dismissCertificateNotification()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3>حالة الطلب</h3>
+                </div>
+                <div class="card-body">
+                    {% if applications %}
+                        {% set latest_app = applications|sort(attribute='date_submitted', reverse=true)|first %}
                         <div class="info-row">
                             <span class="info-label">البرنامج:</span>
                             <span class="info-value">{{ latest_app.program }}</span>
                         </div>
                         <div class="info-row">
                             <span class="info-label">الحالة:</span>
-                            <span class="status-badge {% if latest_app.status == 'Pending Review' %}yellow{% elif latest_app.status == 'Documents Approved' %}green{% elif latest_app.status == 'Documents Rejected' %}red{% endif %}">
+                            <span class="status-badge 
+                                {% if latest_app.status == 'Pending Review' %}yellow
+                                {% elif latest_app.status == 'Documents Approved' %}green
+                                {% elif latest_app.status == 'Documents Rejected' %}red
+                                {% endif %}">
                                 {{ latest_app.status }}
                             </span>
                         </div>
-                        <div class="info-row">
+                        <div class="info-row mb-4">
                             <span class="info-label">الدفع:</span>
-                            <span class="status-badge {% if latest_app.payment_status == 'Pending' %}yellow{% elif latest_app.payment_status == 'Paid' %}green{% endif %}">
+                            <span class="status-badge 
+                                {% if latest_app.payment_status == 'Pending' %}yellow
+                                {% elif latest_app.payment_status == 'Paid' %}green
+                                {% endif %}">
                                 {{ latest_app.payment_status }}
                             </span>
                         </div>
-                    </div>
-                    {% if latest_app.status == 'Documents Approved' and latest_app.payment_status == 'Pending' %}
-                        <a href="{{ url_for('student_payment', app_id=latest_app.id) }}" class="btn primary full-width">الدفع الآن</a>
+                        
+                        {% if latest_app.status == 'Documents Approved' and latest_app.payment_status == 'Pending' %}
+                            <a href="{{ url_for('student_payment', app_id=latest_app.id) }}" class="btn primary full-width">الدفع الآن</a>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center">
+                            <p class="text-muted">لم يتم العثور على طلبات</p>
+                            <a href="{{ url_for('student_new_application') }}" class="btn primary mt-3">تقديم طلب جديد</a>
+                        </div>
                     {% endif %}
-                {% else %}
-                    <div class="empty-state">
-                        <p>لم يتم العثور على طلبات</p>
-                        <a href="{{ url_for('student_new_application') }}" class="btn primary">تقديم طلب جديد</a>
-                    </div>
-                {% endif %}
+                </div>
             </div>
-        </div>
-        
-        <!-- Documents Card -->
-        <div class="card">
-            <div class="card-header">
-                <h3>المستندات</h3>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>المستندات</h3>
+                </div>
+                <div class="card-body">
+                    {% if documents %}
+                        {% set doc_names_map = {
+                            'bachelor degree certificate': 'شهادة البكالوريوس',
+                            'academic transcript': 'السجل الأكاديمي',
+                            'transcript': 'السجل الأكاديمي',
+                            'id card/passport': 'بطاقة الهوية/جواز السفر',
+                            'id card': 'بطاقة الهوية',
+                            'passport': 'جواز السفر',
+                            'national id': 'بطاقة الرقم القومي',
+                            'national_id': 'بطاقة الرقم القومي',
+                            'military status': 'موقف التجنيد',
+                            'cv': 'السيرة الذاتية',
+                            'resume': 'السيرة الذاتية',
+                            'personal photo': 'الصورة الشخصية',
+                            'photo': 'الصورة الشخصية',
+                            'proof of english proficiency': 'إثبات إجادة اللغة الإنجليزية',
+                            'english proficiency test': 'إثبات إجادة اللغة الإنجليزية',
+                            'recommendation': 'خطاب توصية',
+                            'recommendation letter': 'خطاب توصية',
+                            'bachelor_degree': 'شهادة البكالوريوس',
+                            'شهادة البكالوريوس': 'شهادة البكالوريوس',
+                            'السجل الأكاديمي': 'السجل الأكاديمي',
+                            'بطاقة الهوية/جواز السفر': 'بطاقة الهوية/جواز السفر',
+                            'السيرة الذاتية': 'السيرة الذاتية',
+                            'الصورة الشخصية': 'الصورة الشخصية',
+                            'خطاب التوصية': 'خطاب التوصية',
+                            'شهادة إجادة اللغة الإنجليزية': 'شهادة إجادة اللغة الإنجليزية',
+                            'مستندات أخرى': 'مستندات أخرى'
+                        } %}
+                        {% set status_map = {
+                            'Uploaded': 'تم الرفع',
+                            'Verified': 'مقبول',
+                            'Rejected': 'مرفوض',
+                            'تم الرفع': 'تم الرفع',
+                            'مقبول': 'مقبول',
+                            'مرفوض': 'مرفوض'
+                        } %}
+                        <ul class="document-list">
+                            {% for document in documents|sort(attribute='uploaded_at', reverse=true)|slice(0, 3) %}
+                                <li class="document-item">
+                                    <span>{{ doc_names_map.get(document.name|lower, document.name) }}</span>
+                                    <span class="status-badge 
+                                        {% if document.status in ['Uploaded', 'تم الرفع'] %}blue
+                                        {% elif document.status in ['Verified', 'مقبول'] %}green
+                                        {% elif document.status in ['Rejected', 'مرفوض'] %}red
+                                        {% endif %}">
+                                        {{ status_map.get(document.status, document.status) }}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        
+                        <a href="{{ url_for('student_upload_document') }}" class="btn primary full-width mt-4">رفع مستند جديد</a>
+                    {% else %}
+                        <div class="text-center">
+                            <p class="text-muted">لم يتم العثور على مستندات</p>
+                            <a href="{{ url_for('student_upload_document') }}" class="btn primary mt-3">رفع مستند</a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
-            <div class="card-body">
-                {% if documents %}
-                    {% set doc_names_map = { 'bachelor degree certificate': 'شهادة البكالوريوس', 'academic transcript': 'السجل الأكاديمي', 'transcript': 'السجل الأكاديمي', 'id card/passport': 'بطاقة الهوية/جواز السفر', 'id card': 'بطاقة الهوية', 'passport': 'جواز السفر', 'national id': 'بطاقة الرقم القومي', 'national_id': 'بطاقة الرقم القومي', 'military status': 'موقف التجنيد', 'cv': 'السيرة الذاتية', 'resume': 'السيرة الذاتية', 'personal photo': 'الصورة الشخصية', 'photo': 'الصورة الشخصية', 'proof of english proficiency': 'إثبات إجادة اللغة الإنجليزية', 'english proficiency test': 'إثبات إجادة اللغة الإنجليزية', 'recommendation': 'خطاب توصية', 'recommendation letter': 'خطاب توصية', 'bachelor_degree': 'شهادة البكالوريوس', 'شهادة البكالوريوس': 'شهادة البكالوريوس', 'السجل الأكاديمي': 'السجل الأكاديمي', 'بطاقة الهوية/جواز السفر': 'بطاقة الهوية/جواز السفر', 'السيرة الذاتية': 'السيرة الذاتية', 'الصورة الشخصية': 'الصورة الشخصية', 'خطاب التوصية': 'خطاب التوصية', 'شهادة إجادة اللغة الإنجليزية': 'شهادة إجادة اللغة الإنجليزية', 'مستندات أخرى': 'مستندات أخرى' } %}
-                    {% set status_map = { 'Uploaded': 'تم الرفع', 'Verified': 'مقبول', 'Rejected': 'مرفوض', 'تم الرفع': 'تم الرفع', 'مقبول': 'مقبول', 'مرفوض': 'مرفوض' } %}
-                    <ul class="document-list">
-                        {% for document in documents|sort(attribute='uploaded_at', reverse=true)|slice(0, 4) %}
-                            <li class="document-item">
-                                <span>{{ doc_names_map.get(document.name|lower, document.name) }}</span>
-                                <span class="status-badge {% if document.status in ['Uploaded', 'تم الرفع'] %}blue{% elif document.status in ['Verified', 'مقبول'] %}green{% elif document.status in ['Rejected', 'مرفوض'] %}red{% endif %}">
-                                    {{ status_map.get(document.status, document.status) }}
-                                </span>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    <a href="{{ url_for('student_upload_document') }}" class="btn primary full-width">رفع مستند جديد</a>
-                {% else %}
-                    <div class="empty-state">
-                        <p>لم يتم العثور على مستندات</p>
-                        <a href="{{ url_for('student_upload_document') }}" class="btn primary">رفع مستند</a>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-        
-        <!-- Support Tickets Card -->
-        <div class="card">
-            <div class="card-header">
-                <h3>تذاكر الدعم الفني</h3>
-            </div>
-            <div class="card-body">
-                {% if tickets %}
-                    <ul class="ticket-list">
-                        {% for ticket in tickets|sort(attribute='created_at', reverse=true)|slice(0, 4) %}
-                            <li class="ticket-item">
-                                <div class="ticket-details">
-                                    <p class="ticket-subject">{{ ticket.subject }}</p>
-                                    <p class="ticket-date">{{ ticket.created_at.strftime('%Y-%m-%d') }}</p>
-                                </div>
-                                <span class="status-badge {% if ticket.status == 'Open' %}red{% elif ticket.status == 'In Progress' %}yellow{% elif ticket.status == 'Closed' %}green{% endif %}">
-                                    {{ ticket.status }}
-                                </span>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    <a href="{{ url_for('student_new_ticket') }}" class="btn primary full-width">إنشاء تذكرة دعم جديدة</a>
-                {% else %}
-                    <div class="empty-state">
-                        <p>لا توجد تذاكر دعم</p>
-                        <a href="{{ url_for('student_new_ticket') }}" class="btn primary">إنشاء تذكرة</a>
-                    </div>
-                {% endif %}
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>تذاكر الدعم الفني</h3>
+                </div>
+                <div class="card-body">
+                    {% if tickets %}
+                        <ul class="ticket-list">
+                            {% for ticket in tickets|sort(attribute='created_at', reverse=true)|slice(0, 3) %}
+                                <li class="ticket-item">
+                                    <div>
+                                        <p class="ticket-subject">{{ ticket.subject }}</p>
+                                        <p class="ticket-date">{{ ticket.created_at.strftime('%Y-%m-%d') }}</p>
+                                    </div>
+                                    <span class="status-badge 
+                                        {% if ticket.status == 'Open' %}red
+                                        {% elif ticket.status == 'In Progress' %}yellow
+                                        {% elif ticket.status == 'Closed' %}green
+                                        {% endif %}">
+                                        {{ ticket.status }}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        
+                        <a href="{{ url_for('student_new_ticket') }}" class="btn primary full-width mt-4">إنشاء تذكرة دعم جديدة</a>
+                    {% else %}
+                        <div class="text-center">
+                            <p class="text-muted">لا توجد تذاكر دعم</p>
+                            <a href="{{ url_for('student_new_ticket') }}" class="btn primary mt-3">إنشاء تذكرة</a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -323,18 +352,28 @@
 
 {% block scripts %}
 {{ super() }}
-<!-- Include shared notification scripts -->
+<!-- Include the shared notification scripts -->
 <script src="{{ url_for('static', filename='js/dashboard-notifications.js') }}"></script>
 
 <script>
+    // Remove height limitations from cards for dashboard
     document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.card-body').forEach(function(cardBody) {
+            cardBody.style.height = 'auto';
+            cardBody.style.maxHeight = 'none';
+        });
+
         // Certificate notification dismissal
         const certificateNotification = document.getElementById('certificate-notification');
         if (certificateNotification) {
-            if (localStorage.getItem('certificateDismissed') === 'true') {
-                certificateNotification.style.display = 'none';
-            }
+            localStorage.getItem('certificateDismissed') === 'true'
+                ? certificateNotification.style.display = 'none'
+                : null;
         }
+
+        // Notification logic is now handled by notifications.js and dashboard-notifications.js
+        // Remove the redundant toggle and mark-as-read logic from here.
+
     });
 
     // Function to dismiss certificate notification
