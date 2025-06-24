@@ -1,4 +1,7 @@
-from vercel_python_wsgi import make_wsgi_app
-from run import app
+from flask import Flask
 
-app = make_wsgi_app(app)
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Hello from Vercel using Flask!"
