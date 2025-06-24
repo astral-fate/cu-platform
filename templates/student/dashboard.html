@@ -5,10 +5,12 @@
 {% block extra_css %}
 <style>
     /* ==================================================================
-      Dashboard Redesign (v2.1) - Style Specificity Fix
+      Dashboard Redesign (v3.0) - Final Fix
       ==================================================================
-      Corrected CSS specificity to prevent layout styles from overriding
-      card content styles, ensuring correct text colors.
+      Scoped all styles to a unique wrapper (.dashboard-content-area)
+      to create a self-contained component and prevent any conflicts
+      from parent templates or global stylesheets. This ensures
+      predictable styling and correct text colors.
     */
 
     :root {
@@ -17,21 +19,21 @@
         --bg-color: #f3f4f6; /* Light gray page background */
         --card-bg-color: #ffffff;
         --card-border-color: #e5e7eb;
-        --text-primary: #111827; /* Near black for headings */
+        --text-primary: #111827; /* Near black for headings and main text */
         --text-secondary: #6b7280; /* Gray for labels/muted text */
         --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
         --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
         --border-radius: 12px;
     }
 
-    /* General Dashboard Enhancement */
-    .dashboard-container {
-        padding: 2rem;
+    /* Main content wrapper */
+    .dashboard-content-area {
+        padding: 1.5rem;
         background-color: var(--bg-color);
     }
 
     /* Welcome Header Bar */
-    .welcome-header {
+    .dashboard-content-area .welcome-header {
         background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
         color: #fff;
         border-radius: var(--border-radius);
@@ -40,53 +42,22 @@
         box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
     }
 
-    .welcome-header h3 {
+    .dashboard-content-area .welcome-header h3 {
         font-size: 1.75rem;
         font-weight: 700;
         margin: 0;
+        color: #fff; /* Explicitly set color */
     }
-
-    /* Alerts below the welcome header */
-    .dashboard-alerts {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .dashboard-alerts .alert {
-        background-color: var(--card-bg-color);
-        color: var(--text-primary);
-        border: 1px solid var(--card-border-color);
-        border-left-width: 4px;
-        border-radius: 8px;
-        padding: 1rem 1.5rem;
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        box-shadow: var(--card-shadow);
-        margin: 0;
-    }
-
-    .dashboard-alerts .alert.warning { border-left-color: #f59e0b; }
-    .dashboard-alerts .alert.success { border-left-color: #10b981; }
-    .dashboard-alerts .alert i { font-size: 1.5rem; margin-top: 0.25rem; }
-    .dashboard-alerts .alert.warning i { color: #f59e0b; }
-    .dashboard-alerts .alert.success i { color: #10b981; }
-
-    .dashboard-alerts .alert h4 { font-weight: 600; margin-bottom: 0.25rem; }
-    .dashboard-alerts .alert p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
-    .dashboard-alerts .alert .btn.primary { margin-top: 0.75rem; }
 
     /* Responsive Grid for Cards */
-    .dashboard-grid {
+    .dashboard-content-area .dashboard-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 2rem;
+        gap: 1.5rem;
     }
 
     /* Enhanced Card Styling */
-    .card {
+    .dashboard-content-area .card {
         background-color: var(--card-bg-color);
         border-radius: var(--border-radius);
         border: 1px solid var(--card-border-color);
@@ -96,73 +67,73 @@
         flex-direction: column;
     }
 
-    .card:hover {
+    .dashboard-content-area .card:hover {
         transform: translateY(-5px);
         box-shadow: var(--card-shadow-hover);
     }
 
-    .card-header {
+    .dashboard-content-area .card-header {
         background-color: transparent;
         border-bottom: 1px solid var(--card-border-color);
         padding: 1.25rem 1.5rem;
     }
 
-    .card-header h3 {
+    .dashboard-content-area .card-header h3 {
         font-size: 1.1rem;
         font-weight: 600;
         color: var(--text-primary);
         margin: 0;
     }
 
-    .card-body {
+    .dashboard-content-area .card-body {
         padding: 1.5rem;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
     }
 
-    /* Info Rows for 'Application Status' card */
-    .card .info-row {
+    /* Info Rows within cards */
+    .dashboard-content-area .info-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 0.85rem 0;
-        border-bottom: 1px dashed #e5e7eb;
+        border-bottom: 1px solid #f3f4f6; /* Lighter separator */
     }
-    .card .info-row:first-of-type { padding-top: 0; }
-    .card .info-row:last-of-type { border-bottom: none; }
+    .dashboard-content-area .info-row:first-of-type { padding-top: 0; }
+    .dashboard-content-area .info-row:last-of-type { border-bottom: none; }
 
-    /* ** FIX ** Scoped card-specific text colors to override layout styles */
-    .card .info-label { color: var(--text-secondary) !important; font-size: 0.9rem; }
-    .card .info-value, 
-    .card .document-item > span:first-child, 
-    .card .ticket-subject {
+    /* Card-specific text colors, now properly scoped */
+    .dashboard-content-area .info-label { color: var(--text-secondary); font-size: 0.9rem; }
+    .dashboard-content-area .info-value, 
+    .dashboard-content-area .document-item > span:first-child, 
+    .dashboard-content-area .ticket-subject {
         font-weight: 500;
-        color: var(--text-primary) !important;
+        color: var(--text-primary);
         font-size: 0.9rem;
     }
 
     /* List styling for 'Documents' & 'Tickets' */
-    .card .document-list, .card .ticket-list {
+    .dashboard-content-area .document-list, .dashboard-content-area .ticket-list {
         margin: 0;
         padding: 0;
         list-style-type: none;
         flex-grow: 1;
     }
 
-    .card .document-item, .card .ticket-item {
+    .dashboard-content-area .document-item, .dashboard-content-area .ticket-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 1rem 0.25rem;
         border-bottom: 1px solid #f3f4f6;
     }
-    .card .document-item:last-child, .card .ticket-item:last-child { border-bottom: none; }
-    .card .ticket-details { text-align: right; }
-    .card .ticket-date { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem; }
+    .dashboard-content-area .document-item:last-child, .dashboard-content-area .ticket-item:last-child { border-bottom: none; }
+    .dashboard-content-area .ticket-details { text-align: right; }
+    .dashboard-content-area .ticket-date { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem; }
 
     /* Empty State Styling */
-    .empty-state {
+    .dashboard-content-area .empty-state {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -171,85 +142,83 @@
         flex-grow: 1;
         padding: 1rem 0;
     }
-    .empty-state p { color: var(--text-secondary); margin-bottom: 1.25rem; }
+    .dashboard-content-area .empty-state p { color: var(--text-secondary); margin-bottom: 1.25rem; }
 
     /* Status Badge General Style */
-    .status-badge {
+    .dashboard-content-area .status-badge {
         padding: 0.3rem 0.85rem;
         border-radius: 9999px;
         font-size: 0.75rem;
         font-weight: 600;
         text-transform: capitalize;
     }
-    .status-badge.yellow { background-color: #fef9c3; color: #713f12; }
-    .status-badge.green { background-color: #dcfce7; color: #166534; }
-    .status-badge.red { background-color: #fee2e2; color: #991b1b; }
-    .status-badge.blue { background-color: #dbeafe; color: #1e40af; }
+    .dashboard-content-area .status-badge.yellow { background-color: #fef9c3; color: #713f12; }
+    .dashboard-content-area .status-badge.green { background-color: #dcfce7; color: #166534; }
+    .dashboard-content-area .status-badge.red { background-color: #fee2e2; color: #991b1b; }
+    .dashboard-content-area .status-badge.blue { background-color: #dbeafe; color: #1e40af; }
 
     /* Button Styles */
-    .btn.primary {
+    .dashboard-content-area .btn.primary {
         display: inline-block;
         text-align: center;
         background-color: var(--primary-color);
-        color: #fff;
+        color: #fff !important; /* Ensure button text is white */
         border: none;
         padding: 0.75rem 1.5rem;
         border-radius: 8px;
         font-weight: 600;
         text-decoration: none;
         transition: background-color 0.2s ease, transform 0.2s ease;
+        cursor: pointer;
     }
-    .btn.primary:hover {
+    .dashboard-content-area .btn.primary:hover {
         background-color: var(--primary-hover);
         transform: translateY(-2px);
     }
-    .btn.primary.full-width {
+    .dashboard-content-area .btn.primary.full-width {
         display: block;
         width: 100%;
         margin-top: auto; /* Push button to the bottom of the card */
-    }
-    .info-row > .btn.primary.full-width {
-        margin-top: 1rem;
     }
 </style>
 {% endblock %}
 
 {% block main_content %}
-<div class="dashboard-container">
+<!-- This new wrapper isolates the dashboard styles -->
+<div class="dashboard-content-area">
 
     <div class="welcome-header">
         <h3>مرحباً، {{ current_user.full_name }}!</h3>
     </div>
     
-    <div class="dashboard-alerts">
-        {% if payment_required %}
-        <div class="alert warning">
-            <i class="fas fa-exclamation-triangle"></i>
-            <div>
-                <h4>الدفع مطلوب</h4>
-                <p>تمت الموافقة على طلبك! يرجى متابعة الدفع لإكمال التسجيل.</p>
-                {% for application in applications if application.status == 'Documents Approved' and application.payment_status == 'Pending' %}
-                    {% if loop.first %}
-                    <a href="{{ url_for('student_payment', app_id=application.id) }}" class="btn primary">إكمال الدفع</a>
-                    {% endif %}
-                {% endfor %}
-            </div>
+    <!-- Alerts are now outside the grid -->
+    {% if payment_required %}
+    <div class="alert warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+            <h4>الدفع مطلوب</h4>
+            <p>تمت الموافقة على طلبك! يرجى متابعة الدفع لإكمال التسجيل.</p>
+            {% for application in applications if application.status == 'Documents Approved' and application.payment_status == 'Pending' %}
+                {% if loop.first %}
+                <a href="{{ url_for('student_payment', app_id=application.id) }}" class="btn primary">إكمال الدفع</a>
+                {% endif %}
+            {% endfor %}
         </div>
-        {% endif %}
-        
-        {% if certificate_ready %}
-        <div class="alert success" id="certificate-notification">
-            <i class="fas fa-check-circle"></i>
-            <div>
-                <h4>الشهادة جاهزة</h4>
-                <p>شهادتك جاهزة للاستلام! يرجى زيارة مكتب الإدارة لاستلامها.</p>
-            </div>
-            <button class="close-alert" onclick="dismissCertificateNotification()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        {% endif %}
     </div>
+    {% endif %}
+    
+    {% if certificate_ready %}
+    <div class="alert success" id="certificate-notification">
+        <i class="fas fa-check-circle"></i>
+        <div>
+            <h4>الشهادة جاهزة</h4>
+            <p>شهادتك جاهزة للاستلام! يرجى زيارة مكتب الإدارة لاستلامها.</p>
+        </div>
+        <button class="close-alert" onclick="dismissCertificateNotification()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    {% endif %}
 
     <div class="dashboard-grid">
         <!-- Application Status Card -->
@@ -300,7 +269,7 @@
                     {% set doc_names_map = { 'bachelor degree certificate': 'شهادة البكالوريوس', 'academic transcript': 'السجل الأكاديمي', 'transcript': 'السجل الأكاديمي', 'id card/passport': 'بطاقة الهوية/جواز السفر', 'id card': 'بطاقة الهوية', 'passport': 'جواز السفر', 'national id': 'بطاقة الرقم القومي', 'national_id': 'بطاقة الرقم القومي', 'military status': 'موقف التجنيد', 'cv': 'السيرة الذاتية', 'resume': 'السيرة الذاتية', 'personal photo': 'الصورة الشخصية', 'photo': 'الصورة الشخصية', 'proof of english proficiency': 'إثبات إجادة اللغة الإنجليزية', 'english proficiency test': 'إثبات إجادة اللغة الإنجليزية', 'recommendation': 'خطاب توصية', 'recommendation letter': 'خطاب توصية', 'bachelor_degree': 'شهادة البكالوريوس', 'شهادة البكالوريوس': 'شهادة البكالوريوس', 'السجل الأكاديمي': 'السجل الأكاديمي', 'بطاقة الهوية/جواز السفر': 'بطاقة الهوية/جواز السفر', 'السيرة الذاتية': 'السيرة الذاتية', 'الصورة الشخصية': 'الصورة الشخصية', 'خطاب التوصية': 'خطاب التوصية', 'شهادة إجادة اللغة الإنجليزية': 'شهادة إجادة اللغة الإنجليزية', 'مستندات أخرى': 'مستندات أخرى' } %}
                     {% set status_map = { 'Uploaded': 'تم الرفع', 'Verified': 'مقبول', 'Rejected': 'مرفوض', 'تم الرفع': 'تم الرفع', 'مقبول': 'مقبول', 'مرفوض': 'مرفوض' } %}
                     <ul class="document-list">
-                        {% for document in documents|sort(attribute='uploaded_at', reverse=true)|slice(0, 3) %}
+                        {% for document in documents|sort(attribute='uploaded_at', reverse=true)|slice(0, 4) %}
                             <li class="document-item">
                                 <span>{{ doc_names_map.get(document.name|lower, document.name) }}</span>
                                 <span class="status-badge {% if document.status in ['Uploaded', 'تم الرفع'] %}blue{% elif document.status in ['Verified', 'مقبول'] %}green{% elif document.status in ['Rejected', 'مرفوض'] %}red{% endif %}">
@@ -327,7 +296,7 @@
             <div class="card-body">
                 {% if tickets %}
                     <ul class="ticket-list">
-                        {% for ticket in tickets|sort(attribute='created_at', reverse=true)|slice(0, 3) %}
+                        {% for ticket in tickets|sort(attribute='created_at', reverse=true)|slice(0, 4) %}
                             <li class="ticket-item">
                                 <div class="ticket-details">
                                     <p class="ticket-subject">{{ ticket.subject }}</p>
@@ -354,7 +323,7 @@
 
 {% block scripts %}
 {{ super() }}
-<!-- Include the shared notification scripts -->
+<!-- Include shared notification scripts -->
 <script src="{{ url_for('static', filename='js/dashboard-notifications.js') }}"></script>
 
 <script>
