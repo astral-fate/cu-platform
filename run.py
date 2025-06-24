@@ -82,21 +82,25 @@ class NewApplicationForm(FlaskForm):
 # Initialize Flask app
 app = Flask(__name__)
 
+### VERCEL FIX: Use /tmp for uploads
+UPLOAD_DIR = os.path.join('/tmp', 'uploads')
+
 # Configure app with proper paths
 app.config.update(
     SECRET_KEY='your-secret-key-goes-here', # Keep secret key as is
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
-    # SQLALCHEMY_DATABASE_URI='sqlite:///cu_project.db',  for local usage
     SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL'),
     
-    UPLOAD_FOLDER=os.path.join('static', 'uploads'), # Keep path as is
+    UPLOAD_FOLDER=UPLOAD_DIR,
     # --- New Mail Configurations for Mailtrap ---
     MAILTRAP_API_TOKEN=os.environ.get('MAILTRAP_API_TOKEN'),
-    MAIL_DEFAULT_SENDER='noreply@cu-platform.vercel.app'
+    ### FINAL DOMAIN FIX: Use the new custom domain for the sender email ###
+    MAIL_DEFAULT_SENDER=os.environ.get('MAIL_DEFAULT_SENDER', 'noreply@cu-platform.com')
 )
-# Ensure instance and uploads directories exist
-os.makedirs(app.instance_path, exist_ok=True)
-# os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+# Ensure the /tmp/uploads directory exists at runtime.
+with app.app_context():
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # --- New: Serializer for generating secure tokens ---
 s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
@@ -134,34 +138,43 @@ def send_email(to_email, subject, body):
     token = app.config.get('MAILTRAP_API_TOKEN')
     if not token:
         app.logger.error("MAILTRAP_API_TOKEN is not configured in environment variables. Cannot send email.")
-        # In a real app, you might flash a message or handle this more gracefully.
-        # For now, we just log and exit the function.
         return
 
     sender_email = app.config.get('MAIL_DEFAULT_SENDER')
-    sender_name = "CU Graduate Studies Platform" # A sensible default sender name
+    sender_name = "CU Graduate Studies Platform"
 
     app.logger.info(f"Preparing to send email to {to_email} via Mailtrap from {sender_email}")
 
-    # Create a Mail object with the necessary parameters
     mail = mt.Mail(
         sender=mt.Address(email=sender_email, name=sender_name),
         to=[mt.Address(email=to_email)],
         subject=subject,
-        html=body,  # Use the 'html' parameter for HTML content
-        category="System Notifications", # Helps organize emails in your Mailtrap inbox
+        html=body,
+        category="System Notifications",
     )
 
-    # Create a Mailtrap client and send the email
     client = mt.MailtrapClient(token=token)
 
     try:
         response = client.send(mail)
         app.logger.info(f"Email sent successfully to {to_email} via Mailtrap. Response: {response}")
     except Exception as e:
-        # Mailtrap's client can raise exceptions for API errors, etc.
         app.logger.error(f"Failed to send email to {to_email} using Mailtrap. Error: {e}")
-        # Do not re-raise, just log the error. The main application flow should continue.
+
+### VERCEL FIX: Route to serve files from /tmp
+@app.route('/uploads/<path:filename>')
+@login_required 
+def serve_upload(filename):
+    """Serve a file from the UPLOAD_FOLDER (/tmp/uploads)."""
+    if not current_user.is_admin():
+        # Security check: only allow users to access their own documents
+        doc = Document.query.filter_by(file_path=f"uploads/{filename}", user_id=current_user.id).first()
+        if not doc:
+            app.logger.warning(f"User {current_user.id} attempted to access unauthorized file: {filename}")
+            flash('الوصول مرفوض', 'danger')
+            return redirect(url_for('student_dashboard'))
+            
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 @app.template_filter('time_ago')
@@ -394,9 +407,6 @@ def register():
             token = s.dumps(user.email, salt='email-confirm')
             
             # Create the verification URL.
-            # On Vercel, `_external=True` will correctly use the request's host
-            # (e.g., 'cu-platform.vercel.app') to build the full URL, like:
-            # https://cu-platform.vercel.app/verify-email/<token>
             verification_url = url_for('verify_email', token=token, _external=True)
 
             # Prepare email content (HTML)
