@@ -6,37 +6,39 @@
   <title>برامج جامعة القاهرة الأكاديمية</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <!-- Added Cairo font to match index.html -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* Custom Variables from index.html for consistency */
     :root {
-      --primary-color: #0D1D4E;
-      --secondary-color: #433AC8;
+      --primary-color: #0D1D4E; /* Dark Blue */
+      --secondary-color: #433AC8; /* Royal Purple */
+      --accent-color: #433AC8; /* Accent color for highlights */
       --dark-color: #1a1a1a;
       --light-color: #f8f9fa;
-      --transition: all 0.3s ease;
+      --transition: all 0.4s ease-in-out;
       --border-radius-lg: 1rem;
-      --box-shadow-md: 0 8px 25px rgba(0, 0, 0, 0.1);
+      --box-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --box-shadow-md: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
-
+    
     body {
-      /* Changed font to Cairo */
       font-family: 'Cairo', sans-serif;
       overflow-x: hidden;
-      text-align: right;
+      line-height: 1.7;
+      color: #333;
       background-color: #fdfdff;
     }
 
     h1, h2, h3, h4, h5, h6 {
       font-weight: 700;
       color: var(--primary-color);
-    }
-    
-    p {
-        color: #555;
+      line-height: 1.3;
     }
 
-    /* General Section Styling */
+    p {
+      color: #555;
+    }
+    
     section {
       padding: 4rem 0;
       position: relative;
@@ -66,69 +68,95 @@
       background: linear-gradient(to left, var(--primary-color), var(--secondary-color));
       border-radius: 2px;
     }
-    
-    /* Navbar Styles */
+
+    /* Navbar Styles (Unified) */
     .navbar {
       background-color: var(--primary-color);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--box-shadow-md);
       padding: 0.8rem 1rem;
     }
-
+    
     .navbar-brand {
       font-size: 1.5rem;
       font-weight: bold;
       color: white !important;
     }
+    
+    .navbar-toggler {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
 
     .nav-link {
       color: white !important;
-      margin: 0 0.3rem;
+      margin: 0 0.5rem;
       font-weight: 500;
       position: relative;
-      padding: 0.5rem 0.8rem !important;
+      padding: 0.6rem 1rem !important;
+      border-radius: 8px;
     }
-
+    
     .nav-link::after {
       content: '';
       position: absolute;
       width: 0;
-      height: 2px;
+      height: 3px;
       bottom: 0;
       right: 50%;
       transform: translateX(50%);
       background-color: white;
       transition: var(--transition);
     }
-
+    
     .nav-link:hover::after, .nav-link.active::after {
       width: 60%;
     }
 
+    /* Buttons (Unified) */
     .btn {
-      padding: 0.6rem 1.5rem;
+      padding: 0.8rem 1.8rem;
       border-radius: 50px;
       font-weight: 600;
       transition: var(--transition);
+      text-transform: capitalize;
     }
-
+    
     .btn-primary {
       background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
       border: none;
       color: white;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      box-shadow: var(--box-shadow-sm);
     }
 
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1);
+      transform: translateY(-3px);
+      box-shadow: var(--box-shadow-md);
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+      color: white;
     }
 
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+        background-color: transparent;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: var(--box-shadow-sm);
+    }
+    
     .btn-login {
       background-color: transparent;
-      border: 1px solid white;
+      border: 2px solid white;
       color: white !important;
     }
-
+    
     .btn-login:hover {
       background-color: white;
       color: var(--primary-color) !important;
@@ -141,32 +169,40 @@
       padding: 4rem 0;
       position: relative;
       overflow: hidden;
+      text-align: center;
     }
 
-    .header-content {
-      position: relative;
-      z-index: 2;
-      text-align: center;
+    .header-section .section-title {
+        color: white;
+    }
+
+    .header-section .section-title::after {
+        background: white;
+    }
+
+    .header-section p {
+        color: rgba(255, 255, 255, 0.9);
     }
 
     /* Program Categories */
     .category-card {
       border-radius: var(--border-radius-lg);
       overflow: hidden;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--box-shadow-sm);
       transition: var(--transition);
       border: none;
       position: relative;
       margin-bottom: 1.5rem;
+      height: 100%;
     }
 
     .category-card:hover {
       transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--box-shadow-md);
     }
 
     .category-img {
-      height: 200px;
+      height: 250px;
       object-fit: cover;
     }
 
@@ -207,127 +243,12 @@
       backdrop-filter: blur(5px);
     }
     
-    /* Testimonials Section */
-    .testimonial-section {
-      background-color: var(--light-color);
-    }
-
-    .testimonial-card {
-      border-radius: var(--border-radius-lg);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-      border: none;
-      margin-bottom: 1.5rem;
-      padding: 2rem;
-      height: 100%;
-    }
-
-    .testimonial-quote {
-      font-size: 3rem;
-      color: var(--primary-color);
-      opacity: 0.1;
-      position: absolute;
-      top: 15px;
-      left: 25px;
-    }
-    
-    /* SVG Avatar Styling */
-    .testimonial-avatar {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      border: 3px solid var(--primary-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #e9ecef;
-      padding: 10px;
-    }
-
-    /* Application Process */
-    .process-step {
-      text-align: center;
-      position: relative;
-    }
-
-    .step-icon {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      margin: 0 auto 1rem;
-      position: relative;
-      z-index: 2;
-    }
-    
-    .process-line {
-        position: absolute;
-        width: calc(100% - 4rem);
-        height: 2px;
-        background-color: #e0e0e0;
-        top: 30px;
-        right: 50%;
-        z-index: 1;
-    }
-    
-    /* Footer */
-    .footer {
-      background-color: var(--dark-color);
-      color: white;
-      padding: 4rem 0 2rem;
-    }
-
-    .footer h5 {
-      position: relative;
-      padding-bottom: 1rem;
-      margin-bottom: 1.5rem;
-      font-weight: 600;
-      color: white;
-    }
-
-    .footer h5::after {
-      content: '';
-      position: absolute;
-      width: 50px;
-      height: 3px;
-      background: var(--secondary-color);
-      bottom: 0;
-      right: 0;
-    }
-
-    .footer a {
-      color: #a0aec0;
-      text-decoration: none;
-      transition: var(--transition);
-      display: block;
-      margin-bottom: 0.5rem;
-    }
-
-    .footer a:hover {
-      color: white;
-      transform: translateX(-5px);
-    }
-    
-    .footer .social-icons a {
-        margin-left: 1rem;
-    }
-
-    .copyright {
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding-top: 1.5rem;
-      margin-top: 2rem;
-    }
-    
     /* New Program UI Styling */
     .program-tabs .nav-pills .nav-link {
       color: var(--primary-color);
       background-color: #e9ecef;
       margin: 0 0.5rem;
-      border-radius: 8px;
+      border-radius: 50px;
       padding: 0.75rem 1.5rem;
       font-weight: 600;
       transition: var(--transition);
@@ -381,43 +302,14 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .program-list-item-icon {
-      font-size: 1.2rem;
-      margin-left: 10px;
-      color: var(--secondary-color);
-    }
-
     .program-list-item.active .program-list-item-icon {
       color: white;
     }
     
-    .program-detail-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1.5rem;
+    .program-icon-lg {
+        color: white;
     }
 
-    .program-icon-lg {
-      width: 70px;
-      height: 70px;
-      flex-shrink: 0;
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.2rem;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      margin-left: 1.5rem;
-    }
-    
-    .program-badge {
-      font-size: 0.8rem;
-      padding: 0.4em 0.8em;
-      border-radius: 5px;
-      font-weight: 500;
-    }
-    
     .accordion-button:not(.collapsed) {
       background-color: var(--primary-color);
       color: white;
@@ -434,25 +326,86 @@
       box-shadow: none;
     }
 
+    /* Footer */
+    .footer {
+      background-color: var(--dark-color);
+      color: white;
+      padding: 5rem 0 2rem;
+      border-top: 5px solid var(--secondary-color);
+    }
+    
+    .footer h5 {
+      position: relative;
+      padding-bottom: 1rem;
+      margin-bottom: 1.8rem;
+      font-weight: 700;
+      color: white;
+      font-size: 1.3rem;
+    }
+    
+    .footer h5::after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 3px;
+      background: var(--accent-color);
+      bottom: 0;
+      right: 0;
+      border-radius: 2px;
+    }
+    
+    .footer a {
+      color: #b0c4de;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-block;
+      margin-bottom: 0.6rem;
+      font-size: 1rem;
+    }
+    
+    .footer a:hover {
+      color: white;
+      transform: translateX(5px);
+    }
+    
+    .footer .social-icons a {
+        margin-left: 1rem;
+    }
+
+    .copyright {
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 1.8rem;
+      margin-top: 3rem;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
     /* Responsive Adjustments */
     @media (max-width: 991.98px) {
+      .navbar-collapse {
+        background-color: #0b1a44;
+        padding: 1.5rem;
+        margin-top: 0.5rem;
+        border-radius: var(--border-radius-lg);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+      .navbar-nav .nav-item {
+          margin-bottom: 0.5rem;
+      }
+      .navbar .d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+      }
+       .navbar .btn {
+        width: 100%;
+        margin-top: 0.5rem;
+      }
       .program-list-panel {
         border-bottom: 1px solid #e9ecef;
         border-left: none;
       }
-      .program-detail-header {
-        flex-direction: column;
-        text-align: center;
-      }
-      .program-icon-lg {
-        margin-left: 0;
-        margin-bottom: 1rem;
-      }
-      .process-line {
-        display: none;
-      }
-      .process-step {
-          margin-bottom: 2rem;
+      .footer .col-lg-3, .footer .col-lg-4 {
+        margin-bottom: 2.5rem;
       }
     }
     
@@ -465,9 +418,6 @@
       }
       .header-content h1 {
           font-size: 2.5rem;
-      }
-      .footer h5 {
-        margin-top: 1.5rem;
       }
       .footer {
           text-align: center;
@@ -487,23 +437,23 @@
 
 </head>
 <body>
-  <!-- Navigation -->
+  <!-- Navigation (Unified) -->
   <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
       <a class="navbar-brand" href="{{ url_for('index') }}">بوابة جامعة القاهرة</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">الرئيسية</a></li>
-            <li class="nav-item"><a class="nav-link active" href="{{ url_for('programs') }}">البرامج</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">المشاريع</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('news') }}">الأخبار</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">الرئيسية</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{{ url_for('programs') }}">البرامج</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">المشاريع</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('news') }}">الإعلانات</a></li>
         </ul>
         <div class="d-flex align-items-center">
-            <a href="{{ url_for('login') }}" class="btn btn-login ms-2">تسجيل الدخول</a>
-            <a href="{{ url_for('register') }}" class="btn btn-primary">قدم الآن</a>
+          <a href="{{ url_for('login') }}" class="btn btn-login ms-2">تسجيل الدخول</a>
+          <a href="{{ url_for('register') }}" class="btn btn-primary">قدم الآن</a>
         </div>
       </div>
     </div>
@@ -513,10 +463,8 @@
   <section class="header-section">
     <div class="container">
       <div class="header-content">
-        <!-- <h1 class="display-4 fw-bold mb-3">برامجنا الأكاديمية</h1> -->
- <h2 class="section-title" style="color: white;">برامجنا الأكاديمية</h2>
-        <p class="lead mb-4" style="color: white;">اكتشف مجموعة متنوعة من برامج الدراسات العليا والمهنية المصممة لمستقبلك</p>
-        <!-- <p class="lead mb-4">اكتشف مجموعة متنوعة من برامج الدراسات العليا والمهنية المصممة لمستقبلك</p> -->
+        <h2 class="section-title">برامجنا الأكاديمية</h2>
+        <p class="lead">اكتشف مجموعة متنوعة من برامج الدراسات العليا والمهنية المصممة لمستقبلك</p>
       </div>
     </div>
   </section>
@@ -529,8 +477,7 @@
       <p class="text-center text-muted">تصفح البرامج المتخصصة التي تقدمها كلية الدراسات العليا للبحوث الإحصائية</p>
     </div>
 
-    <div class="row">
-      <!-- NOTE: Placeholder image text has been removed -->
+    <div class="row g-4">
       <div class="col-lg-4 col-md-6">
         <div class="category-card">
           <img src="static/img/header.jpg" class="card-img-top category-img" alt="هندسة البرمجيات">
@@ -571,8 +518,8 @@
       </div>
     </div>
 
-    <div class="text-center mt-4">
-      <a href="#all-programs-new" class="btn btn-outline-primary">عرض جميع البرامج</a>
+    <div class="text-center mt-5">
+      <a href="#all-programs-new" class="btn btn-outline-primary btn-lg">عرض جميع البرامج</a>
     </div>
   </div>
 </section>
@@ -587,7 +534,7 @@
 
       <div class="row mb-5 align-items-center g-5">
         <div class="col-lg-6">
-          <img src="{{ url_for('static', filename='img/FGSSR.jpg') }}" alt="مبنى كلية الدراسات العليا" class="img-fluid rounded shadow" onerror="this.src='static/img/header.jpg?text=Faculty+Building'">
+          <img src="{{ url_for('static', filename='img/FGSSR.jpg') }}" alt="مبنى كلية الدراسات العليا" class="img-fluid rounded-3 shadow-lg" onerror="this.src='static/img/header.jpg?text=Faculty+Building'">
         </div>
         <div class="col-lg-6">
           <h3 class="mb-3">عن الكلية</h3>
@@ -595,7 +542,6 @@
           <p>تقدم الكلية مجموعة واسعة من البرامج المهنية المصممة لتزويد الطلاب بالمهارات التقنية والخبرات المطلوبة في سوق العمل اليوم. مع أكثر من 18 برنامجًا متخصصًا، تعد الكلية خريجيها للتميز في مجالات مختلفة.</p>
 
           <div class="d-flex flex-wrap gap-3 mt-4">
-            <!-- NOTE: Updated button links -->
             <a href="mailto:info@cu.edu.eg" class="btn btn-primary">اتصل بالكلية</a>
             <a href="https://www.scribd.com/document/721933912/%D8%AF%D9%84%D9%8A%D9%84-%D8%A7%D9%84%D8%B7%D8%A7%D9%84%D8%A8-2023-2024" target="_blank" class="btn btn-outline-primary">تحميل البروشور</a>
           </div>
@@ -636,126 +582,10 @@
                 <!-- Program Detail Panel (Left/Main Content) -->
                 <div class="col-lg-8 order-lg-1 order-2 program-detail-panel">
                   <div id="program-detail-content">
-                    <!-- Initial State / Program details load here -->
+                    <!-- Program details load here -->
                   </div>
                 </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Application Process -->
-  <section>
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">كيفية التقديم</h2>
-        <p class="text-muted">اتبع هذه الخطوات البسيطة للانضمام إلى مجتمعنا الأكاديمي</p>
-      </div>
-      <div class="row">
-        <div class="col-12">
-            <div class="row">
-                <!-- Step 1 -->
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="step-icon">1</div>
-                        <h5>اختر برنامجًا</h5>
-                        <p>تصفح برامجنا واختر ما يناسب أهدافك المهنية.</p>
-                        <div class="d-md-block d-none">
-                            <div class="process-line"></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Step 2 -->
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="step-icon">2</div>
-                        <h5>جهّز المستندات</h5>
-                        <p>تأكد من استيفائك للمؤهلات وتوفر المستندات المطلوبة.</p>
-                        <div class="d-md-block d-none">
-                            <div class="process-line"></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Step 3 -->
-                <div class="col-md-4">
-                    <div class="process-step">
-                        <div class="step-icon">3</div>
-                        <h5>قدّم الطلب</h5>
-                        <p>أكمل نموذج الطلب عبر الإنترنت من خلال بوابتنا.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 text-center mt-5">
-            <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">ابدأ تقديمك الآن</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials Section -->
-  <section class="testimonial-section">
-    <div class="container">
-       <div class="section-header">
-        <h2 class="section-title">ماذا يقول طلابنا</h2>
-        <p class="text-muted">استمع إلى تجارب الطلاب الذين خاضوا برامجنا الأكاديمية</p>
-      </div>
-
-      <div class="row g-4">
-        <!-- NOTE: Replaced placeholder images with a custom SVG icon -->
-        <div class="col-lg-4 col-md-6">
-          <div class="testimonial-card bg-white position-relative">
-            <i class="fas fa-quote-right testimonial-quote"></i>
-            <div class="d-flex align-items-center mb-4">
-              <div class="testimonial-avatar me-3">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary-color);">
-                  <path d="M12 2.5a5.5 5.5 0 0 1 3.096 10.047 9.005 9.005 0 0 1 5.9 8.181.75.75 0 0 1-1.498.07 7.505 7.505 0 0 0-14.992 0 .75.75 0 0 1-1.498-.07A9.005 9.005 0 0 1 9 12.547 5.5 5.5 0 0 1 12 2.5ZM12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
-                </svg>
-              </div>
-              <div>
-                <h5 class="mb-0">أحمد إبراهيم</h5>
-                <p class="text-muted mb-0">هندسة البرمجيات، 2022</p>
-              </div>
-            </div>
-            <p class="mb-0">"البرنامج منحني المهارات المتقدمة المطلوبة في سوق العمل. كان الأساتذة داعمين والمنهج الدراسي كان تحديًا ومفيدًا. حصلت على وظيفة قبل التخرج."</p>
-          </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6">
-          <div class="testimonial-card bg-white position-relative">
-            <i class="fas fa-quote-right testimonial-quote"></i>
-            <div class="d-flex align-items-center mb-4">
-              <div class="testimonial-avatar me-3">
-                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary-color);">
-                  <path d="M12 2.5a5.5 5.5 0 0 1 3.096 10.047 9.005 9.005 0 0 1 5.9 8.181.75.75 0 0 1-1.498.07 7.505 7.505 0 0 0-14.992 0 .75.75 0 0 1-1.498-.07A9.005 9.005 0 0 1 9 12.547 5.5 5.5 0 0 1 12 2.5ZM12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
-                </svg>
-              </div>
-              <div>
-                <h5 class="mb-0">نور حسام</h5>
-                <p class="text-muted mb-0">تحليل البيانات، 2021</p>
-              </div>
-            </div>
-            <p class="mb-0">"برنامج تحليل البيانات زودني بالمهارات الأساسية في التحليل الإحصائي. قدمت المشاريع العملية تجربة واقعية أطبقها يوميًا في دوري كمحلل بيانات."</p>
-          </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6">
-          <div class="testimonial-card bg-white position-relative">
-            <i class="fas fa-quote-right testimonial-quote"></i>
-            <div class="d-flex align-items-center mb-4">
-               <div class="testimonial-avatar me-3">
-                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary-color);">
-                  <path d="M12 2.5a5.5 5.5 0 0 1 3.096 10.047 9.005 9.005 0 0 1 5.9 8.181.75.75 0 0 1-1.498.07 7.505 7.505 0 0 0-14.992 0 .75.75 0 0 1-1.498-.07A9.005 9.005 0 0 1 9 12.547 5.5 5.5 0 0 1 12 2.5ZM12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
-                </svg>
-              </div>
-              <div>
-                <h5 class="mb-0">هاني محمود</h5>
-                <p class="text-muted mb-0">إدارة المشاريع، 2023</p>
-              </div>
-            </div>
-            <p class="mb-0">"سمحت لي مرونة البرنامج بمواصلة تعليمي مع التقدم في مسيرتي المهنية. ساعدتني المعرفة التي حصلت عليها في تأمين ترقية في مؤسستي."</p>
           </div>
         </div>
       </div>
@@ -766,38 +596,45 @@
   <footer class="footer">
     <div class="container">
       <div class="row g-4">
-        <div class="col-lg-4 col-md-6">
-          <h5>جامعة القاهرة</h5>
-          <p>تقديم تعليم عالي الجودة منذ عام 1908. واحدة من أقدم وأعرق الجامعات في إفريقيا والشرق الأوسط.</p>
-           <div class="mt-4 social-icons d-flex">
-            <a href="#" class="ms-3"><i class="fab fa-facebook-f fa-lg"></i></a>
-            <a href="#" class="ms-3"><i class="fab fa-twitter fa-lg"></i></a>
-            <a href="#" class="ms-3"><i class="fab fa-instagram fa-lg"></i></a>
+          <div class="col-lg-4 col-md-12 text-center text-lg-end">
+            <h5>كلية الدراسات العليا للبحوث الإحصائية</h5>
+            <p class="px-lg-0 px-4">نحن نسعى لتطوير البحث والتعليم الإحصائي من خلال برامج مشكلة وأعضاء هيئة تدريس على مستوى عالي من الخبرة والكفاءة.</p>
+            <div class="mt-4 social-icons d-flex justify-content-center justify-content-lg-start">
+              <a href="#" class="ms-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+              <a href="#" class="ms-3"><i class="fab fa-twitter fa-lg"></i></a>
+              <a href="#" class="ms-3"><i class="fab fa-instagram fa-lg"></i></a>
+              <a href="#" class="ms-3"><i class="fab fa-linkedin-in fa-lg"></i></a>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-4">
+            <h5>روابط سريعة</h5>
+            <ul class="list-unstyled">
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> البرامج</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> القبول</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> بوابة الطالب</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> الأخبار</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-4">
+            <h5>الموارد</h5>
+            <ul class="list-unstyled">
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> مستودع المشاريع</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> الأسئلة الشائعة</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> دليل الطالب</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> المكتبة</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-4">
+            <h5>اتصل بنا</h5>
+            <ul class="list-unstyled">
+              <li><i class="fas fa-map-marker-alt me-2"></i> جامعة القاهرة، الجيزة</li>
+              <li class="mt-2"><i class="fas fa-envelope me-2"></i> <a href="mailto:info@cu.edu.eg">info@cu.edu.eg</a></li>
+              <li class="mt-2"><i class="fas fa-phone me-2"></i> <a href="tel:+20123456789">+20 123 456 789</a></li>
+            </ul>
           </div>
         </div>
-        <div class="col-lg-2 col-md-6">
-          <h5>البرامج</h5>
-          <a href="#all-programs-new">الدبلوم</a>
-          <a href="#all-programs-new">الماجستير</a>
-          <a href="#all-programs-new">الدكتوراه</a>
-        </div>
-        <div class="col-lg-2 col-md-6">
-          <h5>الموارد</h5>
-          <a href="#">المكتبة</a>
-          <a href="#">البحث العلمي</a>
-          <a href="#">خدمات التوظيف</a>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <h5>اتصل بنا</h5>
-          <ul class="list-unstyled">
-              <li class="d-flex mb-2"><i class="fas fa-map-marker-alt mt-1 me-3"></i><span>جامعة القاهرة، الجيزة، مصر</span></li>
-              <li class="d-flex mb-2"><i class="fas fa-phone mt-1 me-3"></i><span>+20 2 35676105</span></li>
-              <li class="d-flex"><i class="fas fa-envelope mt-1 me-3"></i><a href="mailto:info@cu.edu.eg">info@cu.edu.eg</a></li>
-          </ul>
-        </div>
-      </div>
       <div class="text-center copyright">
-        <p>&copy; 2024 جامعة القاهرة. جميع الحقوق محفوظة.</p>
+        <p>&copy; 2024 كلية الدراسات العليا للبحوث الإحصائية. جميع الحقوق محفوظة.</p>
       </div>
     </div>
   </footer>
@@ -806,7 +643,6 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // NOTE: Full program data is restored here.
       const programs_by_level = {
         "diploma": [
           {
@@ -910,7 +746,7 @@
               listItem.className = 'program-list-item';
               listItem.dataset.programId = program.id;
               listItem.dataset.programLevel = level;
-              listItem.innerHTML = `<i class="${program.icon} program-list-item-icon"></i><span>${program.title_ar}</span>`;
+              listItem.innerHTML = `<i class="${program.icon} program-list-item-icon me-2"></i><span>${program.title_ar}</span>`;
               container.appendChild(listItem);
             });
         } else {
@@ -941,15 +777,15 @@
             : '<p>لا توجد متطلبات أساسية محددة مذكورة.</p>';
 
         detailContainer.innerHTML = `
-          <div class="program-detail-header">
-            <div class="program-icon-lg text-white"><i class="${program.icon}"></i></div>
+          <div class="program-detail-header d-flex align-items-center mb-4">
+            <div class="program-icon-lg flex-shrink-0 bg-primary text-white d-flex align-items-center justify-content-center rounded-circle me-4" style="width: 70px; height: 70px; font-size: 2rem;"><i class="${program.icon}"></i></div>
             <div>
               <h3>${program.title_ar}</h3>
               <p class="text-muted">${program.description}</p>
-              <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-lg-start">
-                <span class="program-badge badge bg-info"><i class="far fa-clock me-1"></i> ${program.duration}</span>
-                <span class="program-badge badge bg-success"><i class="fas fa-graduation-cap me-1"></i> ${program.credits}</span>
-                <span class="program-badge badge bg-primary"><i class="fas fa-tag me-1"></i> ${program.type}</span>
+              <div class="d-flex flex-wrap gap-2 justify-content-start">
+                <span class="badge bg-info text-dark rounded-pill"><i class="far fa-clock me-1"></i> ${program.duration}</span>
+                <span class="badge bg-success text-white rounded-pill"><i class="fas fa-graduation-cap me-1"></i> ${program.credits}</span>
+                <span class="badge bg-secondary text-white rounded-pill"><i class="fas fa-tag me-1"></i> ${program.type}</span>
               </div>
             </div>
           </div>
@@ -972,8 +808,8 @@
               }
           } else {
               document.getElementById('program-detail-content').innerHTML = `
-                <div class="text-center text-muted pt-5">
-                    <i class="fas fa-search fa-3x mb-3"></i>
+                <div class="text-center text-muted pt-5 d-flex flex-column align-items-center justify-content-center h-100">
+                    <i class="fas fa-search fa-3x mb-3" style="color: #e0e0e0;"></i>
                     <h3>اختر برنامجًا من القائمة</h3>
                     <p>استخدم القوائم في الأعلى لتصفح الدبلومات والماجستير والدكتوراه.</p>
                 </div>`;
