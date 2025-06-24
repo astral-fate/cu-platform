@@ -6,6 +6,8 @@
   <title>برامج جامعة القاهرة الأكاديمية</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <!-- Added Cairo font to match index.html -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary-color: #0D1D4E;
@@ -13,14 +15,58 @@
       --dark-color: #1a1a1a;
       --light-color: #f8f9fa;
       --transition: all 0.3s ease;
+      --border-radius-lg: 1rem;
+      --box-shadow-md: 0 8px 25px rgba(0, 0, 0, 0.1);
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      /* Changed font to Cairo */
+      font-family: 'Cairo', sans-serif;
       overflow-x: hidden;
-      text-align: right; /* Align text to the right */
+      text-align: right;
+      background-color: #fdfdff;
     }
 
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    
+    p {
+        color: #555;
+    }
+
+    /* General Section Styling */
+    section {
+      padding: 4rem 0;
+      position: relative;
+    }
+
+    .section-header {
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      position: relative;
+      display: inline-block;
+      padding-bottom: 0.8rem;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 50%;
+      transform: translateX(50%);
+      width: 70px;
+      height: 4px;
+      background: linear-gradient(to left, var(--primary-color), var(--secondary-color));
+      border-radius: 2px;
+    }
+    
     /* Navbar Styles */
     .navbar {
       background-color: var(--primary-color);
@@ -48,20 +94,39 @@
       width: 0;
       height: 2px;
       bottom: 0;
-      right: 0; /* Change left to right */
+      right: 50%;
+      transform: translateX(50%);
       background-color: white;
       transition: var(--transition);
     }
 
-    .nav-link:hover::after {
-      width: 100%;
+    .nav-link:hover::after, .nav-link.active::after {
+      width: 60%;
+    }
+
+    .btn {
+      padding: 0.6rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1);
     }
 
     .btn-login {
       background-color: transparent;
       border: 1px solid white;
       color: white !important;
-      transition: var(--transition);
     }
 
     .btn-login:hover {
@@ -69,36 +134,13 @@
       color: var(--primary-color) !important;
     }
 
-    .btn-apply {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      border: none;
-      font-weight: 600;
-      box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11);
-    }
-
-    .btn-apply:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1);
-    }
-
     /* Header Section */
     .header-section {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      background: linear-gradient(135deg, rgba(13, 29, 78, 0.9), rgba(67, 58, 200, 0.9));
       color: white;
-      padding: 3rem 0;
+      padding: 4rem 0;
       position: relative;
       overflow: hidden;
-    }
-
-    .header-section::after {
-      content: '';
-      position: absolute;
-      width: 200%;
-      height: 200%;
-      top: -50%;
-      right: -50%; /* Change left to right */
-      background: radial-gradient(rgba(255, 255, 255, 0.1), transparent);
-      z-index: 1;
     }
 
     .header-content {
@@ -109,7 +151,7 @@
 
     /* Program Categories */
     .category-card {
-      border-radius: 12px;
+      border-radius: var(--border-radius-lg);
       overflow: hidden;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
       transition: var(--transition);
@@ -124,161 +166,119 @@
     }
 
     .category-img {
-      height: 180px;
+      height: 200px;
       object-fit: cover;
     }
 
     .category-overlay {
       position: absolute;
       top: 0;
-      right: 0; /* Change left to right */
+      right: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+      background: linear-gradient(to top, rgba(13, 29, 78, 0.9) 0%, rgba(0,0,0,0.1) 100%);
       display: flex;
-      align-items: flex-end;
-    }
-
-    .category-content {
+      flex-direction: column;
+      justify-content: flex-end;
       padding: 1.5rem;
       color: white;
-      width: 100%;
+    }
+
+    .category-content h4 {
+        color: white;
+        font-weight: 600;
+    }
+    
+    .category-content p {
+        color: rgba(255,255,255,0.8);
+        font-size: 0.9rem;
     }
 
     .category-icon {
+      font-size: 1.5rem;
       width: 50px;
       height: 50px;
-      background-color: var(--primary-color);
+      background-color: rgba(255,255,255,0.1);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 1rem;
+      backdrop-filter: blur(5px);
     }
-
-    /* FAQ Section */
-    .faq-item {
-      margin-bottom: 1rem;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    .faq-header {
-      padding: 1rem;
-      background-color: #f5f5f5;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .faq-header:hover {
-      background-color: #e9ecef;
-    }
-
-    .faq-header h5 {
-      margin: 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .faq-icon {
-      transition: var(--transition);
-    }
-
-    .faq-body {
-      padding: 1rem;
-      display: none;
-    }
-
-    .faq-header.active .faq-icon {
-      transform: rotate(180deg);
-    }
-
-    .faq-header.active {
-      background-color: var(--primary-color);
-      color: white;
-    }
-
-    /* Testimonials */
+    
+    /* Testimonials Section */
     .testimonial-section {
-      background-color: #f5f5f5;
+      background-color: var(--light-color);
     }
 
     .testimonial-card {
-      border-radius: 12px;
-      overflow: hidden;
+      border-radius: var(--border-radius-lg);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-      transition: var(--transition);
       border: none;
       margin-bottom: 1.5rem;
       padding: 2rem;
-    }
-
-    .testimonial-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      height: 100%;
     }
 
     .testimonial-quote {
       font-size: 3rem;
       color: var(--primary-color);
-      opacity: 0.2;
+      opacity: 0.1;
       position: absolute;
-      top: 10px;
-      left: 20px; /* Change right to left */
+      top: 15px;
+      left: 25px;
     }
-
-    .testimonial-img {
-      width: 80px;
-      height: 80px;
+    
+    /* SVG Avatar Styling */
+    .testimonial-avatar {
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid var(--primary-color);
+      border: 3px solid var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #e9ecef;
+      padding: 10px;
     }
 
     /* Application Process */
     .process-step {
       text-align: center;
       position: relative;
-      padding-bottom: 2rem;
     }
 
-    .step-number {
-      width: 50px;
-      height: 50px;
+    .step-icon {
+      width: 60px;
+      height: 60px;
       background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
       color: white;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
+      font-size: 1.5rem;
       margin: 0 auto 1rem;
       position: relative;
       z-index: 2;
     }
-
-    .process-step::before {
-      content: '';
-      position: absolute;
-      width: 2px;
-      height: 100%;
-      background-color: #e9ecef;
-      top: 0;
-      right: 50%; /* Change left to right */
-      transform: translateX(50%);
+    
+    .process-line {
+        position: absolute;
+        width: calc(100% - 4rem);
+        height: 2px;
+        background-color: #e0e0e0;
+        top: 30px;
+        right: 50%;
+        z-index: 1;
     }
-
-    .process-step:last-child::before {
-      display: none;
-    }
-
+    
     /* Footer */
     .footer {
       background-color: var(--dark-color);
       color: white;
-      padding: 3rem 0 2rem;
+      padding: 4rem 0 2rem;
     }
 
     .footer h5 {
@@ -286,6 +286,7 @@
       padding-bottom: 1rem;
       margin-bottom: 1.5rem;
       font-weight: 600;
+      color: white;
     }
 
     .footer h5::after {
@@ -293,9 +294,9 @@
       position: absolute;
       width: 50px;
       height: 3px;
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      background: var(--secondary-color);
       bottom: 0;
-      right: 0; /* Change left to right */
+      right: 0;
     }
 
     .footer a {
@@ -308,7 +309,11 @@
 
     .footer a:hover {
       color: white;
-      transform: translateX(-5px); /* Change translateX(5px) to translateX(-5px) */
+      transform: translateX(-5px);
+    }
+    
+    .footer .social-icons a {
+        margin-left: 1rem;
     }
 
     .copyright {
@@ -316,76 +321,8 @@
       padding-top: 1.5rem;
       margin-top: 2rem;
     }
-
-    /* Responsive Adjustments */
-    @media (max-width: 992px) {
-      .category-card {
-        margin-bottom: 1.5rem;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .header-section {
-        padding: 2rem 0;
-      }
-
-      .footer h5 {
-        margin-top: 1.5rem;
-      }
-
-      .process-step::before {
-        right: 25px; /* Change left to right */
-        top: 50px;
-        height: calc(100% - 50px);
-      }
-
-      .step-number {
-        margin: 0 0 1rem 0;
-      }
-
-      .process-step {
-        text-align: right; /* Change text-align: left to text-align: right */
-        padding-right: 70px; /* Change padding-left to padding-right */
-      }
-    }
-
-    .accordion-button:not(.collapsed) {
-      background-color: var(--primary-color);
-      color: white;
-    }
-
-    .accordion-item {
-      margin-bottom: 1rem;
-      border-radius: 8px !important;
-      overflow: hidden;
-      border: 1px solid rgba(0,0,0,.125);
-    }
-
-    .accordion-button:focus {
-      box-shadow: none;
-    }
-
-    .accordion-body {
-      background-color: #f8f9fa;
-    }
-
-    .accordion-body ul {
-      padding-right: 1.5rem; /* Change padding-left to padding-right for RTL */
-      margin-bottom: 0;
-    }
-
-    /* RTL support for Arabic text */
-    .accordion-button::after {
-      margin-left: 0;
-      margin-right: auto;
-    }
-
-    [dir="rtl"] .accordion-button::after {
-      margin-right: 0;
-      margin-left: auto;
-    }
-
-    /* New Program Tab Styles */
+    
+    /* New Program UI Styling */
     .program-tabs .nav-pills .nav-link {
       color: var(--primary-color);
       background-color: #e9ecef;
@@ -403,88 +340,22 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
-    /* Program Detail Card */
-    .program-detail-card {
-      border-radius: 12px;
-      transition: var(--transition);
-      border: none;
-      overflow: hidden;
-      position: relative;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
-      height: 100%; /* Ensure cards in a row have equal height */
-    }
-
-    .program-detail-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-    }
-
-    .program-icon-lg {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .program-title {
-      color: var(--primary-color);
-      font-weight: 700;
-    }
-
-    .program-description {
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
-
-    .program-badge {
-      font-size: 0.8rem;
-      padding: 0.4em 0.8em;
-      border-radius: 5px;
-      font-weight: 500;
-    }
-
-    .program-badge i {
-      font-size: 0.7rem;
-    }
-
-    .program-details-content ul {
-      padding-right: 1.5rem; /* For RTL */
-      padding-left: 0; /* Override default Bootstrap padding-left */
-    }
-
-    .program-details-content table th,
-    .program-details-content table td {
-      text-align: right; /* For RTL */
-    }
-
-    .program-details-content .table-primary th {
-      background-color: var(--primary-color) !important;
-      color: white;
-    }
-
-    /* Custom Styles for New Programs Section UI */
     .programs-container {
       background-color: white;
-      border-radius: 12px;
+      border-radius: var(--border-radius-lg);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       overflow: hidden;
+      min-height: 70vh;
     }
 
     .program-list-panel {
       background-color: var(--light-color);
-      border-left: 1px solid #e9ecef; /* Separator for RTL */
+      border-left: 1px solid #e9ecef;
       padding: 1.5rem;
-      /* REMOVED fixed height and overflow to prevent scrolling */
     }
 
     .program-detail-panel {
       padding: 2rem;
-       /* REMOVED fixed height and overflow to prevent scrolling */
     }
 
     .program-list-item {
@@ -495,14 +366,16 @@
       transition: var(--transition);
       display: flex;
       align-items: center;
+      border: 1px solid transparent;
     }
 
     .program-list-item:hover {
       background-color: #e2e6ea;
+      border-color: #d1d5db;
     }
 
     .program-list-item.active {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      background: var(--primary-color);
       color: white;
       font-weight: 600;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -510,60 +383,104 @@
 
     .program-list-item-icon {
       font-size: 1.2rem;
-      margin-left: 10px; /* Space for icon in RTL */
-      color: var(--primary-color); /* Default icon color */
+      margin-left: 10px;
+      color: var(--secondary-color);
     }
 
     .program-list-item.active .program-list-item-icon {
-      color: white; /* Active icon color */
+      color: white;
     }
-
+    
     .program-detail-header {
       display: flex;
       align-items: center;
       margin-bottom: 1.5rem;
     }
 
-    .program-detail-header .program-icon-lg {
+    .program-icon-lg {
+      width: 70px;
+      height: 70px;
       flex-shrink: 0;
-      margin-left: 1.5rem; /* Space for icon in RTL */
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-left: 1.5rem;
+    }
+    
+    .program-badge {
+      font-size: 0.8rem;
+      padding: 0.4em 0.8em;
+      border-radius: 5px;
+      font-weight: 500;
+    }
+    
+    .accordion-button:not(.collapsed) {
+      background-color: var(--primary-color);
+      color: white;
     }
 
-    .program-detail-header h3 {
-      margin-bottom: 0.5rem;
-      color: var(--primary-color);
-      font-weight: 700;
+    .accordion-item {
+      margin-bottom: 1rem;
+      border-radius: 8px !important;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,.125);
     }
 
-    .program-detail-header p {
-      font-size: 0.95rem;
-      line-height: 1.6;
+    .accordion-button:focus {
+      box-shadow: none;
     }
 
-    /* Responsive adjustments for new UI */
-    @media (max-width: 992px) {
-      .program-list-panel, .program-detail-panel {
-        height: auto; /* Remove fixed height on smaller screens */
-        overflow-y: visible;
-      }
+    /* Responsive Adjustments */
+    @media (max-width: 991.98px) {
       .program-list-panel {
-        border-bottom: 1px solid #e9ecef; /* Add bottom border for mobile */
-        border-left: none; /* Remove left border */
-      }
-      .programs-container .row > div {
-        flex: 0 0 100%;
-        max-width: 100%;
-      }
-      .program-list-item {
-        justify-content: flex-end; /* Align items to end for RTL on mobile */
+        border-bottom: 1px solid #e9ecef;
+        border-left: none;
       }
       .program-detail-header {
         flex-direction: column;
         text-align: center;
       }
-      .program-detail-header .program-icon-lg {
+      .program-icon-lg {
         margin-left: 0;
         margin-bottom: 1rem;
+      }
+      .process-line {
+        display: none;
+      }
+      .process-step {
+          margin-bottom: 2rem;
+      }
+    }
+    
+    @media (max-width: 767.98px) {
+      section {
+        padding: 3rem 0;
+      }
+      .header-section {
+        padding: 3rem 0;
+      }
+      .header-content h1 {
+          font-size: 2.5rem;
+      }
+      .footer h5 {
+        margin-top: 1.5rem;
+      }
+      .footer {
+          text-align: center;
+      }
+      .footer h5::after {
+          right: 50%;
+          transform: translateX(50%);
+      }
+      .footer .social-icons {
+          justify-content: center !important;
+      }
+      .program-tabs .nav-pills .nav-link {
+          margin-bottom: 0.5rem;
       }
     }
   </style>
@@ -573,26 +490,22 @@
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
-
-            <a class="navbar-brand" href="{{ url_for('index') }}">بوابة جامعة القاهرة</a>
+      <a class="navbar-brand" href="{{ url_for('index') }}">بوابة جامعة القاهرة</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">الرئيسية</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('programs') }}">البرامج</a></li>
+            <li class="nav-item"><a class="nav-link active" href="{{ url_for('programs') }}">البرامج</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">المشاريع</a></li>
-             <li class="nav-item"><a class="nav-link" href="{{ url_for('news') }}">الأخبار</a></li>
-        
-            <!-- <li class="nav-item"><a class="nav-link" href="#announcements">الإعلانات</a></li> -->
-
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('news') }}">الأخبار</a></li>
         </ul>
-        <button class="btn btn-login ms-3">تسجيل الدخول</button>
-        <button class="btn btn-apply btn-primary ms-2" onclick="window.location.href='{{ url_for('register') }}'">قدم الآن</button>
-
+        <div class="d-flex align-items-center">
+            <a href="{{ url_for('login') }}" class="btn btn-login ms-2">تسجيل الدخول</a>
+            <a href="{{ url_for('register') }}" class="btn btn-primary">قدم الآن</a>
         </div>
+      </div>
     </div>
   </nav>
 
@@ -600,117 +513,58 @@
   <section class="header-section">
     <div class="container">
       <div class="header-content">
-        <h1 class="display-4 fw-bold mb-3">البرامج المقدمة</h1>
-        <p class="lead mb-4">اكتشف مجموعة متنوعة من برامج الدراسات العليا والمهنية</p>
-
+        <!-- <h1 class="display-4 fw-bold mb-3">برامجنا الأكاديمية</h1> -->
+ <h2 class="section-title" style="color: white;">برامجنا الأكاديمية</h2>
+        <p class="lead mb-4" style="color: white;">اكتشف مجموعة متنوعة من برامج الدراسات العليا والمهنية المصممة لمستقبلك</p>
+        <!-- <p class="lead mb-4">اكتشف مجموعة متنوعة من برامج الدراسات العليا والمهنية المصممة لمستقبلك</p> -->
       </div>
     </div>
   </section>
 
 <!-- Program Categories Section -->
-<section class="py-5" dir="rtl">
+<section id="categories">
   <div class="container">
-    <h2 class="text-center mb-2">اكتشف البرامج المقدمة</h2>
-    <p class="text-center text-muted mb-5">اكتشف البرامج المتخصصة التي تقدمها كلية الدراسات العليا للبحوث الإحصائية</p>
+    <div class="section-header">
+      <h2 class="section-title">اكتشف البرامج المقدمة</h2>
+      <p class="text-center text-muted">تصفح البرامج المتخصصة التي تقدمها كلية الدراسات العليا للبحوث الإحصائية</p>
+    </div>
 
     <div class="row">
-      <!-- Category 1: Software Engineering -->
+      <!-- NOTE: Placeholder image text has been removed -->
       <div class="col-lg-4 col-md-6">
         <div class="category-card">
-          <img src="https://placehold.co/600x400/0D1D4E/ffffff?text=Software" class="card-img-top category-img" alt="هندسة البرمجيات">
+          <img src="static/img/header.jpg" class="card-img-top category-img" alt="هندسة البرمجيات">
           <div class="category-overlay">
+            <div class="category-icon text-white"><i class="fas fa-laptop-code"></i></div>
             <div class="category-content">
-              <div class="category-icon">
-                <i class="fas fa-laptop-code text-white"></i>
-              </div>
               <h4>هندسة البرمجيات</h4>
               <p class="mb-2">دبلوم، ماجستير، دكتوراه</p>
-              <a href="#software-engineering" class="text-white">اكتشف <i class="fas fa-arrow-left ms-1"></i></a>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Category 2: Web Design -->
       <div class="col-lg-4 col-md-6">
         <div class="category-card">
-          <img src="https://placehold.co/600x400/0D1D4E/ffffff?text=Web+Design" class="card-img-top category-img" alt="تصميم الويب">
+          <img src="static/img/header.jpg" class="card-img-top category-img" alt="تصميم الويب">
           <div class="category-overlay">
+             <div class="category-icon text-white"><i class="fas fa-globe"></i></div>
             <div class="category-content">
-              <div class="category-icon">
-                <i class="fas fa-globe text-white"></i>
-              </div>
               <h4>تصميم الويب</h4>
               <p class="mb-2">دبلوم، ماجستير، دكتوراه</p>
-              <a href="#web-design" class="text-white">اكتشف <i class="fas fa-arrow-left ms-1"></i></a>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Category 3: Project Management -->
       <div class="col-lg-4 col-md-6">
         <div class="category-card">
-          <img src="https://placehold.co/600x400/0D1D4E/ffffff?text=Project+Mgmt" class="card-img-top category-img" alt="إدارة المشاريع">
+          <img src="static/img/header.jpg" class="card-img-top category-img" alt="إدارة المشاريع">
           <div class="category-overlay">
+            <div class="category-icon text-white"><i class="fas fa-tasks"></i></div>
             <div class="category-content">
-              <div class="category-icon">
-                <i class="fas fa-tasks text-white"></i>
-              </div>
               <h4>إدارة المشاريع</h4>
               <p class="mb-2">دبلوم، ماجستير، دكتوراه</p>
-              <a href="#project-management" class="text-white">اكتشف <i class="fas fa-arrow-left ms-1"></i></a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Category 4: Operations Research -->
-      <div class="col-lg-4 col-md-6">
-        <div class="category-card">
-          <img src="https://placehold.co/600x400/0D1D4E/ffffff?text=Operations" class="card-img-top category-img" alt="بحوث العمليات">
-          <div class="category-overlay">
-            <div class="category-content">
-              <div class="category-icon">
-                <i class="fas fa-cogs text-white"></i>
-              </div>
-              <h4>بحوث العمليات ودعم القرار</h4>
-              <p class="mb-2">دبلوم، ماجستير، دكتوراه</p>
-              <a href="#operations-research" class="text-white">اكتشف <i class="fas fa-arrow-left ms-1"></i></a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Category 5: Risk Management -->
-      <div class="col-lg-4 col-md-6">
-        <div class="category-card">
-          <img src="https://placehold.co/600x400/0D1D4E/ffffff?text=Risk+Mgmt" class="card-img-top category-img" alt="إدارة المخاطر">
-          <div class="category-overlay">
-            <div class="category-content">
-              <div class="category-icon">
-                <i class="fas fa-exclamation-triangle text-white"></i>
-              </div>
-              <h4>إدارة المخاطر والأزمات</h4>
-              <p class="mb-2">دبلوم، ماجستير، دكتوراه</p>
-              <a href="#risk-management" class="text-white">اكتشف <i class="fas fa-arrow-left ms-1"></i></a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Category 6: Human Resources -->
-      <div class="col-lg-4 col-md-6">
-        <div class="category-card">
-          <img src="https://placehold.co/600x400/0D1D4E/ffffff?text=HR" class="card-img-top category-img" alt="إدارة الموارد البشرية">
-          <div class="category-overlay">
-            <div class="category-content">
-              <div class="category-icon">
-                <i class="fas fa-users text-white"></i>
-              </div>
-              <h4>إدارة الموارد البشرية</h4>
-              <p class="mb-2">دبلوم، ماجستير، دكتوراه</p>
-              <a href="#human-resources" class="text-white">اكتشف <i class="fas fa-arrow-left ms-1"></i></a>
             </div>
           </div>
         </div>
@@ -723,272 +577,185 @@
   </div>
 </section>
 
-
   <!-- FGSSR Programs Section -->
-  <section class="py-5 bg-light" id="fgssr">
+  <section class="bg-light" id="fgssr">
     <div class="container">
-      <h2 class="text-center mb-2">كلية الدراسات العليا للبحوث الإحصائية</h2>
-      <p class="text-center text-muted mb-5">برامج مهنية مصممة لتلبية متطلبات الصناعة وتطوير الخبرات التقنية</p>
+      <div class="section-header">
+        <h2 class="section-title">كلية الدراسات العليا للبحوث الإحصائية</h2>
+        <p class="text-muted">برامج مهنية مصممة لتلبية متطلبات الصناعة وتطوير الخبرات التقنية</p>
+      </div>
 
-      <div class="row mb-5">
+      <div class="row mb-5 align-items-center g-5">
         <div class="col-lg-6">
-          <!-- <img src="https://placehold.co/600x400/0D1D4E/ffffff?text=FGSSR+Building" alt="مبنى كلية الدراسات العليا للبحوث الإحصائية" class="img-fluid rounded shadow"> -->
-          <img src="{{ url_for('static', filename='img/FGSSR.jpg') }}" alt="مبنى كلية الدراسات العليا للبحوث الإحصائية" class="img-fluid rounded shadow mt-3">
+          <img src="{{ url_for('static', filename='img/FGSSR.jpg') }}" alt="مبنى كلية الدراسات العليا" class="img-fluid rounded shadow" onerror="this.src='static/img/header.jpg?text=Faculty+Building'">
         </div>
         <div class="col-lg-6">
           <h3 class="mb-3">عن الكلية</h3>
           <p>كلية الدراسات العليا للبحوث الإحصائية (FGSSR) هي واحدة من أقدم وأعرق المؤسسات التعليمية المتقدمة في الإحصاء وعلوم الحاسب والمجالات ذات الصلة في مصر. لأكثر من 70 عامًا، كانت الكلية رائدة في التعليم الإحصائي والبحث العلمي.</p>
-
-          <p>تقدم الكلية مجموعة واسعة من البرامج المهنية المصممة لتزويد الطلاب بالمهارات التقنية والخبرات المطلوبة في سوق العمل اليوم. مع أكثر من 18 برنامجًا متخصصًا، تعد الكلية خريجيها للتميز في مجالات مختلفة بما في ذلك علم البيانات، هندسة البرمجيات، إدارة المخاطر، والمزيد.</p>
+          <p>تقدم الكلية مجموعة واسعة من البرامج المهنية المصممة لتزويد الطلاب بالمهارات التقنية والخبرات المطلوبة في سوق العمل اليوم. مع أكثر من 18 برنامجًا متخصصًا، تعد الكلية خريجيها للتميز في مجالات مختلفة.</p>
 
           <div class="d-flex flex-wrap gap-3 mt-4">
-            <button class="btn btn-primary">اتصل بالكلية</button>
-            <button class="btn btn-outline-primary">تحميل البروشور</button>
+            <!-- NOTE: Updated button links -->
+            <a href="mailto:info@cu.edu.eg" class="btn btn-primary">اتصل بالكلية</a>
+            <a href="https://www.scribd.com/document/721933912/%D8%AF%D9%84%D9%8A%D9%84-%D8%A7%D9%84%D8%B7%D8%A7%D9%84%D8%A8-2023-2024" target="_blank" class="btn btn-outline-primary">تحميل البروشور</a>
           </div>
         </div>
       </div>
 
       <!-- New All Programs Section with Tabs and Split Panel -->
-      <section class="py-5" id="all-programs-new">
+      <div id="all-programs-new">
         <div class="container-fluid">
-          <h2 class="text-center mb-2">برامجنا الأكاديمية</h2>
-          <p class="text-center text-muted mb-5">استكشف برامج الدبلوم، الماجستير، والدكتوراه المتاحة</p>
-
-          <div class="programs-container row no-gutters">
-            <!-- Program Detail Panel (Left/Main Content) -->
-            <div class="col-lg-8 order-lg-1 order-2 program-detail-panel">
-              <div id="program-detail-content">
-                <div class="text-center text-muted pt-5">
-                  <i class="fas fa-info-circle fa-3x mb-3"></i>
-                  <h3>اختر برنامجًا من القائمة لاستعراض تفاصيله</h3>
-                  <p>استخدم القوائم على اليسار لتصفح الدبلومات والماجستير والدكتوراه.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Program List Panel (Right/Sidebar) -->
-            <div class="col-lg-4 order-lg-2 order-1 program-list-panel">
-              <div class="program-tabs mb-4">
-                <ul class="nav nav-pills justify-content-center" id="pills-tab" role="tablist">
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="pills-diploma-tab" data-bs-toggle="pill" data-bs-target="#pills-diploma-list" type="button" role="tab" aria-controls="pills-diploma-list" aria-selected="true">الدبلوم</button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-masters-tab" data-bs-toggle="pill" data-bs-target="#pills-masters-list" type="button" role="tab" aria-controls="pills-masters-list" aria-selected="false">الماجستير</button>
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-phd-tab" data-bs-toggle="pill" data-bs-target="#pills-phd-list" type="button" role="tab" aria-controls="pills-phd-list" aria-selected="false">الدكتوراه</button>
-                  </li>
-                </ul>
-                <div class="tab-content mt-3" id="pills-tabContent">
-                  <!-- Diploma List Content -->
-                  <div class="tab-pane fade show active" id="pills-diploma-list" role="tabpanel" aria-labelledby="pills-diploma-tab">
-                    <div id="diploma-program-list">
-                      <!-- Program titles will be rendered here by JavaScript -->
-                    </div>
-                  </div>
-
-                  <!-- Master's List Content -->
-                  <div class="tab-pane fade" id="pills-masters-list" role="tabpanel" aria-labelledby="pills-masters-tab">
-                    <div id="masters-program-list">
-                      <!-- Program titles will be rendered here by JavaScript -->
-                    </div>
-                  </div>
-
-                  <!-- PhD List Content -->
-                  <div class="tab-pane fade" id="pills-phd-list" role="tabpanel" aria-labelledby="pills-phd-tab">
-                    <div id="phd-program-list">
-                      <!-- Program titles will be rendered here by JavaScript -->
+          <div class="section-header">
+            <h2 class="section-title">برامجنا الأكاديمية</h2>
+            <p class="text-muted">استكشف برامج الدبلوم، الماجستير، والدكتوراه المتاحة</p>
+          </div>
+          
+          <div class="programs-container">
+            <div class="row g-0">
+                <!-- Program List Panel (Right/Sidebar) -->
+                <div class="col-lg-4 order-lg-2 order-1 program-list-panel">
+                  <div class="program-tabs mb-4">
+                    <ul class="nav nav-pills nav-fill" id="pills-tab" role="tablist">
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pills-diploma-tab" data-bs-toggle="pill" data-bs-target="#pills-diploma-list" type="button" role="tab">الدبلوم</button>
+                      </li>
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-masters-tab" data-bs-toggle="pill" data-bs-target="#pills-masters-list" type="button" role="tab">الماجستير</button>
+                      </li>
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-phd-tab" data-bs-toggle="pill" data-bs-target="#pills-phd-list" type="button" role="tab">الدكتوراه</button>
+                      </li>
+                    </ul>
+                    <div class="tab-content mt-3" id="pills-tabContent">
+                      <div class="tab-pane fade show active" id="pills-diploma-list" role="tabpanel"><div id="diploma-program-list"></div></div>
+                      <div class="tab-pane fade" id="pills-masters-list" role="tabpanel"><div id="masters-program-list"></div></div>
+                      <div class="tab-pane fade" id="pills-phd-list" role="tabpanel"><div id="phd-program-list"></div></div>
                     </div>
                   </div>
                 </div>
-              </div>
+                <!-- Program Detail Panel (Left/Main Content) -->
+                <div class="col-lg-8 order-lg-1 order-2 program-detail-panel">
+                  <div id="program-detail-content">
+                    <!-- Initial State / Program details load here -->
+                  </div>
+                </div>
             </div>
           </div>
         </div>
-      </section>
-      <!-- End New All Programs Section with Tabs and Split Panel -->
-
+      </div>
     </div>
   </section>
 
   <!-- Application Process -->
-  <section class="py-5">
+  <section>
     <div class="container">
-      <h2 class="text-center mb-2">كيفية التقديم</h2>
-      <p class="text-center text-muted mb-5">اتبع هذه الخطوات للانضمام إلى مجتمعنا الأكاديمي</p>
-
+      <div class="section-header">
+        <h2 class="section-title">كيفية التقديم</h2>
+        <p class="text-muted">اتبع هذه الخطوات البسيطة للانضمام إلى مجتمعنا الأكاديمي</p>
+      </div>
       <div class="row">
-        <div class="col-lg-8 mx-auto">
-          <div class="row">
-            <!-- Step 1 -->
-            <div class="col-md-4">
-              <div class="process-step">
-                <div class="step-number">1</div>
-                <h5>اختر برنامجًا</h5>
-                <p>تصفح برامجنا واختر البرنامج الذي يتوافق مع اهتماماتك وأهدافك المهنية.</p>
-              </div>
+        <div class="col-12">
+            <div class="row">
+                <!-- Step 1 -->
+                <div class="col-md-4">
+                    <div class="process-step">
+                        <div class="step-icon">1</div>
+                        <h5>اختر برنامجًا</h5>
+                        <p>تصفح برامجنا واختر ما يناسب أهدافك المهنية.</p>
+                        <div class="d-md-block d-none">
+                            <div class="process-line"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Step 2 -->
+                <div class="col-md-4">
+                    <div class="process-step">
+                        <div class="step-icon">2</div>
+                        <h5>جهّز المستندات</h5>
+                        <p>تأكد من استيفائك للمؤهلات وتوفر المستندات المطلوبة.</p>
+                        <div class="d-md-block d-none">
+                            <div class="process-line"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Step 3 -->
+                <div class="col-md-4">
+                    <div class="process-step">
+                        <div class="step-icon">3</div>
+                        <h5>قدّم الطلب</h5>
+                        <p>أكمل نموذج الطلب عبر الإنترنت من خلال بوابتنا.</p>
+                    </div>
+                </div>
             </div>
-
-            <!-- Step 2 -->
-            <div class="col-md-4">
-              <div class="process-step">
-                <div class="step-number">2</div>
-                <h5>تحقق من المتطلبات</h5>
-                <p>تأكد من استيفائك للمؤهلات الأكاديمية وتوفر المستندات المطلوبة.</p>
-              </div>
-            </div>
-
-            <!-- Step 3 -->
-            <div class="col-md-4">
-              <div class="process-step">
-                <div class="step-number">3</div>
-                <h5>تقديم الطلب</h5>
-                <p>أكمل نموذج الطلب عبر الإنترنت وادفع رسوم الطلب من خلال بوابتنا.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="text-center mt-5">
-            <button class="btn btn-primary btn-lg">ابدأ تقديمك الآن</button>
-          </div>
+        </div>
+        <div class="col-12 text-center mt-5">
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">ابدأ تقديمك الآن</a>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Testimonials Section -->
-  <section class="py-5 testimonial-section">
+  <section class="testimonial-section">
     <div class="container">
-      <h2 class="text-center mb-2">ما يقوله طلابنا</h2>
-      <p class="text-center text-muted mb-5">استمع إلى تجارب الطلاب الذين خاضوا برامجنا</p>
+       <div class="section-header">
+        <h2 class="section-title">ماذا يقول طلابنا</h2>
+        <p class="text-muted">استمع إلى تجارب الطلاب الذين خاضوا برامجنا الأكاديمية</p>
+      </div>
 
-      <div class="row">
-        <!-- Testimonial 1 -->
-        <div class="col-lg-4">
+      <div class="row g-4">
+        <!-- NOTE: Replaced placeholder images with a custom SVG icon -->
+        <div class="col-lg-4 col-md-6">
           <div class="testimonial-card bg-white position-relative">
             <i class="fas fa-quote-right testimonial-quote"></i>
             <div class="d-flex align-items-center mb-4">
-              <img src="https://placehold.co/80x80/0D1D4E/ffffff?text=User1" class="testimonial-img me-3" alt="طالب">
+              <div class="testimonial-avatar me-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary-color);">
+                  <path d="M12 2.5a5.5 5.5 0 0 1 3.096 10.047 9.005 9.005 0 0 1 5.9 8.181.75.75 0 0 1-1.498.07 7.505 7.505 0 0 0-14.992 0 .75.75 0 0 1-1.498-.07A9.005 9.005 0 0 1 9 12.547 5.5 5.5 0 0 1 12 2.5ZM12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
+                </svg>
+              </div>
               <div>
                 <h5 class="mb-0">أحمد إبراهيم</h5>
                 <p class="text-muted mb-0">هندسة البرمجيات، 2022</p>
               </div>
             </div>
-            <p class="mb-0">"برنامج هندسة البرمجيات في FGSSR منحني المهارات المتقدمة المطلوبة في سوق العمل اليوم. كان الأساتذة داعمين والمنهج الدراسي كان تحديًا في جميع الجوانب الصحيحة. حصلت على وظيفة كمطور كبير قبل التخرج."</p>
+            <p class="mb-0">"البرنامج منحني المهارات المتقدمة المطلوبة في سوق العمل. كان الأساتذة داعمين والمنهج الدراسي كان تحديًا ومفيدًا. حصلت على وظيفة قبل التخرج."</p>
           </div>
         </div>
 
-        <!-- Testimonial 2 -->
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-md-6">
           <div class="testimonial-card bg-white position-relative">
             <i class="fas fa-quote-right testimonial-quote"></i>
             <div class="d-flex align-items-center mb-4">
-              <img src="https://placehold.co/80x80/0D1D4E/ffffff?text=User2" class="testimonial-img me-3" alt="طالب">
+              <div class="testimonial-avatar me-3">
+                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary-color);">
+                  <path d="M12 2.5a5.5 5.5 0 0 1 3.096 10.047 9.005 9.005 0 0 1 5.9 8.181.75.75 0 0 1-1.498.07 7.505 7.505 0 0 0-14.992 0 .75.75 0 0 1-1.498-.07A9.005 9.005 0 0 1 9 12.547 5.5 5.5 0 0 1 12 2.5ZM12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
+                </svg>
+              </div>
               <div>
                 <h5 class="mb-0">نور حسام</h5>
                 <p class="text-muted mb-0">تحليل البيانات، 2021</p>
               </div>
             </div>
-            <p class="mb-0">"برنامج تحليل البيانات زودني بالمهارات الأساسية في التحليل الإحصائي وتصور البيانات. قدمت المشاريع العملية ودراسات الحالة تجربة واقعية أطبقها يوميًا في دوري كمحلل بيانات في شركة متعددة الجنسيات."</p>
+            <p class="mb-0">"برنامج تحليل البيانات زودني بالمهارات الأساسية في التحليل الإحصائي. قدمت المشاريع العملية تجربة واقعية أطبقها يوميًا في دوري كمحلل بيانات."</p>
           </div>
         </div>
 
-        <!-- Testimonial 3 -->
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-md-6">
           <div class="testimonial-card bg-white position-relative">
             <i class="fas fa-quote-right testimonial-quote"></i>
             <div class="d-flex align-items-center mb-4">
-              <img src="https://placehold.co/80x80/0D1D4E/ffffff?text=User3" class="testimonial-img me-3" alt="طالب">
+               <div class="testimonial-avatar me-3">
+                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="color: var(--primary-color);">
+                  <path d="M12 2.5a5.5 5.5 0 0 1 3.096 10.047 9.005 9.005 0 0 1 5.9 8.181.75.75 0 0 1-1.498.07 7.505 7.505 0 0 0-14.992 0 .75.75 0 0 1-1.498-.07A9.005 9.005 0 0 1 9 12.547 5.5 5.5 0 0 1 12 2.5ZM12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
+                </svg>
+              </div>
               <div>
                 <h5 class="mb-0">هاني محمود</h5>
                 <p class="text-muted mb-0">إدارة المشاريع، 2023</p>
               </div>
             </div>
-            <p class="mb-0">"كمحترف،سمحت لي مرونة البرنامج بمواصلة تعليمي مع التقدم في مسيرتي المهنية. ساعدتني المعرفة والشهادة التي حصلت عليها في تأمين ترقية إلى مدير مشروع في مؤسستي خلال أشهر من التخرج."</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ Section -->
-  <section class="py-5">
-    <div class="container">
-      <h2 class="text-center mb-2">الأسئلة الشائعة</h2>
-      <p class="text-center text-muted mb-5">اعثر على إجابات للأسئلة الشائعة حول برامجنا</p>
-
-      <div class="row">
-        <div class="col-lg-8 mx-auto">
-          <!-- FAQ Item 1 -->
-          <div class="faq-item">
-            <div class="faq-header" id="faq-header-1">
-              <h5>ما هي متطلبات القبول؟
-                <i class="fas fa-chevron-down faq-icon"></i>
-              </h5>
-            </div>
-            <div class="faq-body" id="faq-body-1">
-              <p>تختلف متطلبات القبول حسب البرنامج ولكنها تشمل عمومًا درجة البكالوريوس من مؤسسة معتمدة، السجلات الأكاديمية الرسمية، نموذج الطلب، وقد تشمل مقابلات أو امتحانات قبول. تتطلب بعض البرامج مقررات تمهيدية محددة للمتقدمين من غير المتخصصين.</p>
-            </div>
-          </div>
-
-          <!-- FAQ Item 2 -->
-          <div class="faq-item">
-            <div class="faq-header" id="faq-header-2">
-              <h5>هل تتوفر منح دراسية؟
-                <i class="fas fa-chevron-down faq-icon"></i>
-              </h5>
-            </div>
-            <div class="faq-body" id="faq-body-2">
-              <p>نعم، تقدم جامعة القاهرة منحًا دراسية مختلفة بناءً على الجدارة الأكاديمية، الحاجة المالية، والمواهب الخاصة. تتوفر أيضًا منح للطلاب الدوليين لبرامج محددة. اتصل بمكتب المساعدة المالية للحصول على أحدث المعلومات حول فرص المنح الدراسية.</p>
-            </div>
-          </div>
-
-          <!-- FAQ Item 3 -->
-          <div class="faq-item">
-            <div class="faq-header" id="faq-header-3">
-              <h5>ما هو نظام التقييم؟
-                <i class="fas fa-chevron-down faq-icon"></i>
-              </h5>
-            </div>
-            <div class="faq-body" id="faq-body-3">
-              <p>بالنسبة للبرامج المهنية، يتكون نظام التقييم عادةً من:</p>
-              <ul>
-                <li>أعمال نصف السنة (60%): تشمل الواجبات، الاختبارات القصيرة، المشاريع، والامتحانات النصفية</li>
-                <li>ال الامتحان النهائي (40%)</li>
-                <li>لاجتياز المقرر، يجب أن يحصل الطلاب على 50/100 على الأقل كدرجة كلية و20/40 كحد أدنى في الامتحان النهائي</li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- FAQ Item 4 -->
-          <div class="faq-item">
-            <div class="faq-header" id="faq-header-4">
-              <h5>كم من الوقت يستغرق إكمال البرنامج؟
-                <i class="fas fa-chevron-down faq-icon"></i>
-              </h5>
-            </div>
-            <div class="faq-body" id="faq-body-4">
-              <p>تختلف مدة البرنامج:</p>
-              <ul>
-                <li>الدبلومات المهنية: عام واحد (فصلين دراسيين)</li>
-                <li>درجات الماجستير: عامين على الأقل (4 فصول دراسية)</li>
-                <li>درجات الدكتوراه: 3-4 سنوات على الأقل</li>
-              </ul>
-              <p>لكل برنامج مدة قصوى مسموح بها للإكمال، والتي يتم تحديدها في تفاصيل البرنامج.</p>
-            </div>
-          </div>
-
-          <!-- FAQ Item 5 -->
-          <div class="faq-item">
-            <div class="faq-header" id="faq-header-5">
-              <h5>هل يمكنني تحويل الساعات المعتمدة من جامعة أخرى؟
-                <i class="fas fa-chevron-down faq-icon"></i>
-              </h5>
-            </div>
-            <div class="faq-body" id="faq-body-5">
-              <p>نعم، نقبل تحويل الساعات المعتمدة من الجامعات المعتمدة. يمكن تحويل الساعات إذا كانت المقررات مكافئة في المحتوى والمستوى لتلك المقدمة في جامعة القاهرة. يختلف الحد الأقصى لعدد الساعات المعتمدة القابلة للتحويل حسب البرنامج. اتصل بمكتب القبول للحصول على تفاصيل محددة حول حالتك.</p>
-            </div>
+            <p class="mb-0">"سمحت لي مرونة البرنامج بمواصلة تعليمي مع التقدم في مسيرتي المهنية. ساعدتني المعرفة التي حصلت عليها في تأمين ترقية في مؤسستي."</p>
           </div>
         </div>
       </div>
@@ -998,40 +765,39 @@
   <!-- Footer Section -->
   <footer class="footer">
     <div class="container">
-      <div class="row">
-        <div class="col-lg-4">
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
           <h5>جامعة القاهرة</h5>
           <p>تقديم تعليم عالي الجودة منذ عام 1908. واحدة من أقدم وأعرق الجامعات في إفريقيا والشرق الأوسط.</p>
+           <div class="mt-4 social-icons d-flex">
+            <a href="#" class="ms-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+            <a href="#" class="ms-3"><i class="fab fa-twitter fa-lg"></i></a>
+            <a href="#" class="ms-3"><i class="fab fa-instagram fa-lg"></i></a>
+          </div>
         </div>
-        <div class="col-lg-2">
+        <div class="col-lg-2 col-md-6">
           <h5>البرامج</h5>
-          <a href="#">المرحلة الجامعية</a>
-          <a href="#">الدراسات العليا</a>
-          <a href="#">البرامج المهنية</a>
-          <a href="#">الدورات عبر الإنترنت</a>
+          <a href="#all-programs-new">الدبلوم</a>
+          <a href="#all-programs-new">الماجستير</a>
+          <a href="#all-programs-new">الدكتوراه</a>
         </div>
-        <div class="col-lg-2">
+        <div class="col-lg-2 col-md-6">
           <h5>الموارد</h5>
           <a href="#">المكتبة</a>
           <a href="#">البحث العلمي</a>
-          <a href="#">المنشورات</a>
           <a href="#">خدمات التوظيف</a>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-md-6">
           <h5>اتصل بنا</h5>
-          <p>جامعة القاهرة، الجيزة، مصر<br>
-          الهاتف: +20 2 35676105<br>
-          البريد الإلكتروني: info@cu.edu.eg</p>
-          <div class="d-flex gap-3 mt-3">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-          </div>
+          <ul class="list-unstyled">
+              <li class="d-flex mb-2"><i class="fas fa-map-marker-alt mt-1 me-3"></i><span>جامعة القاهرة، الجيزة، مصر</span></li>
+              <li class="d-flex mb-2"><i class="fas fa-phone mt-1 me-3"></i><span>+20 2 35676105</span></li>
+              <li class="d-flex"><i class="fas fa-envelope mt-1 me-3"></i><a href="mailto:info@cu.edu.eg">info@cu.edu.eg</a></li>
+          </ul>
         </div>
       </div>
       <div class="text-center copyright">
-        <p>&copy; 2025 جامعة القاهرة. جميع الحقوق محفوظة.</p>
+        <p>&copy; 2024 جامعة القاهرة. جميع الحقوق محفوظة.</p>
       </div>
     </div>
   </footer>
@@ -1040,28 +806,7 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Get all FAQ headers
-      const faqHeaders = document.querySelectorAll('.faq-header');
-
-      // Add click event listeners to each header
-      faqHeaders.forEach(header => {
-        header.addEventListener('click', function() {
-          // Toggle active class on the header
-          this.classList.toggle('active');
-
-          // Get the body element
-          const body = this.nextElementSibling;
-
-          // Toggle the display of the body
-          if (this.classList.contains('active')) {
-            body.style.display = 'block';
-          } else {
-            body.style.display = 'none';
-          }
-        });
-      });
-
-      // Data parsed from 'cu programs.txt'
+      // NOTE: Full program data is restored here.
       const programs_by_level = {
         "diploma": [
           {
@@ -1069,2308 +814,195 @@
             "title_ar": "إدارة المشروعات",
             "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال إدارة المشروعات.",
             "icon": "fas fa-tasks",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "أساسيات إدارة المشاريع",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات",
-                  "hours": 3
-                },
-                {
-                  "course": "التخطيط والجدولة",
-                  "hours": 3
-                },
-                {
-                  "course": "الهيكل التنظيمي والاتصالات",
-                  "hours": 3
-                },
-                {
-                  "course": "صنع القرار",
-                  "hours": 3
-                },
-                {
-                  "course": "الميزانية والتكلفة",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة الأزمات والمخاطر",
-                  "hours": 3
-                },
-                {
-                  "course": "مراقبة المشاريع",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة الجودة الشاملة",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "project-management-diploma"
+            "details": { "prerequisites": [], "curriculum": [{ "course": "أساسيات إدارة المشاريع", "hours": 3 }, { "course": "تحليل البيانات", "hours": 3 }, { "course": "التخطيط والجدولة", "hours": 3 }, { "course": "الهيكل التنظيمي والاتصالات", "hours": 3 }, { "course": "صنع القرار", "hours": 3 }, { "course": "الميزانية والتكلفة", "hours": 3 }, { "course": "إدارة الأزمات والمخاطر", "hours": 3 }, { "course": "مراقبة المشاريع", "hours": 3 }, { "course": "إدارة الجودة الشاملة", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." },
+            "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "project-management-diploma"
           },
           {
-            "title_en": "Operations Research and Decision Support",
-            "title_ar": "بحوث العمليات ودعم القرار",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال بحوث العمليات ودعم القرار.",
-            "icon": "fas fa-cogs",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "نماذج بحوث العمليات وتطبيقاتها",
-                  "hours": 3
-                },
-                {
-                  "course": "نظم دعم القرار",
-                  "hours": 3
-                },
-                {
-                  "course": "التحليل الإحصائي للأعمال",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة المشاريع والشبكات",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة المخزون",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة العمليات",
-                  "hours": 3
-                },
-                {
-                  "course": "النمذجة والمحاكاة",
-                  "hours": 3
-                },
-                {
-                  "course": "مراقبة الجودة",
-                  "hours": 3
-                },
-                {
-                  "course": "برمجيات بحوث العمليات",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "operations-research-and-decision-support-diploma"
+            "title_en": "Operations Research and Decision Support", "title_ar": "بحوث العمليات ودعم القرار", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال بحوث العمليات ودعم القرار.", "icon": "fas fa-cogs", "details": { "prerequisites": [], "curriculum": [{ "course": "نماذج بحوث العمليات وتطبيقاتها", "hours": 3 }, { "course": "نظم دعم القرار", "hours": 3 }, { "course": "التحليل الإحصائي للأعمال", "hours": 3 }, { "course": "إدارة المشاريع والشبكات", "hours": 3 }, { "course": "إدارة المخزون", "hours": 3 }, { "course": "إدارة العمليات", "hours": 3 }, { "course": "النمذجة والمحاكاة", "hours": 3 }, { "course": "مراقبة الجودة", "hours": 3 }, { "course": "برمجيات بحوث العمليات", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "operations-research-and-decision-support-diploma"
           },
           {
-            "title_en": "Supply Chain and Operations Management",
-            "title_ar": "سلسلة الإمداد وإدارة العمليات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال سلسلة الإمداد وإدارة العمليات.",
-            "icon": "fas fa-truck",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "إدارة المشاريع: الأدوات والتقنيات",
-                  "hours": 3
-                },
-                {
-                  "course": "أدوات التحليل الكمي في صنع القرار",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة العمليات",
-                  "hours": 3
-                },
-                {
-                  "course": "برمجيات إدارة العمليات",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة سلسلة الإمداد",
-                  "hours": 3
-                },
-                {
-                  "course": "التحليل الإحصائي للأعمال",
-                  "hours": 3
-                },
-                {
-                  "course": "نظم المعلومات في سلسلة الإمداد",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة الإنتاج",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة الجودة",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "supply-chain-and-operations-management-diploma"
+            "title_en": "Supply Chain and Operations Management", "title_ar": "سلسلة الإمداد وإدارة العمليات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال سلسلة الإمداد وإدارة العمليات.", "icon": "fas fa-truck", "details": { "prerequisites": [], "curriculum": [{ "course": "إدارة المشاريع: الأدوات والتقنيات", "hours": 3 }, { "course": "أدوات التحليل الكمي في صنع القرار", "hours": 3 }, { "course": "إدارة العمليات", "hours": 3 }, { "course": "برمجيات إدارة العمليات", "hours": 3 }, { "course": "إدارة سلسلة الإمداد", "hours": 3 }, { "course": "التحليل الإحصائي للأعمال", "hours": 3 }, { "course": "نظم المعلومات في سلسلة الإمداد", "hours": 3 }, { "course": "إدارة الإنتاج", "hours": 3 }, { "course": "إدارة الجودة", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "supply-chain-and-operations-management-diploma"
           },
           {
-            "title_en": "Web Design",
-            "title_ar": "تصميم المواقع",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال تصميم المواقع.",
-            "icon": "fas fa-globe",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مقدمة في علوم الحاسب",
-                  "hours": 3
-                },
-                {
-                  "course": "قاعدة بيانات SQL Server",
-                  "hours": 3
-                },
-                {
-                  "course": "HTML 5 و CSS 3",
-                  "hours": 3
-                },
-                {
-                  "course": "فوتوشوب لتصميم الويب",
-                  "hours": 3
-                },
-                {
-                  "course": "ASP.NET و JavaScript و jQuery",
-                  "hours": 3
-                },
-                {
-                  "course": "برمجة الويب باستخدام PHP",
-                  "hours": 3
-                },
-                {
-                  "course": "Bootstrap لتصميم الويب المتجاوب",
-                  "hours": 3
-                },
-                {
-                  "course": "تطوير الويب لتحسين محركات البحث SEO",
-                  "hours": 3
-                },
-                {
-                  "course": "البرمجة الشيئية",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "web-design-diploma"
+            "title_en": "Web Design", "title_ar": "تصميم المواقع", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال تصميم المواقع.", "icon": "fas fa-globe", "details": { "prerequisites": [], "curriculum": [{ "course": "مقدمة في علوم الحاسب", "hours": 3 }, { "course": "قاعدة بيانات SQL Server", "hours": 3 }, { "course": "HTML 5 و CSS 3", "hours": 3 }, { "course": "فوتوشوب لتصميم الويب", "hours": 3 }, { "course": "ASP.NET و JavaScript و jQuery", "hours": 3 }, { "course": "برمجة الويب باستخدام PHP", "hours": 3 }, { "course": "Bootstrap لتصميم الويب المتجاوب", "hours": 3 }, { "course": "تطوير الويب لتحسين محركات البحث SEO", "hours": 3 }, { "course": "البرمجة الشيئية", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "web-design-diploma"
           },
           {
-            "title_en": "Software Engineering",
-            "title_ar": "هندسة البرمجيات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال هندسة البرمجيات.",
-            "icon": "fas fa-laptop-code",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ أنظمة الحاسوب والبرمجة",
-                  "hours": 3
-                },
-                {
-                  "course": "نظم قواعد البيانات العلائقية",
-                  "hours": 3
-                },
-                {
-                  "course": "عملية تطوير البرمجيات",
-                  "hours": 3
-                },
-                {
-                  "course": "تصميم واجهة المستخدم",
-                  "hours": 3
-                },
-                {
-                  "course": "تطوير البرمجيات الشيئية باستخدام UML",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة مشاريع البرمجيات",
-                  "hours": 3
-                },
-                {
-                  "course": "تصميم وهندسة الويب",
-                  "hours": 3
-                },
-                {
-                  "course": "تطوير البرمجيات الرشيقة",
-                  "hours": 3
-                },
-                {
-                  "course": "البرمجة على نطاق واسع",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "software-engineering-diploma"
+            "title_en": "Software Engineering", "title_ar": "هندسة البرمجيات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال هندسة البرمجيات.", "icon": "fas fa-laptop-code", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ أنظمة الحاسوب والبرمجة", "hours": 3 }, { "course": "نظم قواعد البيانات العلائقية", "hours": 3 }, { "course": "عملية تطوير البرمجيات", "hours": 3 }, { "course": "تصميم واجهة المستخدم", "hours": 3 }, { "course": "تطوير البرمجيات الشيئية باستخدام UML", "hours": 3 }, { "course": "إدارة مشاريع البرمجيات", "hours": 3 }, { "course": "تصميم وهندسة الويب", "hours": 3 }, { "course": "تطوير البرمجيات الرشيقة", "hours": 3 }, { "course": "البرمجة على نطاق واسع", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "software-engineering-diploma"
           },
           {
-            "title_en": "Population Policies & Data Analysis",
-            "title_ar": "السياسات السكانية وتحليل بياناتها",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال السياسات السكانية وتحليل بياناتها.",
-            "icon": "fas fa-users",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "السياسات والتوقعات السكانية",
-                  "hours": 3
-                },
-                {
-                  "course": "مصادر البيانات السكانية وتقييمها",
-                  "hours": 3
-                },
-                {
-                  "course": "السكان والتنمية (البشرية – الفقر – التنفيذ...)",
-                  "hours": 3
-                },
-                {
-                  "course": "استخدام SPSS لتحليل بيانات المسح",
-                  "hours": 3
-                },
-                {
-                  "course": "توقعات السكان باستخدام برنامج Spectrum",
-                  "hours": 3
-                },
-                {
-                  "course": "توقعات القوى العاملة ومؤشرات سوق العمل",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات متعددة المستويات",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل المسار والمعادلات الهيكلية باستخدام AMOS",
-                  "hours": 3
-                },
-                {
-                  "course": "تطبيقات التحليل متعدد المتغيرات",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "population-policies-data-analysis-diploma"
+            "title_en": "Population Policies & Data Analysis", "title_ar": "السياسات السكانية وتحليل بياناتها", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال السياسات السكانية وتحليل بياناتها.", "icon": "fas fa-users", "details": { "prerequisites": [], "curriculum": [{ "course": "السياسات والتوقعات السكانية", "hours": 3 }, { "course": "مصادر البيانات السكانية وتقييمها", "hours": 3 }, { "course": "السكان والتنمية (البشرية – الفقر – التنفيذ...)", "hours": 3 }, { "course": "استخدام SPSS لتحليل بيانات المسح", "hours": 3 }, { "course": "توقعات السكان باستخدام برنامج Spectrum", "hours": 3 }, { "course": "توقعات القوى العاملة ومؤشرات سوق العمل", "hours": 3 }, { "course": "تحليل البيانات متعددة المستويات", "hours": 3 }, { "course": "تحليل المسار والمعادلات الهيكلية باستخدام AMOS", "hours": 3 }, { "course": "تطبيقات التحليل متعدد المتغيرات", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "population-policies-data-analysis-diploma"
           },
           {
-            "title_en": "Applied Statistics",
-            "title_ar": "الإحصاءات التطبيقية",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الإحصاءات التطبيقية.",
-            "icon": "fas fa-chart-pie",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مقدمة في الإحصاء التطبيقي",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في المعاينة",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في تحليل البيانات النوعية",
-                  "hours": 3
-                },
-                {
-                  "course": "السلاسل الزمنية مع التطبيقات",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات باستخدام الحزم الإحصائية (I)",
-                  "hours": 3
-                },
-                {
-                  "course": "الأرقام القياسية",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل الانحدار",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في تحليل البيانات الكمية",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات باستخدام الحزم الإحصائية (II)",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "applied-statistics-diploma"
+            "title_en": "Applied Statistics", "title_ar": "الإحصاءات التطبيقية", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الإحصاءات التطبيقية.", "icon": "fas fa-chart-pie", "details": { "prerequisites": [], "curriculum": [{ "course": "مقدمة في الإحصاء التطبيقي", "hours": 3 }, { "course": "مقدمة في المعاينة", "hours": 3 }, { "course": "مقدمة في تحليل البيانات النوعية", "hours": 3 }, { "course": "السلاسل الزمنية مع التطبيقات", "hours": 3 }, { "course": "تحليل البيانات باستخدام الحزم الإحصائية (I)", "hours": 3 }, { "course": "الأرقام القياسية", "hours": 3 }, { "course": "تحليل الانحدار", "hours": 3 }, { "course": "مقدمة في تحليل البيانات الكمية", "hours": 3 }, { "course": "تحليل البيانات باستخدام الحزم الإحصائية (II)", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "applied-statistics-diploma"
           },
           {
-            "title_en": "Modern Management for Human Resources",
-            "title_ar": "الإدارة الحديثة للموارد البشرية",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الإدارة الحديثة للموارد البشرية.",
-            "icon": "fas fa-user-tie",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "أساسيات ووظائف إدارة الموارد البشرية",
-                  "hours": 3
-                },
-                {
-                  "course": "نظام معلومات الموارد البشرية",
-                  "hours": 3
-                },
-                {
-                  "course": "تخطيط برامج التدريب",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة البدائل",
-                  "hours": 3
-                },
-                {
-                  "course": "تنمية الموارد البشرية في إطار الجودة الشاملة",
-                  "hours": 3
-                },
-                {
-                  "course": "قوانين العمل في مصر",
-                  "hours": 3
-                },
-                {
-                  "course": "تخطيط القوى العاملة",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في التحليل الإحصائي",
-                  "hours": 3
-                },
-                {
-                  "course": "الموارد البشرية والرضا الوظيفي",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "modern-management-for-human-resources-diploma"
+            "title_en": "Modern Management for Human Resources", "title_ar": "الإدارة الحديثة للموارد البشرية", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الإدارة الحديثة للموارد البشرية.", "icon": "fas fa-user-tie", "details": { "prerequisites": [], "curriculum": [{ "course": "أساسيات ووظائف إدارة الموارد البشرية", "hours": 3 }, { "course": "نظام معلومات الموارد البشرية", "hours": 3 }, { "course": "تخطيط برامج التدريب", "hours": 3 }, { "course": "إدارة البدائل", "hours": 3 }, { "course": "تنمية الموارد البشرية في إطار الجودة الشاملة", "hours": 3 }, { "course": "قوانين العمل في مصر", "hours": 3 }, { "course": "تخطيط القوى العاملة", "hours": 3 }, { "course": "مقدمة في التحليل الإحصائي", "hours": 3 }, { "course": "الموارد البشرية والرضا الوظيفي", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "modern-management-for-human-resources-diploma"
           },
           {
-            "title_en": "Econometric Analysis of Time Series",
-            "title_ar": "التحليل القياسي للسلاسل الزمنية",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال التحليل القياسي للسلاسل الزمنية.",
-            "icon": "fas fa-chart-line",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "التحليل الإحصائي",
-                  "hours": 3
-                },
-                {
-                  "course": "السلاسل الزمنية ونماذج بوكس جينكنز",
-                  "hours": 3
-                },
-                {
-                  "course": "الأساليب الاقتصادية القياسية",
-                  "hours": 3
-                },
-                {
-                  "course": "الأساليب الرياضية للسلاسل الزمنية",
-                  "hours": 3
-                },
-                {
-                  "course": "حزم الحاسوب الإحصائية والاقتصادية القياسية",
-                  "hours": 3
-                },
-                {
-                  "course": "التنبؤ ومطابقة النموذج",
-                  "hours": 3
-                },
-                {
-                  "course": "السلاسل الزمنية القائمة على الاقتصاد القياسي",
-                  "hours": 3
-                },
-                {
-                  "course": "تطبيقات السلاسل الزمنية في مجالات مختلفة",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات اللوحية",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "econometric-analysis-of-time-series-diploma"
+            "title_en": "Econometric Analysis of Time Series", "title_ar": "التحليل القياسي للسلاسل الزمنية", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال التحليل القياسي للسلاسل الزمنية.", "icon": "fas fa-chart-line", "details": { "prerequisites": [], "curriculum": [{ "course": "التحليل الإحصائي", "hours": 3 }, { "course": "السلاسل الزمنية ونماذج بوكس جينكنز", "hours": 3 }, { "course": "الأساليب الاقتصادية القياسية", "hours": 3 }, { "course": "الأساليب الرياضية للسلاسل الزمنية", "hours": 3 }, { "course": "حزم الحاسوب الإحصائية والاقتصادية القياسية", "hours": 3 }, { "course": "التنبؤ ومطابقة النموذج", "hours": 3 }, { "course": "السلاسل الزمنية القائمة على الاقتصاد القياسي", "hours": 3 }, { "course": "تطبيقات السلاسل الزمنية في مجالات مختلفة", "hours": 3 }, { "course": "تحليل البيانات اللوحية", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "econometric-analysis-of-time-series-diploma"
           },
           {
-            "title_en": "Statistical Computing",
-            "title_ar": "الحسابات الإحصائية",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الحسابات الإحصائية.",
-            "icon": "fas fa-calculator",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "التحليل الإحصائي",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في الإحصاء الرياضي",
-                  "hours": 3
-                },
-                {
-                  "course": "الأساليب الإحصائية والمحاكاة",
-                  "hours": 3
-                },
-                {
-                  "course": "تكنولوجيا الإنترنت وبرمجيات الإنترنت",
-                  "hours": 3
-                },
-                {
-                  "course": "الحزم الإحصائية",
-                  "hours": 3
-                },
-                {
-                  "course": "النماذج العشوائية وتطبيقاتها",
-                  "hours": 3
-                },
-                {
-                  "course": "الحسابات التطورية والطبيعية",
-                  "hours": 3
-                },
-                {
-                  "course": "السلاسل الزمنية والتنبؤ",
-                  "hours": 3
-                },
-                {
-                  "course": "النمذجة الرياضية وتحليل القرار",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "statistical-computing-diploma"
+            "title_en": "Statistical Computing", "title_ar": "الحسابات الإحصائية", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الحسابات الإحصائية.", "icon": "fas fa-calculator", "details": { "prerequisites": [], "curriculum": [{ "course": "التحليل الإحصائي", "hours": 3 }, { "course": "مقدمة في الإحصاء الرياضي", "hours": 3 }, { "course": "الأساليب الإحصائية والمحاكاة", "hours": 3 }, { "course": "تكنولوجيا الإنترنت وبرمجيات الإنترنت", "hours": 3 }, { "course": "الحزم الإحصائية", "hours": 3 }, { "course": "النماذج العشوائية وتطبيقاتها", "hours": 3 }, { "course": "الحسابات التطورية والطبيعية", "hours": 3 }, { "course": "السلاسل الزمنية والتنبؤ", "hours": 3 }, { "course": "النمذجة الرياضية وتحليل القرار", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "statistical-computing-diploma"
           },
           {
-            "title_en": "Statistical Quality Control & Quality Assurance",
-            "title_ar": "الضبط الإحصائي وتوكيد الجودة",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الضبط الإحصائي وتوكيد الجودة.",
-            "icon": "fas fa-check-double",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "أساسيات مراقبة الجودة",
-                  "hours": 3
-                },
-                {
-                  "course": "نظم المعلومات وإدارة المعرفة",
-                  "hours": 3
-                },
-                {
-                  "course": "رسوم التحكم",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات",
-                  "hours": 3
-                },
-                {
-                  "course": "نظم الجودة",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة المشاريع",
-                  "hours": 3
-                },
-                {
-                  "course": "معاينة القبول",
-                  "hours": 3
-                },
-                {
-                  "course": "الموثوقية والاستبدال",
-                  "hours": 3
-                },
-                {
-                  "course": "التحسين المستمر",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "statistical-quality-control-quality-assurance-diploma"
+            "title_en": "Statistical Quality Control & Quality Assurance", "title_ar": "الضبط الإحصائي وتوكيد الجودة", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الضبط الإحصائي وتوكيد الجودة.", "icon": "fas fa-check-double", "details": { "prerequisites": [], "curriculum": [{ "course": "أساسيات مراقبة الجودة", "hours": 3 }, { "course": "نظم المعلومات وإدارة المعرفة", "hours": 3 }, { "course": "رسوم التحكم", "hours": 3 }, { "course": "تحليل البيانات", "hours": 3 }, { "course": "نظم الجودة", "hours": 3 }, { "course": "إدارة المشاريع", "hours": 3 }, { "course": "معاينة القبول", "hours": 3 }, { "course": "الموثوقية والاستبدال", "hours": 3 }, { "course": "التحسين المستمر", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "statistical-quality-control-quality-assurance-diploma"
           },
           {
-            "title_en": "Risk and Crisis Management",
-            "title_ar": "إدارة المخاطر والأزمات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال إدارة المخاطر والأزمات.",
-            "icon": "fas fa-exclamation-triangle",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "إدارة الأزمات والمخاطر (1)",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة المخاطر المالية",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات الإحصائية وكتابة التقارير",
-                  "hours": 3
-                },
-                {
-                  "course": "دور القيادة في إدارة الأزمات",
-                  "hours": 3
-                },
-                {
-                  "course": "التخطيط الاستراتيجي لإدارة الأزمات",
-                  "hours": 3
-                },
-                {
-                  "course": "دور الإعلام في إدارة الأزمات",
-                  "hours": 3
-                },
-                {
-                  "course": "بحوث العمليات",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة الأزمات والمخاطر (2)",
-                  "hours": 3
-                },
-                {
-                  "course": "التحليل العلمي للأزمات",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "risk-and-crisis-management-diploma"
+            "title_en": "Risk and Crisis Management", "title_ar": "إدارة المخاطر والأزمات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال إدارة المخاطر والأزمات.", "icon": "fas fa-exclamation-triangle", "details": { "prerequisites": [], "curriculum": [{ "course": "إدارة الأزمات والمخاطر (1)", "hours": 3 }, { "course": "إدارة المخاطر المالية", "hours": 3 }, { "course": "تحليل البيانات الإحصائية وكتابة التقارير", "hours": 3 }, { "course": "دور القيادة في إدارة الأزمات", "hours": 3 }, { "course": "التخطيط الاستراتيجي لإدارة الأزمات", "hours": 3 }, { "course": "دور الإعلام في إدارة الأزمات", "hours": 3 }, { "course": "بحوث العمليات", "hours": 3 }, { "course": "إدارة الأزمات والمخاطر (2)", "hours": 3 }, { "course": "التحليل العلمي للأزمات", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "risk-and-crisis-management-diploma"
           },
           {
-            "title_en": "Surveys and Reporting",
-            "title_ar": "المسوح وإعداد تقاريرها",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال المسوح وإعداد تقاريرها.",
-            "icon": "fas fa-clipboard-list",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "المسوح وأنواعها",
-                  "hours": 3
-                },
-                {
-                  "course": "المعاينة",
-                  "hours": 3
-                },
-                {
-                  "course": "إدخال البيانات باستخدام CSPro",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات الوصفية",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات الإنجابية",
-                  "hours": 3
-                },
-                {
-                  "course": "تنظيم الأسرة والحاجة غير الملباة (الصحة الإنجابية)",
-                  "hours": 3
-                },
-                {
-                  "course": "الوفيات والمراضة",
-                  "hours": 3
-                },
-                {
-                  "course": "تطبيقات البيانات متعددة المتغيرات",
-                  "hours": 3
-                },
-                {
-                  "course": "إجراء تقارير المسوح ونشر نتائجها",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "surveys-and-reporting-diploma"
+            "title_en": "Surveys and Reporting", "title_ar": "المسوح وإعداد تقاريرها", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال المسوح وإعداد تقاريرها.", "icon": "fas fa-clipboard-list", "details": { "prerequisites": [], "curriculum": [{ "course": "المسوح وأنواعها", "hours": 3 }, { "course": "المعاينة", "hours": 3 }, { "course": "إدخال البيانات باستخدام CSPro", "hours": 3 }, { "course": "تحليل البيانات الوصفية", "hours": 3 }, { "course": "تحليل البيانات الإنجابية", "hours": 3 }, { "course": "تنظيم الأسرة والحاجة غير الملباة (الصحة الإنجابية)", "hours": 3 }, { "course": "الوفيات والمراضة", "hours": 3 }, { "course": "تطبيقات البيانات متعددة المتغيرات", "hours": 3 }, { "course": "إجراء تقارير المسوح ونشر نتائجها", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "surveys-and-reporting-diploma"
           },
           {
-            "title_en": "Data Analysis",
-            "title_ar": "تحليل البيانات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال تحليل البيانات.",
-            "icon": "fas fa-database",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مقدمة في الإحصاء",
-                  "hours": 3
-                },
-                {
-                  "course": "مصادر البيانات وتقييمها",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في تقنيات المعاينة",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل الانحدار والتشخيص",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات باستخدام SPSS",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في تحليل البيانات النوعية",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في تحليل البيانات الكمية",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في تحليل البيانات متعددة المستويات",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في التحليل متعدد المتغيرات",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "data-analysis-diploma"
+            "title_en": "Data Analysis", "title_ar": "تحليل البيانات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال تحليل البيانات.", "icon": "fas fa-database", "details": { "prerequisites": [], "curriculum": [{ "course": "مقدمة في الإحصاء", "hours": 3 }, { "course": "مصادر البيانات وتقييمها", "hours": 3 }, { "course": "مقدمة في تقنيات المعاينة", "hours": 3 }, { "course": "تحليل الانحدار والتشخيص", "hours": 3 }, { "course": "تحليل البيانات باستخدام SPSS", "hours": 3 }, { "course": "مقدمة في تحليل البيانات النوعية", "hours": 3 }, { "course": "مقدمة في تحليل البيانات الكمية", "hours": 3 }, { "course": "مقدمة في تحليل البيانات متعددة المستويات", "hours": 3 }, { "course": "مقدمة في التحليل متعدد المتغيرات", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "data-analysis-diploma"
           },
           {
-            "title_en": "Life Testing and Reliability Analysis",
-            "title_ar": "اختبارات الحياة وتحليل الصلاحية",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال اختبارات الحياة وتحليل الصلاحية.",
-            "icon": "fas fa-hourglass-half",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "الإحصاء والاحتمالات",
-                  "hours": 3
-                },
-                {
-                  "course": "الإحصاء التطبيقي",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البقاء على قيد الحياة",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في الموثوقية واختبارات الحياة",
-                  "hours": 3
-                },
-                {
-                  "course": "الحزم الإحصائية",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل الموثوقية الإحصائي",
-                  "hours": 3
-                },
-                {
-                  "course": "فترات التنبؤ والتسامح: القياس والموثوقية",
-                  "hours": 3
-                },
-                {
-                  "course": "الأساليب الإحصائية في الموثوقية",
-                  "hours": 3
-                },
-                {
-                  "course": "تطبيقات الموثوقية واختبارات الحياة",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "life-testing-and-reliability-analysis-diploma"
+            "title_en": "Life Testing and Reliability Analysis", "title_ar": "اختبارات الحياة وتحليل الصلاحية", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال اختبارات الحياة وتحليل الصلاحية.", "icon": "fas fa-hourglass-half", "details": { "prerequisites": [], "curriculum": [{ "course": "الإحصاء والاحتمالات", "hours": 3 }, { "course": "الإحصاء التطبيقي", "hours": 3 }, { "course": "تحليل البقاء على قيد الحياة", "hours": 3 }, { "course": "مقدمة في الموثوقية واختبارات الحياة", "hours": 3 }, { "course": "الحزم الإحصائية", "hours": 3 }, { "course": "تحليل الموثوقية الإحصائي", "hours": 3 }, { "course": "فترات التنبؤ والتسامح: القياس والموثوقية", "hours": 3 }, { "course": "الأساليب الإحصائية في الموثوقية", "hours": 3 }, { "course": "تطبيقات الموثوقية واختبارات الحياة", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "life-testing-and-reliability-analysis-diploma"
           },
           {
-            "title_en": "Measuring Public Opinion Polls",
-            "title_ar": "قياس استطلاعات الرأى العام",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال قياس استطلاعات الرأى العام.",
-            "icon": "fas fa-poll",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "دليل استطلاعات الرأي العام",
-                  "hours": 3
-                },
-                {
-                  "course": "تصميم استطلاع الرأي العام",
-                  "hours": 3
-                },
-                {
-                  "course": "وسائل المسح والقياس، فن المقابلات الشخصية، مدونة الأخلاق والممارسات المهنية",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل بيانات المسح",
-                  "hours": 3
-                },
-                {
-                  "course": "المجالات المغطاة في استطلاعات الرأي العام",
-                  "hours": 3
-                },
-                {
-                  "course": "استخدام SPSS في تحليل بيانات المسح",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل الاتجاه والمحتوى: تحليل متعمق",
-                  "hours": 3
-                },
-                {
-                  "course": "إعداد تقارير المسح ونشر نتائجها",
-                  "hours": 3
-                },
-                {
-                  "course": "أمثلة عملية لاستطلاعات الرأي العام، تقييم الأداء وضمان الجودة",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "measuring-public-opinion-polls-diploma"
+            "title_en": "Measuring Public Opinion Polls", "title_ar": "قياس استطلاعات الرأى العام", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال قياس استطلاعات الرأى العام.", "icon": "fas fa-poll", "details": { "prerequisites": [], "curriculum": [{ "course": "دليل استطلاعات الرأي العام", "hours": 3 }, { "course": "تصميم استطلاع الرأي العام", "hours": 3 }, { "course": "وسائل المسح والقياس، فن المقابلات الشخصية، مدونة الأخلاق والممارسات المهنية", "hours": 3 }, { "course": "تحليل بيانات المسح", "hours": 3 }, { "course": "المجالات المغطاة في استطلاعات الرأي العام", "hours": 3 }, { "course": "استخدام SPSS في تحليل بيانات المسح", "hours": 3 }, { "course": "تحليل الاتجاه والمحتوى: تحليل متعمق", "hours": 3 }, { "course": "إعداد تقارير المسح ونشر نتائجها", "hours": 3 }, { "course": "أمثلة عملية لاستطلاعات الرأي العام، تقييم الأداء وضمان الجودة", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "measuring-public-opinion-polls-diploma"
           },
           {
-            "title_en": "Statistical Research and Development",
-            "title_ar": "البحوث الإحصائية والتطوير",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال البحوث الإحصائية والتطوير.",
-            "icon": "fas fa-flask",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "أساسيات البحث والتطوير (R & D)",
-                  "hours": 3
-                },
-                {
-                  "course": "تنقيب البيانات",
-                  "hours": 3
-                },
-                {
-                  "course": "التحسين المستمر",
-                  "hours": 3
-                },
-                {
-                  "course": "صنع القرار",
-                  "hours": 3
-                },
-                {
-                  "course": "الإبداع والابتكار",
-                  "hours": 3
-                },
-                {
-                  "course": "هندسة القيمة",
-                  "hours": 3
-                },
-                {
-                  "course": "إعادة الهندسة وإدارة التغيير",
-                  "hours": 3
-                },
-                {
-                  "course": "التنبؤ والإنذار المبكر",
-                  "hours": 3
-                },
-                {
-                  "course": "المحاكاة",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "statistical-research-and-development-diploma"
+            "title_en": "Statistical Research and Development", "title_ar": "البحوث الإحصائية والتطوير", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال البحوث الإحصائية والتطوير.", "icon": "fas fa-flask", "details": { "prerequisites": [], "curriculum": [{ "course": "أساسيات البحث والتطوير (R & D)", "hours": 3 }, { "course": "تنقيب البيانات", "hours": 3 }, { "course": "التحسين المستمر", "hours": 3 }, { "course": "صنع القرار", "hours": 3 }, { "course": "الإبداع والابتكار", "hours": 3 }, { "course": "هندسة القيمة", "hours": 3 }, { "course": "إعادة الهندسة وإدارة التغيير", "hours": 3 }, { "course": "التنبؤ والإنذار المبكر", "hours": 3 }, { "course": "المحاكاة", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "statistical-research-and-development-diploma"
           },
           {
-            "title_en": "Human Development & Resources",
-            "title_ar": "التنمية البشرية ومواردها",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال التنمية البشرية ومواردها.",
-            "icon": "fas fa-hand-holding-heart",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "التنمية البشرية الأساسية",
-                  "hours": 3
-                },
-                {
-                  "course": "الصحة والتعليم والقوى العاملة والتنمية البشرية",
-                  "hours": 3
-                },
-                {
-                  "course": "تقدير التنمية البشرية",
-                  "hours": 3
-                },
-                {
-                  "course": "أساسيات السكان",
-                  "hours": 3
-                },
-                {
-                  "course": "الأساليب الإحصائية",
-                  "hours": 3
-                },
-                {
-                  "course": "مهارات الإدارة الأساسية",
-                  "hours": 3
-                },
-                {
-                  "course": "التنبؤ بالطلب على التنمية البشرية",
-                  "hours": 3
-                },
-                {
-                  "course": "اقتصاديات التنمية البشرية",
-                  "hours": 3
-                },
-                {
-                  "course": "توقعات السكان باستخدام حزم الحاسوب",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "diploma",
-            "duration": "مدة عام واحد",
-            "credits": "24 ساعة معتمدة",
-            "type": "دبلوم مهني",
-            "id": "human-development-resources-diploma"
+            "title_en": "Human Development & Resources", "title_ar": "التنمية البشرية ومواردها", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال التنمية البشرية ومواردها.", "icon": "fas fa-hand-holding-heart", "details": { "prerequisites": [], "curriculum": [{ "course": "التنمية البشرية الأساسية", "hours": 3 }, { "course": "الصحة والتعليم والقوى العاملة والتنمية البشرية", "hours": 3 }, { "course": "تقدير التنمية البشرية", "hours": 3 }, { "course": "أساسيات السكان", "hours": 3 }, { "course": "الأساليب الإحصائية", "hours": 3 }, { "course": "مهارات الإدارة الأساسية", "hours": 3 }, { "course": "التنبؤ بالطلب على التنمية البشرية", "hours": 3 }, { "course": "اقتصاديات التنمية البشرية", "hours": 3 }, { "course": "توقعات السكان باستخدام حزم الحاسوب", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "diploma", "duration": "مدة عام واحد", "credits": "24 ساعة معتمدة", "type": "دبلوم مهني", "id": "human-development-resources-diploma"
           }
         ],
         "masters": [
-          {
-            "title_en": "Project Management",
-            "title_ar": "إدارة المشروعات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال إدارة المشروعات.",
-            "icon": "fas fa-tasks",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ ومنهجيات البحث العلمي",
-                  "hours": 3
-                },
-                {
-                  "course": "دراسات الجدوى للمشاريع",
-                  "hours": 3
-                },
-                {
-                  "course": "موضوعات مختارة في إدارة المشاريع",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل التكلفة والعائد وتقييم المشاريع",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة المشاريع في الممارسة",
-                  "hours": 3
-                },
-                {
-                  "course": "برمجيات إدارة المشاريع",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "project-management-masters"
-          },
-          {
-            "title_en": "Operations Research and Decision Support",
-            "title_ar": "بحوث العمليات ودعم القرار",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال بحوث العمليات ودعم القرار.",
-            "icon": "fas fa-cogs",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ ومنهجيات البحث العلمي",
-                  "hours": 3
-                },
-                {
-                  "course": "موضوعات متقدمة في صنع القرار",
-                  "hours": 3
-                },
-                {
-                  "course": "التنبؤ",
-                  "hours": 3
-                },
-                {
-                  "course": "الجدولة",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة سلسلة الإمداد",
-                  "hours": 3
-                },
-                {
-                  "course": "برمجيات بحوث العمليات المتقدمة",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "operations-research-and-decision-support-masters"
-          },
-          {
-            "title_en": "Supply Chain and Operations Management",
-            "title_ar": "سلسلة الإمداد وإدارة العمليات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال سلسلة الإمداد وإدارة العمليات.",
-            "icon": "fas fa-truck",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ ومنهجيات البحث العلمي",
-                  "hours": 3
-                },
-                {
-                  "course": "النمذجة والمحاكاة",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل المخاطر وتقييمها",
-                  "hours": 3
-                },
-                {
-                  "course": "الجدولة",
-                  "hours": 3
-                },
-                {
-                  "course": "موضوعات متقدمة في إدارة العمليات",
-                  "hours": 3
-                },
-                {
-                  "course": "برمجيات إدارة العمليات",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "supply-chain-and-operations-management-masters"
-          },
-          {
-            "title_en": "Web Design",
-            "title_ar": "تصميم المواقع",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال تصميم المواقع.",
-            "icon": "fas fa-globe",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "تصميم وإدارة المواقع المتقدمة",
-                  "hours": 3
-                },
-                {
-                  "course": "أمن تطبيقات الويب",
-                  "hours": 3
-                },
-                {
-                  "course": "تطوير تطبيقات الويب المتقدمة",
-                  "hours": 3
-                },
-                {
-                  "course": "نظم قواعد البيانات المتقدمة",
-                  "hours": 3
-                },
-                {
-                  "course": "التقنيات والممارسات الرشيقة",
-                  "hours": 3
-                },
-                {
-                  "course": "منهجية البحث",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "web-design-masters"
-          },
-          {
-            "title_en": "Software Engineering",
-            "title_ar": "هندسة البرمجيات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال هندسة البرمجيات.",
-            "icon": "fas fa-laptop-code",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ ومنهجيات البحث العلمي",
-                  "hours": 3
-                },
-                {
-                  "course": "ضمان جودة البرمجيات",
-                  "hours": 3
-                },
-                {
-                  "course": "موضوعات متقدمة في قواعد البيانات",
-                  "hours": 3
-                },
-                {
-                  "course": "موضوعات متقدمة في نظم المعلومات",
-                  "hours": 3
-                },
-                {
-                  "course": "أمن المعلومات",
-                  "hours": 3
-                },
-                {
-                  "course": "تطوير البرمجيات الرشيقة المتقدم",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "software-engineering-masters"
-          },
-          {
-            "title_en": "Applied Statistics",
-            "title_ar": "الإحصاءات التطبيقية",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الإحصاءات التطبيقية.",
-            "icon": "fas fa-chart-pie",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ ومنهجيات البحث العلمي",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات النوعية",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات الكمية",
-                  "hours": 3
-                },
-                {
-                  "course": "الاقتصاد القياسي",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في التحليل متعدد المستويات",
-                  "hours": 3
-                },
-                {
-                  "course": "التحليل متعدد المتغيرات",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "applied-statistics-masters"
-          },
-          {
-            "title_en": "Modern Management for Human Resources",
-            "title_ar": "الإدارة الحديثة للموارد البشرية",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الإدارة الحديثة للموارد البشرية.",
-            "icon": "fas fa-user-tie",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ ومنهجيات البحث العلمي",
-                  "hours": 3
-                },
-                {
-                  "course": "التخطيط الاستراتيجي للموارد البشرية",
-                  "hours": 3
-                },
-                {
-                  "course": "أخلاقيات العمل",
-                  "hours": 3
-                },
-                {
-                  "course": "السلوك التنظيمي للموارد البشرية",
-                  "hours": 3
-                },
-                {
-                  "course": "تخطيط وإدارة المسار الوظيفي",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءات فردية",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "modern-management-for-human-resources-masters"
-          },
-          {
-            "title_en": "Econometric Analysis of Time Series",
-            "title_ar": "التحليل القياسي للسلاسل الزمنية",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال التحليل القياسي للسلاسل الزمنية.",
-            "icon": "fas fa-chart-line",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ ومنهجيات البحث العلمي",
-                  "hours": 3
-                },
-                {
-                  "course": "الأساليب الرياضية المتقدمة للسلاسل الزمنية",
-                  "hours": 3
-                },
-                {
-                  "course": "الاحتمالات والإحصاء والعمليات العشوائية",
-                  "hours": 3
-                },
-                {
-                  "course": "الأساليب الاقتصادية القياسية المتقدمة",
-                  "hours": 3
-                },
-                {
-                  "course": "السلاسل الزمنية أحادية المتغير",
-                  "hours": 3
-                },
-                {
-                  "course": "السلاسل الزمنية متعددة المتغيرات",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "econometric-analysis-of-time-series-masters"
-          },
-          {
-            "title_en": "Statistical Computing",
-            "title_ar": "الحسابات الإحصائية",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الحسابات الإحصائية.",
-            "icon": "fas fa-calculator",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ ومنهجيات البحث العلمي",
-                  "hours": 3
-                },
-                {
-                  "course": "التحليل العددي",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل الانحدار",
-                  "hours": 3
-                },
-                {
-                  "course": "تقنيات المعاينة",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل السلاسل الزمنية المتقدم",
-                  "hours": 3
-                },
-                {
-                  "course": "حزم الحاسوب في الإحصاء مع التطبيقات",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "statistical-computing-masters"
-          },
-          {
-            "title_en": "Statistical Quality Control & Quality Assurance",
-            "title_ar": "الضبط الإحصائي وتوكيد الجودة",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الضبط الإحصائي وتوكيد الجودة.",
-            "icon": "fas fa-check-double",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ ومنهجيات البحث العلمي",
-                  "hours": 3
-                },
-                {
-                  "course": "رسوم التحكم المتقدمة",
-                  "hours": 3
-                },
-                {
-                  "course": "التنبؤ",
-                  "hours": 3
-                },
-                {
-                  "course": "صنع القرار",
-                  "hours": 3
-                },
-                {
-                  "course": "تصميم وتحليل التجارب",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل الكفاءة والإنتاجية",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "statistical-quality-control-quality-assurance-masters"
-          },
-          {
-            "title_en": "Risk and Crisis Management",
-            "title_ar": "إدارة المخاطر والأزمات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال إدارة المخاطر والأزمات.",
-            "icon": "fas fa-exclamation-triangle",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ ومنهجيات البحث العلمي",
-                  "hours": 3
-                },
-                {
-                  "course": "التنبؤ الوقائي بالأزمات والمخاطر",
-                  "hours": 3
-                },
-                {
-                  "course": "التأمين في إدارة الأزمات والمخاطر",
-                  "hours": 3
-                },
-                {
-                  "course": "التحليل الكمي للمخاطر",
-                  "hours": 3
-                },
-                {
-                  "course": "دور دعم القرار في إدارة الأزمات والمخاطر",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءات فردية",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "risk-and-crisis-management-masters"
-          },
-          {
-            "title_en": "Data Analysis",
-            "title_ar": "تحليل البيانات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال تحليل البيانات.",
-            "icon": "fas fa-database",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ ومنهجيات البحث العلمي",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات النوعية",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات الكمية",
-                  "hours": 3
-                },
-                {
-                  "course": "تنقيب البيانات مع التطبيقات",
-                  "hours": 3
-                },
-                {
-                  "course": "موضوعات متقدمة في تحليل البيانات",
-                  "hours": 3
-                },
-                {
-                  "course": "التحليل متعدد المتغيرات",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "data-analysis-masters"
-          },
-          {
-            "title_en": "Statistical Research and Development",
-            "title_ar": "البحوث الإحصائية والتطوير",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال البحوث الإحصائية والتطوير.",
-            "icon": "fas fa-flask",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "مبادئ ومنهجيات البحث العلمي",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة المشاريع",
-                  "hours": 3
-                },
-                {
-                  "course": "الذكاء الاصطناعي",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل الأعمال",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات الذكي",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل المخاطر",
-                  "hours": 3
-                },
-                {
-                  "course": "مشروع",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "masters",
-            "duration": "مدة عامين",
-            "credits": "36 ساعة معتمدة",
-            "type": "ماجستير مهني",
-            "id": "statistical-research-and-development-masters"
-          }
+          { "title_en": "Project Management", "title_ar": "إدارة المشروعات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال إدارة المشروعات.", "icon": "fas fa-tasks", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ ومنهجيات البحث العلمي", "hours": 3 }, { "course": "دراسات الجدوى للمشاريع", "hours": 3 }, { "course": "موضوعات مختارة في إدارة المشاريع", "hours": 3 }, { "course": "تحليل التكلفة والعائد وتقييم المشاريع", "hours": 3 }, { "course": "إدارة المشاريع في الممارسة", "hours": 3 }, { "course": "برمجيات إدارة المشاريع", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "project-management-masters" },
+          { "title_en": "Operations Research and Decision Support", "title_ar": "بحوث العمليات ودعم القرار", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال بحوث العمليات ودعم القرار.", "icon": "fas fa-cogs", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ ومنهجيات البحث العلمي", "hours": 3 }, { "course": "موضوعات متقدمة في صنع القرار", "hours": 3 }, { "course": "التنبؤ", "hours": 3 }, { "course": "الجدولة", "hours": 3 }, { "course": "إدارة سلسلة الإمداد", "hours": 3 }, { "course": "برمجيات بحوث العمليات المتقدمة", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "operations-research-and-decision-support-masters" },
+          { "title_en": "Supply Chain and Operations Management", "title_ar": "سلسلة الإمداد وإدارة العمليات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال سلسلة الإمداد وإدارة العمليات.", "icon": "fas fa-truck", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ ومنهجيات البحث العلمي", "hours": 3 }, { "course": "النمذجة والمحاكاة", "hours": 3 }, { "course": "تحليل المخاطر وتقييمها", "hours": 3 }, { "course": "الجدولة", "hours": 3 }, { "course": "موضوعات متقدمة في إدارة العمليات", "hours": 3 }, { "course": "برمجيات إدارة العمليات", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "supply-chain-and-operations-management-masters" },
+          { "title_en": "Web Design", "title_ar": "تصميم المواقع", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال تصميم المواقع.", "icon": "fas fa-globe", "details": { "prerequisites": [], "curriculum": [{ "course": "تصميم وإدارة المواقع المتقدمة", "hours": 3 }, { "course": "أمن تطبيقات الويب", "hours": 3 }, { "course": "تطوير تطبيقات الويب المتقدمة", "hours": 3 }, { "course": "نظم قواعد البيانات المتقدمة", "hours": 3 }, { "course": "التقنيات والممارسات الرشيقة", "hours": 3 }, { "course": "منهجية البحث", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "web-design-masters" },
+          { "title_en": "Software Engineering", "title_ar": "هندسة البرمجيات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال هندسة البرمجيات.", "icon": "fas fa-laptop-code", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ ومنهجيات البحث العلمي", "hours": 3 }, { "course": "ضمان جودة البرمجيات", "hours": 3 }, { "course": "موضوعات متقدمة في قواعد البيانات", "hours": 3 }, { "course": "موضوعات متقدمة في نظم المعلومات", "hours": 3 }, { "course": "أمن المعلومات", "hours": 3 }, { "course": "تطوير البرمجيات الرشيقة المتقدم", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "software-engineering-masters" },
+          { "title_en": "Applied Statistics", "title_ar": "الإحصاءات التطبيقية", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الإحصاءات التطبيقية.", "icon": "fas fa-chart-pie", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ ومنهجيات البحث العلمي", "hours": 3 }, { "course": "تحليل البيانات النوعية", "hours": 3 }, { "course": "تحليل البيانات الكمية", "hours": 3 }, { "course": "الاقتصاد القياسي", "hours": 3 }, { "course": "مقدمة في التحليل متعدد المستويات", "hours": 3 }, { "course": "التحليل متعدد المتغيرات", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "applied-statistics-masters" },
+          { "title_en": "Modern Management for Human Resources", "title_ar": "الإدارة الحديثة للموارد البشرية", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الإدارة الحديثة للموارد البشرية.", "icon": "fas fa-user-tie", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ ومنهجيات البحث العلمي", "hours": 3 }, { "course": "التخطيط الاستراتيجي للموارد البشرية", "hours": 3 }, { "course": "أخلاقيات العمل", "hours": 3 }, { "course": "السلوك التنظيمي للموارد البشرية", "hours": 3 }, { "course": "تخطيط وإدارة المسار الوظيفي", "hours": 3 }, { "course": "قراءات فردية", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "modern-management-for-human-resources-masters" },
+          { "title_en": "Econometric Analysis of Time Series", "title_ar": "التحليل القياسي للسلاسل الزمنية", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال التحليل القياسي للسلاسل الزمنية.", "icon": "fas fa-chart-line", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ ومنهجيات البحث العلمي", "hours": 3 }, { "course": "الأساليب الرياضية المتقدمة للسلاسل الزمنية", "hours": 3 }, { "course": "الاحتمالات والإحصاء والعمليات العشوائية", "hours": 3 }, { "course": "الأساليب الاقتصادية القياسية المتقدمة", "hours": 3 }, { "course": "السلاسل الزمنية أحادية المتغير", "hours": 3 }, { "course": "السلاسل الزمنية متعددة المتغيرات", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "econometric-analysis-of-time-series-masters" },
+          { "title_en": "Statistical Computing", "title_ar": "الحسابات الإحصائية", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الحسابات الإحصائية.", "icon": "fas fa-calculator", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ ومنهجيات البحث العلمي", "hours": 3 }, { "course": "التحليل العددي", "hours": 3 }, { "course": "تحليل الانحدار", "hours": 3 }, { "course": "تقنيات المعاينة", "hours": 3 }, { "course": "تحليل السلاسل الزمنية المتقدم", "hours": 3 }, { "course": "حزم الحاسوب في الإحصاء مع التطبيقات", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "statistical-computing-masters" },
+          { "title_en": "Statistical Quality Control & Quality Assurance", "title_ar": "الضبط الإحصائي وتوكيد الجودة", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الضبط الإحصائي وتوكيد الجودة.", "icon": "fas fa-check-double", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ ومنهجيات البحث العلمي", "hours": 3 }, { "course": "رسوم التحكم المتقدمة", "hours": 3 }, { "course": "التنبؤ", "hours": 3 }, { "course": "صنع القرار", "hours": 3 }, { "course": "تصميم وتحليل التجارب", "hours": 3 }, { "course": "تحليل الكفاءة والإنتاجية", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "statistical-quality-control-quality-assurance-masters" },
+          { "title_en": "Risk and Crisis Management", "title_ar": "إدارة المخاطر والأزمات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال إدارة المخاطر والأزمات.", "icon": "fas fa-exclamation-triangle", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ ومنهجيات البحث العلمي", "hours": 3 }, { "course": "التنبؤ الوقائي بالأزمات والمخاطر", "hours": 3 }, { "course": "التأمين في إدارة الأزمات والمخاطر", "hours": 3 }, { "course": "التحليل الكمي للمخاطر", "hours": 3 }, { "course": "دور دعم القرار في إدارة الأزمات والمخاطر", "hours": 3 }, { "course": "قراءات فردية", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "risk-and-crisis-management-masters" },
+          { "title_en": "Data Analysis", "title_ar": "تحليل البيانات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال تحليل البيانات.", "icon": "fas fa-database", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ ومنهجيات البحث العلمي", "hours": 3 }, { "course": "تحليل البيانات النوعية", "hours": 3 }, { "course": "تحليل البيانات الكمية", "hours": 3 }, { "course": "تنقيب البيانات مع التطبيقات", "hours": 3 }, { "course": "موضوعات متقدمة في تحليل البيانات", "hours": 3 }, { "course": "التحليل متعدد المتغيرات", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "data-analysis-masters" },
+          { "title_en": "Statistical Research and Development", "title_ar": "البحوث الإحصائية والتطوير", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال البحوث الإحصائية والتطوير.", "icon": "fas fa-flask", "details": { "prerequisites": [], "curriculum": [{ "course": "مبادئ ومنهجيات البحث العلمي", "hours": 3 }, { "course": "إدارة المشاريع", "hours": 3 }, { "course": "الذكاء الاصطناعي", "hours": 3 }, { "course": "تحليل الأعمال", "hours": 3 }, { "course": "تحليل البيانات الذكي", "hours": 3 }, { "course": "تحليل المخاطر", "hours": 3 }, { "course": "مشروع", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "masters", "duration": "مدة عامين", "credits": "36 ساعة معتمدة", "type": "ماجستير مهني", "id": "statistical-research-and-development-masters" }
         ],
         "phd": [
-          {
-            "title_en": "Project Management",
-            "title_ar": "إدارة المشروعات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال إدارة المشروعات.",
-            "icon": "fas fa-tasks",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "إدارة السلوك التنظيمي",
-                  "hours": 3
-                },
-                {
-                  "course": "الموارد البشرية الاستراتيجية",
-                  "hours": 3
-                },
-                {
-                  "course": "تقييم مشاريع التنمية",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل القيمة للمشاريع الهندسية",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة المشاريع المتعددة",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءة فردية موجهة (موضوعات متقدمة)",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "phd",
-            "duration": "مدة 3-4 سنوات",
-            "credits": "54 ساعة معتمدة",
-            "type": "دكتوراه بحثية",
-            "id": "project-management-phd"
-          },
-          {
-            "title_en": "Operations Research and Decision Support",
-            "title_ar": "بحوث العمليات ودعم القرار",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال بحوث العمليات ودعم القرار.",
-            "icon": "fas fa-cogs",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "موضوعات متقدمة في نظم دعم القرار",
-                  "hours": 3
-                },
-                {
-                  "course": "صنع القرار متعدد المعايير",
-                  "hours": 3
-                },
-                {
-                  "course": "النماذج الاحتمالية",
-                  "hours": 3
-                },
-                {
-                  "course": "تطبيقات نظرية الألعاب",
-                  "hours": 3
-                },
-                {
-                  "course": "موضوعات متقدمة في بحوث العمليات",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءات فردية موجهة (موضوعات متقدمة)",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "phd",
-            "duration": "مدة 3-4 سنوات",
-            "credits": "54 ساعة معتمدة",
-            "type": "دكتوراه بحثية",
-            "id": "operations-research-and-decision-support-phd"
-          },
-          {
-            "title_en": "Supply Chain and Operations Management",
-            "title_ar": "سلسلة الإمداد وإدارة العمليات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال سلسلة الإمداد وإدارة العمليات.",
-            "icon": "fas fa-truck",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "تخطيط المرافق والمواقع",
-                  "hours": 3
-                },
-                {
-                  "course": "أنظمة العمليات اللينة",
-                  "hours": 3
-                },
-                {
-                  "course": "تخطيط متطلبات الإنتاج والمواد",
-                  "hours": 3
-                },
-                {
-                  "course": "التخطيط التجميعي واستراتيجية العمليات",
-                  "hours": 3
-                },
-                {
-                  "course": "الصيانة والموثوقية",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءات فردية موجهة (موضوعات متقدمة)",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "phd",
-            "duration": "مدة 3-4 سنوات",
-            "credits": "54 ساعة معتمدة",
-            "type": "دكتوراه بحثية",
-            "id": "supply-chain-and-operations-management-phd"
-          },
-          {
-            "title_en": "Web Design",
-            "title_ar": "تصميم المواقع",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال تصميم المواقع.",
-            "icon": "fas fa-globe",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "تطوير تطبيقات الجوال",
-                  "hours": 3
-                },
-                {
-                  "course": "تطورات في إدارة الويب",
-                  "hours": 3
-                },
-                {
-                  "course": "موضوعات مختارة في تكنولوجيا الويب",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءات فردية موجهة (موضوعات متقدمة)",
-                  "hours": 3
-                },
-                {
-                  "course": "دراسات موجهة في علوم الويب",
-                  "hours": 3
-                },
-                {
-                  "course": "دراسات فردية تحت الإشراف (موضوعات متقدمة)",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "phd",
-            "duration": "مدة 3-4 سنوات",
-            "credits": "54 ساعة معتمدة",
-            "type": "دكتوراه بحثية",
-            "id": "web-design-phd"
-          },
-          {
-            "title_en": "Software Engineering",
-            "title_ar": "هندسة البرمجيات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال هندسة البرمجيات.",
-            "icon": "fas fa-laptop-code",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "موضوعات مختارة في هندسة البرمجيات",
-                  "hours": 3
-                },
-                {
-                  "course": "موضوعات مختارة في نظم المعلومات",
-                  "hours": 3
-                },
-                {
-                  "course": "موضوعات مختارة في تكنولوجيا المعلومات",
-                  "hours": 3
-                },
-                {
-                  "course": "تخزين البيانات",
-                  "hours": 3
-                },
-                {
-                  "course": "تطوير حلول التجارة الإلكترونية",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءات فردية موجهة (موضوعات متقدمة)",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "phd",
-            "duration": "مدة 3-4 سنوات",
-            "credits": "54 ساعة معتمدة",
-            "type": "دكتوراه بحثية",
-            "id": "software-engineering-phd"
-          },
-          {
-            "title_en": "Applied Statistics",
-            "title_ar": "الإحصاءات التطبيقية",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الإحصاءات التطبيقية.",
-            "icon": "fas fa-chart-pie",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "تنقيب البيانات",
-                  "hours": 3
-                },
-                {
-                  "course": "التحليل متعدد المستويات المتقدم",
-                  "hours": 3
-                },
-                {
-                  "course": "مقدمة في البيانات الضخمة",
-                  "hours": 3
-                },
-                {
-                  "course": "أدوات تحليل البيانات الضخمة",
-                  "hours": 3
-                },
-                {
-                  "course": "التحليل متعدد المتغيرات المتقدم",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءات فردية موجهة (موضوعات متقدمة)",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "phd",
-            "duration": "مدة 3-4 سنوات",
-            "credits": "54 ساعة معتمدة",
-            "type": "دكتوراه بحثية",
-            "id": "applied-statistics-phd"
-          },
-          {
-            "title_en": "Modern Management for Human Resources",
-            "title_ar": "الإدارة الحديثة للموارد البشرية",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الإدارة الحديثة للموارد البشرية.",
-            "icon": "fas fa-user-tie",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "التخطيط الاستراتيجي للإدارة للموارد البشرية",
-                  "hours": 3
-                },
-                {
-                  "course": "إدارة الموارد البشرية الدولية",
-                  "hours": 3
-                },
-                {
-                  "course": "الذكاء الاصطناعي والموارد البشرية",
-                  "hours": 3
-                },
-                {
-                  "course": "الاستثمار البشري وإدارة رأس المال الفكري",
-                  "hours": 3
-                },
-                {
-                  "course": "الاتجاهات الحديثة في إدارة الموارد البشرية",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءات فردية موجهة (موضوعات متقدمة)",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "phd",
-            "duration": "مدة 3-4 سنوات",
-            "credits": "54 ساعة معتمدة",
-            "type": "دكتوراه بحثية",
-            "id": "modern-management-for-human-resources-phd"
-          },
-          {
-            "title_en": "Statistical Computing",
-            "title_ar": "الحسابات الإحصائية",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الحسابات الإحصائية.",
-            "icon": "fas fa-calculator",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "برمجة SAS الإحصائية",
-                  "hours": 3
-                },
-                {
-                  "course": "تقنيات عددية متقدمة",
-                  "hours": 3
-                },
-                {
-                  "course": "الأساليب غير البارامترية",
-                  "hours": 3
-                },
-                {
-                  "course": "برمجة بايثون و R المتقدمة",
-                  "hours": 3
-                },
-                {
-                  "course": "الأساليب الإحصائية في الموثوقية",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءات فردية موجهة (موضوعات متقدمة)",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "phd",
-            "duration": "مدة 3-4 سنوات",
-            "credits": "54 ساعة معتمدة",
-            "type": "دكتوراه بحثية",
-            "id": "statistical-computing-phd"
-          },
-          {
-            "title_en": "Statistical Quality Control & Quality Assurance",
-            "title_ar": "الضبط الإحصائي وتوكيد الجودة",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الضبط الإحصائي وتوكيد الجودة.",
-            "icon": "fas fa-check-double",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "المحاكاة",
-                  "hours": 3
-                },
-                {
-                  "course": "المواصفات والتوحيد القياسي",
-                  "hours": 3
-                },
-                {
-                  "course": "التدقيق الداخلي والخارجي",
-                  "hours": 3
-                },
-                {
-                  "course": "إعادة الهندسة وإدارة التغيير",
-                  "hours": 3
-                },
-                {
-                  "course": "التحسين المستمر المتقدم",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءات فردية موجهة (موضوعات متقدمة)",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "phd",
-            "duration": "مدة 3-4 سنوات",
-            "credits": "54 ساعة معتمدة",
-            "type": "دكتوراه بحثية",
-            "id": "statistical-quality-control-quality-assurance-phd"
-          },
-          {
-            "title_en": "Risk and Crisis Management",
-            "title_ar": "إدارة المخاطر والأزمات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال إدارة المخاطر والأزمات.",
-            "icon": "fas fa-exclamation-triangle",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "التخطيط الاستراتيجي وسيناريوهات إدارة الأزمات",
-                  "hours": 3
-                },
-                {
-                  "course": "دور الحكومة في إدارة الأزمات والمخاطر",
-                  "hours": 3
-                },
-                {
-                  "course": "الذكاء الاصطناعي في إدارة الأزمات والمخاطر",
-                  "hours": 3
-                },
-                {
-                  "course": "الأنظمة المقارنة في إدارة الأزمات والمخاطر",
-                  "hours": 3
-                },
-                {
-                  "course": "المحاكاة",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءات فردية موجهة (موضوعات متقدمة)",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "phd",
-            "duration": "مدة 3-4 سنوات",
-            "credits": "54 ساعة معتمدة",
-            "type": "دكتوراه بحثية",
-            "id": "risk-and-crisis-management-phd"
-          },
-          {
-            "title_en": "Data Analysis",
-            "title_ar": "تحليل البيانات",
-            "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال تحليل البيانات.",
-            "icon": "fas fa-database",
-            "details": {
-              "prerequisites": [],
-              "curriculum": [
-                {
-                  "course": "تحليل البيانات النوعية المتقدم",
-                  "hours": 3
-                },
-                {
-                  "course": "تحليل البيانات الكمية المتقدم",
-                  "hours": 3
-                },
-                {
-                  "course": "التحليل متعدد المتغيرات المتقدم",
-                  "hours": 3
-                },
-                {
-                  "course": "تنقيب البيانات المتقدم",
-                  "hours": 3
-                },
-                {
-                  "course": "التحليل متعدد المستويات المتقدم",
-                  "hours": 3
-                },
-                {
-                  "course": "قراءات فردية موجهة (موضوعات متقدمة)",
-                  "hours": 3
-                }
-              ],
-              "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.",
-              "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية."
-            },
-            "level": "phd",
-            "duration": "مدة 3-4 سنوات",
-            "credits": "54 ساعة معتمدة",
-            "type": "دكتوراه بحثية",
-            "id": "data-analysis-phd"
-          }
+          { "title_en": "Project Management", "title_ar": "إدارة المشروعات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال إدارة المشروعات.", "icon": "fas fa-tasks", "details": { "prerequisites": [], "curriculum": [{ "course": "إدارة السلوك التنظيمي", "hours": 3 }, { "course": "الموارد البشرية الاستراتيجية", "hours": 3 }, { "course": "تقييم مشاريع التنمية", "hours": 3 }, { "course": "تحليل القيمة للمشاريع الهندسية", "hours": 3 }, { "course": "إدارة المشاريع المتعددة", "hours": 3 }, { "course": "قراءة فردية موجهة (موضوعات متقدمة)", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "phd", "duration": "مدة 3-4 سنوات", "credits": "54 ساعة معتمدة", "type": "دكتوراه بحثية", "id": "project-management-phd" },
+          { "title_en": "Operations Research and Decision Support", "title_ar": "بحوث العمليات ودعم القرار", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال بحوث العمليات ودعم القرار.", "icon": "fas fa-cogs", "details": { "prerequisites": [], "curriculum": [{ "course": "موضوعات متقدمة في نظم دعم القرار", "hours": 3 }, { "course": "صنع القرار متعدد المعايير", "hours": 3 }, { "course": "النماذج الاحتمالية", "hours": 3 }, { "course": "تطبيقات نظرية الألعاب", "hours": 3 }, { "course": "موضوعات متقدمة في بحوث العمليات", "hours": 3 }, { "course": "قراءات فردية موجهة (موضوعات متقدمة)", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "phd", "duration": "مدة 3-4 سنوات", "credits": "54 ساعة معتمدة", "type": "دكتوراه بحثية", "id": "operations-research-and-decision-support-phd" },
+          { "title_en": "Supply Chain and Operations Management", "title_ar": "سلسلة الإمداد وإدارة العمليات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال سلسلة الإمداد وإدارة العمليات.", "icon": "fas fa-truck", "details": { "prerequisites": [], "curriculum": [{ "course": "تخطيط المرافق والمواقع", "hours": 3 }, { "course": "أنظمة العمليات اللينة", "hours": 3 }, { "course": "تخطيط متطلبات الإنتاج والمواد", "hours": 3 }, { "course": "التخطيط التجميعي واستراتيجية العمليات", "hours": 3 }, { "course": "الصيانة والموثوقية", "hours": 3 }, { "course": "قراءات فردية موجهة (موضوعات متقدمة)", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "phd", "duration": "مدة 3-4 سنوات", "credits": "54 ساعة معتمدة", "type": "دكتوراه بحثية", "id": "supply-chain-and-operations-management-phd" },
+          { "title_en": "Web Design", "title_ar": "تصميم المواقع", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال تصميم المواقع.", "icon": "fas fa-globe", "details": { "prerequisites": [], "curriculum": [{ "course": "تطوير تطبيقات الجوال", "hours": 3 }, { "course": "تطورات في إدارة الويب", "hours": 3 }, { "course": "موضوعات مختارة في تكنولوجيا الويب", "hours": 3 }, { "course": "قراءات فردية موجهة (موضوعات متقدمة)", "hours": 3 }, { "course": "دراسات موجهة في علوم الويب", "hours": 3 }, { "course": "دراسات فردية تحت الإشراف (موضوعات متقدمة)", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "phd", "duration": "مدة 3-4 سنوات", "credits": "54 ساعة معتمدة", "type": "دكتوراه بحثية", "id": "web-design-phd" },
+          { "title_en": "Software Engineering", "title_ar": "هندسة البرمجيات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال هندسة البرمجيات.", "icon": "fas fa-laptop-code", "details": { "prerequisites": [], "curriculum": [{ "course": "موضوعات مختارة في هندسة البرمجيات", "hours": 3 }, { "course": "موضوعات مختارة في نظم المعلومات", "hours": 3 }, { "course": "موضوعات مختارة في تكنولوجيا المعلومات", "hours": 3 }, { "course": "تخزين البيانات", "hours": 3 }, { "course": "تطوير حلول التجارة الإلكترونية", "hours": 3 }, { "course": "قراءات فردية موجهة (موضوعات متقدمة)", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "phd", "duration": "مدة 3-4 سنوات", "credits": "54 ساعة معتمدة", "type": "دكتوراه بحثية", "id": "software-engineering-phd" },
+          { "title_en": "Applied Statistics", "title_ar": "الإحصاءات التطبيقية", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الإحصاءات التطبيقية.", "icon": "fas fa-chart-pie", "details": { "prerequisites": [], "curriculum": [{ "course": "تنقيب البيانات", "hours": 3 }, { "course": "التحليل متعدد المستويات المتقدم", "hours": 3 }, { "course": "مقدمة في البيانات الضخمة", "hours": 3 }, { "course": "أدوات تحليل البيانات الضخمة", "hours": 3 }, { "course": "التحليل متعدد المتغيرات المتقدم", "hours": 3 }, { "course": "قراءات فردية موجهة (موضوعات متقدمة)", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "phd", "duration": "مدة 3-4 سنوات", "credits": "54 ساعة معتمدة", "type": "دكتوراه بحثية", "id": "applied-statistics-phd" },
+          { "title_en": "Modern Management for Human Resources", "title_ar": "الإدارة الحديثة للموارد البشرية", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الإدارة الحديثة للموارد البشرية.", "icon": "fas fa-user-tie", "details": { "prerequisites": [], "curriculum": [{ "course": "التخطيط الاستراتيجي للإدارة للموارد البشرية", "hours": 3 }, { "course": "إدارة الموارد البشرية الدولية", "hours": 3 }, { "course": "الذكاء الاصطناعي والموارد البشرية", "hours": 3 }, { "course": "الاستثمار البشري وإدارة رأس المال الفكري", "hours": 3 }, { "course": "الاتجاهات الحديثة في إدارة الموارد البشرية", "hours": 3 }, { "course": "قراءات فردية موجهة (موضوعات متقدمة)", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "phd", "duration": "مدة 3-4 سنوات", "credits": "54 ساعة معتمدة", "type": "دكتوراه بحثية", "id": "modern-management-for-human-resources-phd" },
+          { "title_en": "Statistical Computing", "title_ar": "الحسابات الإحصائية", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الحسابات الإحصائية.", "icon": "fas fa-calculator", "details": { "prerequisites": [], "curriculum": [{ "course": "برمجة SAS الإحصائية", "hours": 3 }, { "course": "تقنيات عددية متقدمة", "hours": 3 }, { "course": "الأساليب غير البارامترية", "hours": 3 }, { "course": "برمجة بايثون و R المتقدمة", "hours": 3 }, { "course": "الأساليب الإحصائية في الموثوقية", "hours": 3 }, { "course": "قراءات فردية موجهة (موضوعات متقدمة)", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "phd", "duration": "مدة 3-4 سنوات", "credits": "54 ساعة معتمدة", "type": "دكتوراه بحثية", "id": "statistical-computing-phd" },
+          { "title_en": "Statistical Quality Control & Quality Assurance", "title_ar": "الضبط الإحصائي وتوكيد الجودة", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال الضبط الإحصائي وتوكيد الجودة.", "icon": "fas fa-check-double", "details": { "prerequisites": [], "curriculum": [{ "course": "المحاكاة", "hours": 3 }, { "course": "المواصفات والتوحيد القياسي", "hours": 3 }, { "course": "التدقيق الداخلي والخارجي", "hours": 3 }, { "course": "إعادة الهندسة وإدارة التغيير", "hours": 3 }, { "course": "التحسين المستمر المتقدم", "hours": 3 }, { "course": "قراءات فردية موجهة (موضوعات متقدمة)", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "phd", "duration": "مدة 3-4 سنوات", "credits": "54 ساعة معتمدة", "type": "دكتوراه بحثية", "id": "statistical-quality-control-quality-assurance-phd" },
+          { "title_en": "Risk and Crisis Management", "title_ar": "إدارة المخاطر والأزمات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال إدارة المخاطر والأزمات.", "icon": "fas fa-exclamation-triangle", "details": { "prerequisites": [], "curriculum": [{ "course": "التخطيط الاستراتيجي وسيناريوهات إدارة الأزمات", "hours": 3 }, { "course": "دور الحكومة في إدارة الأزمات والمخاطر", "hours": 3 }, { "course": "الذكاء الاصطناعي في إدارة الأزمات والمخاطر", "hours": 3 }, { "course": "الأنظمة المقارنة في إدارة الأزمات والمخاطر", "hours": 3 }, { "course": "المحاكاة", "hours": 3 }, { "course": "قراءات فردية موجهة (موضوعات متقدمة)", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "phd", "duration": "مدة 3-4 سنوات", "credits": "54 ساعة معتمدة", "type": "دكتوراه بحثية", "id": "risk-and-crisis-management-phd" },
+          { "title_en": "Data Analysis", "title_ar": "تحليل البيانات", "description": "برنامج شامل يهدف إلى تزويد الطلاب بالمعرفة والمهارات المتقدمة في مجال تحليل البيانات.", "icon": "fas fa-database", "details": { "prerequisites": [], "curriculum": [{ "course": "تحليل البيانات النوعية المتقدم", "hours": 3 }, { "course": "تحليل البيانات الكمية المتقدم", "hours": 3 }, { "course": "التحليل متعدد المتغيرات المتقدم", "hours": 3 }, { "course": "تنقيب البيانات المتقدم", "hours": 3 }, { "course": "التحليل متعدد المستويات المتقدم", "hours": 3 }, { "course": "قراءات فردية موجهة (موضوعات متقدمة)", "hours": 3 }], "outcomes": "سيتمكن الخريجون من اكتساب المهارات المتقدمة في هذا المجال.", "assessment": "يتم التقييم من خلال الواجبات، الاختبارات، المشاريع، والامتحانات النهائية." }, "level": "phd", "duration": "مدة 3-4 سنوات", "credits": "54 ساعة معتمدة", "type": "دكتوراه بحثية", "id": "data-analysis-phd" }
         ]
       };
 
-      // Function to render the program list (left/right panel)
       function renderProgramList(level, containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
-
-        container.innerHTML = ''; // Clear previous content
-
-        programs_by_level[level].forEach(program => {
-          const listItem = document.createElement('div');
-          listItem.classList.add('program-list-item');
-          listItem.dataset.programId = program.id;
-          listItem.dataset.programLevel = level;
-          listItem.innerHTML = `
-            <i class="${program.icon} program-list-item-icon"></i>
-            <span>${program.title_ar}</span>
-          `;
-          container.appendChild(listItem);
-        });
+        container.innerHTML = '';
+        const programs = programs_by_level[level] || [];
+        if (programs.length > 0) {
+            programs.forEach(program => {
+              const listItem = document.createElement('div');
+              listItem.className = 'program-list-item';
+              listItem.dataset.programId = program.id;
+              listItem.dataset.programLevel = level;
+              listItem.innerHTML = `<i class="${program.icon} program-list-item-icon"></i><span>${program.title_ar}</span>`;
+              container.appendChild(listItem);
+            });
+        } else {
+             container.innerHTML = `<div class="text-center text-muted p-3">لا توجد برامج متاحة حاليًا.</div>`;
+        }
       }
 
-      // Function to render the program details (main content panel)
       function renderProgramDetails(program) {
         const detailContainer = document.getElementById('program-detail-content');
         if (!detailContainer) return;
 
-        // Ensure curriculum is an array before mapping
-        const curriculumTable = program.details.curriculum && Array.isArray(program.details.curriculum) && program.details.curriculum.length > 0
-          ? `
-            <h5 class="mb-3 mt-4">هيكل المقررات</h5>
-            <div class="table-responsive">
-              <table class="table table-bordered">
-                <thead class="table-primary">
-                  <tr><th>المقرر</th><th>الساعات</th></tr>
-                </thead>
-                <tbody>
-                  ${program.details.curriculum.map(item => `
-                    <tr><td>${item.course}</td><td>${item.hours}</td></tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            </div>
-          ` : '';
-
-        // Ensure prerequisites is an array before mapping
-        const prerequisitesList = program.details.prerequisites && Array.isArray(program.details.prerequisites) && program.details.prerequisites.length > 0
-          ? `
-            <h5 class="mb-3 mt-4">المتطلبات الأساسية</h5>
-            <ul>
-              ${program.details.prerequisites.map(req => `<li>${req}</li>`).join('')}
-            </ul>
-          ` : '';
+        const curriculum = program.details.curriculum || [];
+        const curriculumTable = curriculum.length > 0 ? `
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <thead style="background-color: var(--primary-color); color: white;">
+                <tr><th>المقرر</th><th>الساعات</th></tr>
+              </thead>
+              <tbody>
+                ${curriculum.map(item => `<tr><td>${item.course}</td><td>${item.hours}</td></tr>`).join('')}
+              </tbody>
+            </table>
+          </div>` : '<p>لا توجد تفاصيل هيكل المقررات متاحة حاليًا.</p>';
+        
+        const prerequisites = program.details.prerequisites || [];
+        const prerequisitesList = prerequisites.length > 0 ? `
+            <ul>${prerequisites.map(req => `<li>${req}</li>`).join('')}</ul>`
+            : '<p>لا توجد متطلبات أساسية محددة مذكورة.</p>';
 
         detailContainer.innerHTML = `
           <div class="program-detail-header">
-            <div class="program-icon-lg">
-              <i class="${program.icon} text-white"></i>
-            </div>
+            <div class="program-icon-lg text-white"><i class="${program.icon}"></i></div>
             <div>
               <h3>${program.title_ar}</h3>
               <p class="text-muted">${program.description}</p>
-              <div class="d-flex flex-wrap gap-2">
+              <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-lg-start">
                 <span class="program-badge badge bg-info"><i class="far fa-clock me-1"></i> ${program.duration}</span>
                 <span class="program-badge badge bg-success"><i class="fas fa-graduation-cap me-1"></i> ${program.credits}</span>
                 <span class="program-badge badge bg-primary"><i class="fas fa-tag me-1"></i> ${program.type}</span>
               </div>
             </div>
           </div>
-
-          <div class="accordion" id="programDetailsAccordion">
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="headingPrerequisites">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrerequisites" aria-expanded="true" aria-controls="collapsePrerequisites">
-                  المتطلبات الأساسية
-                </button>
-              </h2>
-              <div id="collapsePrerequisites" class="accordion-collapse collapse show" aria-labelledby="headingPrerequisites" data-bs-parent="#programDetailsAccordion">
-                <div class="accordion-body program-details-content">
-                  ${prerequisitesList || '<p>لا توجد متطلبات أساسية محددة مذكورة.</p>'}
-                </div>
-              </div>
-            </div>
-
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="headingCurriculum">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCurriculum" aria-expanded="false" aria-controls="collapseCurriculum">
-                  هيكل المقررات
-                </button>
-              </h2>
-              <div id="collapseCurriculum" class="accordion-collapse collapse" aria-labelledby="headingCurriculum" data-bs-parent="#programDetailsAccordion">
-                <div class="accordion-body program-details-content">
-                  ${curriculumTable || '<p>لا توجد تفاصيل هيكل المقررات متاحة حاليًا.</p>'}
-                </div>
-              </div>
-            </div>
-
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="headingOutcomes">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOutcomes" aria-expanded="false" aria-controls="collapseOutcomes">
-                  نتائج التعلم والتقييم
-                </button>
-              </h2>
-              <div id="collapseOutcomes" class="accordion-collapse collapse" aria-labelledby="headingOutcomes" data-bs-parent="#programDetailsAccordion">
-                <div class="accordion-body program-details-content">
-                  <h5>نتائج التعلم</h5>
-                  <p>${program.details.outcomes || 'لا توجد نتائج تعلم محددة مذكورة.'}</p>
-                  <h5>نظام التقييم</h5>
-                  <p>${program.details.assessment || 'لا يوجد نظام تقييم محدد مذكور.'}</p>
-                </div>
-              </div>
-            </div>
+          <div class="accordion mt-4" id="programDetailsAccordion">
+            <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCurriculum">هيكل المقررات</button></h2><div id="collapseCurriculum" class="accordion-collapse collapse show" data-bs-parent="#programDetailsAccordion"><div class="accordion-body">${curriculumTable}</div></div></div>
+            <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrereq">المتطلبات الأساسية</button></h2><div id="collapsePrereq" class="accordion-collapse collapse" data-bs-parent="#programDetailsAccordion"><div class="accordion-body">${prerequisitesList}</div></div></div>
+            <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOutcomes">نتائج التعلم</button></h2><div id="collapseOutcomes" class="accordion-collapse collapse" data-bs-parent="#programDetailsAccordion"><div class="accordion-body"><p>${program.details.outcomes || 'غير محدد.'}</p></div></div></div>
           </div>
-
-          <div class="text-center mt-4">
-            <button class="btn btn-primary btn-lg">قدم الآن لهذا البرنامج</button>
-          </div>
-        `;
+          <div class="text-center mt-4"><a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">قدم الآن لهذا البرنامج</a></div>`;
       }
 
-      // Event delegation for program list items
+      function handleProgramSelection(level) {
+          const listContainer = document.getElementById(`${level}-program-list`);
+          const programs = programs_by_level[level] || [];
+          if (listContainer && programs.length > 0) {
+              const firstItem = listContainer.querySelector('.program-list-item');
+              if (firstItem) {
+                firstItem.classList.add('active');
+                renderProgramDetails(programs[0]);
+              }
+          } else {
+              document.getElementById('program-detail-content').innerHTML = `
+                <div class="text-center text-muted pt-5">
+                    <i class="fas fa-search fa-3x mb-3"></i>
+                    <h3>اختر برنامجًا من القائمة</h3>
+                    <p>استخدم القوائم في الأعلى لتصفح الدبلومات والماجستير والدكتوراه.</p>
+                </div>`;
+          }
+      }
+
       document.querySelectorAll('.tab-pane').forEach(tabPane => {
         tabPane.addEventListener('click', function(event) {
           const listItem = event.target.closest('.program-list-item');
           if (listItem) {
-            // Remove active class from all list items in the current tab
-            tabPane.querySelectorAll('.program-list-item').forEach(item => {
-              item.classList.remove('active');
-            });
-            // Add active class to the clicked item
+            this.querySelectorAll('.program-list-item').forEach(item => item.classList.remove('active'));
             listItem.classList.add('active');
-
-            const programId = listItem.dataset.programId;
-            const programLevel = listItem.dataset.programLevel;
-            const selectedProgram = programs_by_level[programLevel].find(p => p.id === programId);
-
-            if (selectedProgram) {
-              renderProgramDetails(selectedProgram);
-            }
+            const program = programs_by_level[listItem.dataset.programLevel].find(p => p.id === listItem.dataset.programId);
+            if (program) renderProgramDetails(program);
           }
         });
       });
 
-      // Initial render for the active tab (Diploma)
+      document.querySelectorAll('[data-bs-toggle="pill"]').forEach(tab => {
+          tab.addEventListener('shown.bs.tab', (event) => {
+              const level = event.target.id.split('-')[1]; // diploma, masters, phd
+              renderProgramList(level, `${level}-program-list`);
+              handleProgramSelection(level);
+          });
+      });
+
+      // Initial Load
       renderProgramList('diploma', 'diploma-program-list');
-      // Automatically select and display details for the first program in the Diploma list
-      if (programs_by_level.diploma.length > 0) {
-        document.getElementById('diploma-program-list').querySelector('.program-list-item').classList.add('active');
-        renderProgramDetails(programs_by_level.diploma[0]);
-      }
-
-
-      // Add event listeners to tab buttons to render content dynamically
-      document.getElementById('pills-diploma-tab').addEventListener('shown.bs.tab', () => {
-        renderProgramList('diploma', 'diploma-program-list');
-        // Automatically select and display details for the first program in the Diploma list
-        if (programs_by_level.diploma.length > 0) {
-          document.getElementById('diploma-program-list').querySelector('.program-list-item').classList.add('active');
-          renderProgramDetails(programs_by_level.diploma[0]);
-        } else {
-            document.getElementById('program-detail-content').innerHTML = `
-                <div class="text-center text-muted pt-5">
-                    <i class="fas fa-info-circle fa-3x mb-3"></i>
-                    <h3>لا توجد برامج متاحة حاليًا لهذا المستوى.</h3>
-                    <p>يرجى التحقق مرة أخرى لاحقًا.</p>
-                </div>`;
-        }
-      });
-      document.getElementById('pills-masters-tab').addEventListener('shown.bs.tab', () => {
-        renderProgramList('masters', 'masters-program-list');
-        // Automatically select and display details for the first program in the Master's list
-        if (programs_by_level.masters.length > 0) {
-          document.getElementById('masters-program-list').querySelector('.program-list-item').classList.add('active');
-          renderProgramDetails(programs_by_level.masters[0]);
-        } else {
-            document.getElementById('program-detail-content').innerHTML = `
-                <div class="text-center text-muted pt-5">
-                    <i class="fas fa-info-circle fa-3x mb-3"></i>
-                    <h3>لا توجد برامج متاحة حاليًا لهذا المستوى.</h3>
-                    <p>يرجى التحقق مرة أخرى لاحقًا.</p>
-                </div>`;
-        }
-      });
-      document.getElementById('pills-phd-tab').addEventListener('shown.bs.tab', () => {
-        renderProgramList('phd', 'phd-program-list');
-        // Automatically select and display details for the first program in the PhD list
-        if (programs_by_level.phd.length > 0) {
-          document.getElementById('phd-program-list').querySelector('.program-list-item').classList.add('active');
-          renderProgramDetails(programs_by_level.phd[0]);
-        } else {
-            document.getElementById('program-detail-content').innerHTML = `
-                <div class="text-center text-muted pt-5">
-                    <i class="fas fa-info-circle fa-3x mb-3"></i>
-                    <h3>لا توجد برامج متاحة حاليًا لهذا المستوى.</h3>
-                    <p>يرجى التحقق مرة أخرى لاحقًا.</p>
-                </div>`;
-        }
-      });
+      handleProgramSelection('diploma');
     });
   </script>
 </body>
