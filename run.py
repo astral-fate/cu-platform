@@ -11,8 +11,15 @@ from functools import wraps
 import base64
 # --- New Imports for Email Verification ---
 from itsdangerous import URLSafeTimedSerializer
-import smtplib
-from email.mime.text import MIMEText
+# --- New Mailtrap Import ---
+try:
+    import mailtrap as mt
+    MAILTRAP_AVAILABLE = True
+except ImportError:
+    MAILTRAP_AVAILABLE = False
+    # TRANSLATED
+    print("تحذير: مكتبة Mailtrap غير مثبتة. سيتم تعطيل إرسال البريد الإلكتروني. قم بتشغيل 'pip install mailtrap' لتفعيلها.")
+
 
 # --- Third-Party Libraries ---
 from flask import (
@@ -83,10 +90,9 @@ app.config.update(
     SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL'),
     
     UPLOAD_FOLDER=os.path.join('static', 'uploads'), # Keep path as is
-    # --- New Mail Configurations ---
-    MAIL_SERVER='127.0.0.1',
-    MAIL_PORT=25,
-    MAIL_DEFAULT_SENDER='noreply@cu-project.com' # Example sender address
+    # --- New Mail Configurations for Mailtrap ---
+    MAILTRAP_API_TOKEN=os.environ.get('MAILTRAP_API_TOKEN'),
+    MAIL_DEFAULT_SENDER='noreply@cu-platform.vercel.app'
 )
 # Ensure instance and uploads directories exist
 os.makedirs(app.instance_path, exist_ok=True)
@@ -118,22 +124,43 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- New: Email sending helper function ---
+# --- MODIFIED: Email sending helper function using Mailtrap ---
 def send_email(to_email, subject, body):
-    """Helper function to send email using smtplib."""
-    msg = MIMEText(body, 'html', 'utf-8')
-    msg['Subject'] = subject
-    msg['From'] = app.config['MAIL_DEFAULT_SENDER']
-    msg['To'] = to_email
+    """Helper function to send email using the Mailtrap API."""
+    if not MAILTRAP_AVAILABLE:
+        app.logger.error("Mailtrap library not installed. Cannot send email.")
+        return
+
+    token = app.config.get('MAILTRAP_API_TOKEN')
+    if not token:
+        app.logger.error("MAILTRAP_API_TOKEN is not configured in environment variables. Cannot send email.")
+        # In a real app, you might flash a message or handle this more gracefully.
+        # For now, we just log and exit the function.
+        return
+
+    sender_email = app.config.get('MAIL_DEFAULT_SENDER')
+    sender_name = "CU Graduate Studies Platform" # A sensible default sender name
+
+    app.logger.info(f"Preparing to send email to {to_email} via Mailtrap from {sender_email}")
+
+    # Create a Mail object with the necessary parameters
+    mail = mt.Mail(
+        sender=mt.Address(email=sender_email, name=sender_name),
+        to=[mt.Address(email=to_email)],
+        subject=subject,
+        html=body,  # Use the 'html' parameter for HTML content
+        category="System Notifications", # Helps organize emails in your Mailtrap inbox
+    )
+
+    # Create a Mailtrap client and send the email
+    client = mt.MailtrapClient(token=token)
 
     try:
-        # Use a local SMTP debugging server on 127.0.0.1:25
-        # To run one, execute in your terminal: python -m smtpd -c DebuggingServer -n 127.0.0.1:25
-        with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as server:
-            server.send_message(msg)
-            app.logger.info(f"Email sent successfully to {to_email}")
+        response = client.send(mail)
+        app.logger.info(f"Email sent successfully to {to_email} via Mailtrap. Response: {response}")
     except Exception as e:
-        app.logger.error(f"Failed to send email to {to_email}. Server: {app.config['MAIL_SERVER']}:{app.config['MAIL_PORT']}. Error: {e}")
+        # Mailtrap's client can raise exceptions for API errors, etc.
+        app.logger.error(f"Failed to send email to {to_email} using Mailtrap. Error: {e}")
         # Do not re-raise, just log the error. The main application flow should continue.
 
 
@@ -365,7 +392,11 @@ def register():
         try:
             # Generate a time-sensitive token
             token = s.dumps(user.email, salt='email-confirm')
-            # Create the verification URL
+            
+            # Create the verification URL.
+            # On Vercel, `_external=True` will correctly use the request's host
+            # (e.g., 'cu-platform.vercel.app') to build the full URL, like:
+            # https://cu-platform.vercel.app/verify-email/<token>
             verification_url = url_for('verify_email', token=token, _external=True)
 
             # Prepare email content (HTML)
