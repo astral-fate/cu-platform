@@ -7,14 +7,14 @@
     /* General Dashboard Enhancement */
     .dashboard-container {
         padding: 1.5rem;
-        background-color: #f8f9fa;
+        background-color: #f8f9fa; /* Light grey background for the whole page */
     }
 
     /* Welcome Card Styling */
     .welcome-card {
         background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
         color: #fff;
-        border-radius: 16px;
+        border-radius: 16px; /* Softer, more modern corners */
         padding: 2rem;
         margin-bottom: 2rem;
         box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2), 0 6px 6px rgba(79, 70, 229, 0.15);
@@ -36,7 +36,7 @@
         display: flex;
         align-items: flex-start;
         gap: 1rem;
-        box-shadow: none;
+        box-shadow: none; /* Remove default shadow for nested alerts */
     }
 
     .welcome-card .alert i {
@@ -55,10 +55,10 @@
         font-size: 0.9rem;
         line-height: 1.6;
     }
-
+    
     .welcome-card .alert .btn.primary {
         background-color: #ffffff;
-        color: #4f46e5;
+        color: #4f46e5; /* Match the primary color */
         font-weight: 600;
         border: none;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -73,7 +73,7 @@
     /* Responsive Grid for Cards */
     .dashboard-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); /* Responsive grid */
         gap: 1.5rem;
         padding: 0;
         overflow-x: hidden; /* Prevent horizontal scrolling */
@@ -82,13 +82,13 @@
     /* Enhanced Card Styling */
     .card {
         background-color: #ffffff;
-        border-radius: 16px;
+        border-radius: 16px; /* Match welcome card's radius */
         border: 1px solid #e5e7eb;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         display: flex;
         flex-direction: column;
-        margin-bottom: 0; /* Removed margin as gap is handled by grid */
+        margin-bottom: 0; /* Margin is now handled by the grid gap */
     }
 
     .card:hover {
@@ -107,12 +107,31 @@
     .card-header h3 {
         font-size: 1.1rem;
         font-weight: 600;
-        color: #111827;
+        color: #111827; /* Dark text color for headers */
     }
     
     .card-body {
         padding: 1.5rem;
-        flex-grow: 1; /* Ensure cards in a row have same height */
+        flex-grow: 1; /* Ensures cards in a row have the same height */
+    }
+
+    /* Specific styles for "Application Status" card */
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+    }
+
+    .info-label {
+        color: #6b7280; /* Muted grey for labels */
+        font-size: 0.9rem;
+    }
+
+    .info-value {
+        font-weight: 600;
+        color: #111827 !important; /* IMPORTANT: Ensures program name is black */
+        font-size: 0.9rem;
     }
 
     /* Styling for lists within cards */
@@ -134,6 +153,17 @@
     .document-item:last-child, .ticket-item:last-child {
         border-bottom: none;
     }
+
+    .ticket-subject {
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+      color: #111827; /* Dark color for subject */
+    }
+
+    .ticket-date {
+        font-size: 0.8rem;
+        color: #6b7280;
+    }
     
     /* Close button on certificate notification */
     .close-alert {
@@ -144,33 +174,20 @@
         border: none;
         color: rgba(255,255,255,0.7);
         cursor: pointer;
-        font-size: 1rem;
+        font-size: 1.1rem;
+        padding: 0.5rem;
+        line-height: 1;
     }
     .close-alert:hover {
         color: white;
     }
-
-    /* --- Notification Panel Fixes from original file --- */
-    .notifications-panel {
-        position: absolute; right: 0; top: 100%; margin-top: 5px; width: min(320px, 90vw); max-width: 90vw; background-color: white; border-radius: 8px; box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15); z-index: 1000; overflow: hidden; max-height: 80vh; overflow-y: auto;
-    }
-    @media (max-width: 576px) {
-        .notifications-panel { right: -50px; width: 280px; }
-    }
-    .notifications-panel.hidden { display: none; }
-    .notifications-header { padding: 12px 15px; background-color: #4f46e5; color: white; display: flex; align-items: center; justify-content: space-between; font-size: 14px; text-align: left; }
-    .notifications-list { max-height: 350px; overflow-y: auto; }
-    .notification-item { padding: 12px 15px; border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s; text-align: left; }
-    .notification-item:hover { background-color: #f9fafb; }
-    .notification-item.unread { background-color: #eff6ff; }
-    .notification-time { font-size: 12px; color: #6b7280; margin-top: 4px; display: block; }
 
 </style>
 {% endblock %}
 
 {% block main_content %}
 <div class="dashboard-container">
-    <!-- The main content area now has a single child, which helps with layout consistency -->
+    <!-- This container helps with overall padding and background -->
     <div class="dashboard-main">
         <div class="welcome-card">
             <h3>مرحباً، {{ current_user.full_name }}!</h3>
