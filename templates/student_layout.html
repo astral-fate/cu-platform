@@ -182,7 +182,7 @@ document.getElementById('toggle-sidebar')?.addEventListener('click', function() 
 <style>
     /*
       ==================================================================
-      Improved Styles for Student Dashboard (v6)
+      Improved Styles for Student Dashboard (v7)
       ==================================================================
       These styles are designed to override existing stylesheets to 
       provide a cleaner, more modern, and visually consistent UI.
@@ -269,41 +269,45 @@ document.getElementById('toggle-sidebar')?.addEventListener('click', function() 
     .sidebar-info {
         display: flex;
         flex-direction: column;
-        gap: 0.75rem; /* Space between each info item */
+        gap: 1rem; /* Space between each info item */
         text-align: right; /* Align text to the right for RTL */
     }
 
     /* Individual info item row (ID, Program, GPA) */
     .info-item {
         display: flex;
-        justify-content: space-between; /* Pushes label and value to opposite ends */
-        align-items: center;
-        padding: 0.5rem 0;
+        flex-direction: column; /* Stack label and value vertically */
+        align-items: flex-start; /* Align items to the start (right in RTL) */
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 1rem;
     }
 
     .info-item:last-child {
         border-bottom: none; /* Remove border from the last item */
+        padding-bottom: 0;
     }
 
     /* Label for info (e.g., 'ID:', 'البرنامج:') */
     .info-label {
         color: rgba(255, 255, 255, 0.8); /* Slightly transparent white for labels */
-        font-size: 0.875rem;
+        font-size: 0.8rem;
+        font-weight: 400;
+        margin-bottom: 0.25rem; /* Space between label and value */
     }
 
     /* Value for info (e.g., student's ID number) */
     .info-value {
         color: var(--sidebar-text-color);
-        font-weight: 500;
-        font-size: 0.9rem;
+        font-weight: 600;
+        font-size: 1rem;
     }
     
     .info-value.small {
-        font-size: 0.85rem;
-        max-width: 150px; /* Prevent long text from breaking layout */
+        font-size: 0.9rem; /* Adjust size for consistency */
+        font-weight: 500;
+        max-width: 100%; 
         white-space: normal;
-        text-align: left;
+        text-align: right; /* Ensure alignment is correct in RTL */
     }
 
     /* Badge for GPA */
@@ -312,8 +316,9 @@ document.getElementById('toggle-sidebar')?.addEventListener('click', function() 
         color: var(--gpa-badge-text);
         padding: 0.25rem 0.75rem;
         border-radius: 50px; /* Pill-shaped badge */
-        font-size: 0.9rem;
+        font-size: 1rem;
         font-weight: 600;
+        display: inline-block; /* Needed for padding to apply correctly */
     }
 
     /* Divider line below the profile box */
