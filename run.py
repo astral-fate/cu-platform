@@ -91,6 +91,12 @@ app.config.update(
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL'),
     
+    # Add these lines to fix serverless connection issues
+    SQLALCHEMY_ENGINE_OPTIONS={
+        "pool_recycle": 280,
+        "pool_pre_ping": True
+    },
+    
     UPLOAD_FOLDER=UPLOAD_DIR,
     # --- New Mail Configurations for Mailtrap ---
     MAILTRAP_API_TOKEN=os.environ.get('MAILTRAP_API_TOKEN'),
