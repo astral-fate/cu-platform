@@ -88,7 +88,7 @@ app.config.update(
 )
 # Ensure instance and uploads directories exist
 os.makedirs(app.instance_path, exist_ok=True)
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+# os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # --- New: Serializer for generating secure tokens ---
 s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
