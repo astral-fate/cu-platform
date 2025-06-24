@@ -100,6 +100,12 @@ csrf = CSRFProtect(app)
 db.init_app(app)
 migrate = Migrate(app, db)
 
+
+
+# Create database tables if they don't exist
+with app.app_context():
+    db.create_all()
+
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
