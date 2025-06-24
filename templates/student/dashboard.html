@@ -4,6 +4,13 @@
 
 {% block extra_css %}
 <style>
+    /* ==================================================================
+      Improved Dashboard Styles
+      ==================================================================
+      This CSS provides a cleaner, more modern, and responsive design 
+      for the dashboard cards and layout.
+    */
+
     /* General Dashboard Enhancement */
     .dashboard-container {
         padding: 1.5rem;
@@ -73,7 +80,9 @@
     /* Responsive Grid for Cards */
     .dashboard-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); /* Responsive grid */
+        /* This creates responsive columns. They will be at least 340px wide
+           and will wrap to new lines on larger screens. */
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); 
         gap: 1.5rem;
         padding: 0;
         overflow-x: hidden; /* Prevent horizontal scrolling */
@@ -130,7 +139,7 @@
 
     .info-value {
         font-weight: 600;
-        color: #111827 !important; /* IMPORTANT: Ensures program name is black */
+        color: #111827 !important; /* IMPORTANT: Ensures text is black as requested */
         font-size: 0.9rem;
     }
 
