@@ -4,170 +4,173 @@
 
 {% block extra_css %}
 <style>
-    /* تنسيق الشريط الجانبي */
-    .sidebar-profile {
-        text-align: center;
-        padding: 1.5rem 1rem;
-        background: linear-gradient(135deg, #4f46e5, #7c3aed);
-        border-radius: 12px;
-        margin: 0 1rem 1.5rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    
-    .sidebar-avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.2);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        font-weight: 600;
-        margin: 0 auto 1rem;
-    }
-    
-    .sidebar-name {
-        color: white;
-        font-size: 1.25rem;
-        margin-bottom: 1rem;
-        font-weight: 600;
-    }
-    
-    .sidebar-info {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    
-    .info-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.25rem;
-    }
-    
-    .info-label {
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    
-    .info-value {
-        color: white;
-        font-weight: 500;
-    }
-    
-    .info-value.small {
-        font-size: 0.875rem;
-    }
-    
-    .gpa-badge {
-        background-color: rgba(255, 255, 255, 0.2);
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-weight: 600;
-    }
-    
-    .sidebar-divider {
-        border-color: rgba(255, 255, 255, 0.1);
-        margin: 1rem 0;
-    }
-    
-    /* إشعار الشهادات */
-    .alert.success {
-        position: relative;
-    }
-    
-    .close-alert {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        background: none;
-        border: none;
-        color: #10b981;
-        cursor: pointer;
-        font-size: 0.875rem;
-    }
-    
-    .close-alert:hover {
-        color: #047857;
+    /* General Dashboard Enhancement */
+    .dashboard-container {
+        padding: 1.5rem;
+        background-color: #f8f9fa;
     }
 
-    /* إصلاح لوحة الإشعارات */
-    .notifications-panel {
-        position: absolute;
-        right: 0;
-        top: 100%;
-        margin-top: 5px;
-        width: min(320px, 90vw);  /* Use the smaller of 320px or 90% of viewport width */
-        max-width: 90vw;
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
-        z-index: 1000;
-        overflow: hidden;
-        max-height: 80vh;  /* Limit height to 80% of viewport height */
-        overflow-y: auto;  /* Add vertical scrolling if needed */
+    /* Welcome Card Styling */
+    .welcome-card {
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        color: #fff;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2), 0 6px 6px rgba(79, 70, 229, 0.15);
     }
-    
-    /* Ensure the panel doesn't go off-screen on small screens */
-    @media (max-width: 576px) {
-        .notifications-panel {
-            right: -50px;  /* Adjust the position on very small screens */
-            width: 280px;
-        }
+
+    .welcome-card h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
     }
-    
-    .notifications-panel.hidden {
-        display: none;
-    }
-    
-    .notifications-header {
-        padding: 12px 15px;
-        background-color: #4f46e5;
-        color: white;
+
+    /* Alert boxes inside the Welcome Card */
+    .welcome-card .alert {
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        border-radius: 12px;
+        padding: 1rem;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
+        gap: 1rem;
+        box-shadow: none;
+    }
+
+    .welcome-card .alert i {
+        font-size: 1.5rem;
+        margin-top: 0.25rem;
+        opacity: 0.9;
+    }
+
+    .welcome-card .alert h4 {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .welcome-card .alert p {
+        opacity: 0.9;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .welcome-card .alert .btn.primary {
+        background-color: #ffffff;
+        color: #4f46e5;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+    }
+    
+    .welcome-card .alert .btn.primary:hover {
+        background-color: #eef2ff;
+        transform: translateY(-2px);
+    }
+
+    /* Responsive Grid for Cards */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 1.5rem;
+        padding: 0;
+        overflow-x: hidden; /* Prevent horizontal scrolling */
+    }
+
+    /* Enhanced Card Styling */
+    .card {
+        background-color: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0; /* Removed margin as gap is handled by grid */
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
+    }
+
+    .card-header {
+        background-color: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 1rem 1.5rem;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+    }
+
+    .card-header h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #111827;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+        flex-grow: 1; /* Ensure cards in a row have same height */
+    }
+
+    /* Styling for lists within cards */
+    .document-list, .ticket-list {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+    .document-item, .ticket-item {
+        display: flex;
         justify-content: space-between;
-        font-size: 14px;
-        text-align: left;
-    }
-    
-    .notifications-list {
-        max-height: 350px;
-        overflow-y: auto;
-    }
-    
-    .notification-item {
-        padding: 12px 15px;
+        align-items: center;
+        padding: 1rem 0.25rem;
         border-bottom: 1px solid #e5e7eb;
         transition: background-color 0.2s;
-        text-align: left;
+    }
+
+    .document-item:last-child, .ticket-item:last-child {
+        border-bottom: none;
     }
     
-    .notification-item:hover {
-        background-color: #f9fafb;
+    /* Close button on certificate notification */
+    .close-alert {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.7);
+        cursor: pointer;
+        font-size: 1rem;
     }
-    
-    .notification-item.unread {
-        background-color: #eff6ff;
+    .close-alert:hover {
+        color: white;
     }
-    
-    .notification-time {
-        font-size: 12px;
-        color: #6b7280;
-        margin-top: 4px;
-        display: block;
+
+    /* --- Notification Panel Fixes from original file --- */
+    .notifications-panel {
+        position: absolute; right: 0; top: 100%; margin-top: 5px; width: min(320px, 90vw); max-width: 90vw; background-color: white; border-radius: 8px; box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15); z-index: 1000; overflow: hidden; max-height: 80vh; overflow-y: auto;
     }
+    @media (max-width: 576px) {
+        .notifications-panel { right: -50px; width: 280px; }
+    }
+    .notifications-panel.hidden { display: none; }
+    .notifications-header { padding: 12px 15px; background-color: #4f46e5; color: white; display: flex; align-items: center; justify-content: space-between; font-size: 14px; text-align: left; }
+    .notifications-list { max-height: 350px; overflow-y: auto; }
+    .notification-item { padding: 12px 15px; border-bottom: 1px solid #e5e7eb; transition: background-color 0.2s; text-align: left; }
+    .notification-item:hover { background-color: #f9fafb; }
+    .notification-item.unread { background-color: #eff6ff; }
+    .notification-time { font-size: 12px; color: #6b7280; margin-top: 4px; display: block; }
+
 </style>
 {% endblock %}
 
 {% block main_content %}
 <div class="dashboard-container">
-    <!-- محتوى لوحة التحكم الرئيسية -->
+    <!-- The main content area now has a single child, which helps with layout consistency -->
     <div class="dashboard-main">
         <div class="welcome-card">
             <h3>مرحباً، {{ current_user.full_name }}!</h3>
@@ -356,24 +359,14 @@
 <script src="{{ url_for('static', filename='js/dashboard-notifications.js') }}"></script>
 
 <script>
-    // Remove height limitations from cards for dashboard
     document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.card-body').forEach(function(cardBody) {
-            cardBody.style.height = 'auto';
-            cardBody.style.maxHeight = 'none';
-        });
-
         // Certificate notification dismissal
         const certificateNotification = document.getElementById('certificate-notification');
         if (certificateNotification) {
-            localStorage.getItem('certificateDismissed') === 'true'
-                ? certificateNotification.style.display = 'none'
-                : null;
+            if (localStorage.getItem('certificateDismissed') === 'true') {
+                certificateNotification.style.display = 'none';
+            }
         }
-
-        // Notification logic is now handled by notifications.js and dashboard-notifications.js
-        // Remove the redundant toggle and mark-as-read logic from here.
-
     });
 
     // Function to dismiss certificate notification
