@@ -430,113 +430,6 @@ def verify_email(token):
 
     return redirect(url_for('login'))
 
-# --- NEW: Forgot Password Request Route ---
-@app.route('/forgot-password', methods=['GET', 'POST'])
-def forgot_password_request():
-    if current_user.is_authenticated:
-        return redirect(url_for('student_dashboard'))
-
-    class ForgotPasswordForm(FlaskForm):
-        pass # Empty form for CSRF
-    form = ForgotPasswordForm()
-
-    if form.validate_on_submit():
-        email = request.form.get('email')
-        user = User.query.filter_by(email=email).first()
-
-        # Security: Don't reveal if the user exists.
-        # Send email if user exists, otherwise do nothing, but show the same message.
-        if user:
-            try:
-                # Generate a time-sensitive token with a different salt
-                token = s.dumps(user.email, salt='password-reset-salt')
-                # Create the reset URL
-                reset_url = url_for('reset_password', token=token, _external=True)
-
-                # Prepare email content
-                # TRANSLATED email body
-                email_subject = 'إعادة تعيين كلمة المرور الخاصة بك'
-                email_body_html = f"""
-                <html dir="rtl" lang="ar">
-                <head><meta charset="UTF-8"></head>
-                <body>
-                    <p>مرحباً {user.full_name},</p>
-                    <p>لقد طلبت إعادة تعيين كلمة المرور لحسابك. يرجى الضغط على الرابط التالي لإعادة تعيينها. هذا الرابط صالح لمدة ساعة واحدة فقط.</p>
-                    <p style="text-align: center;">
-                        <a href="{reset_url}" style="background-color: #ffc107; color: black; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-                            إعادة تعيين كلمة المرور
-                        </a>
-                    </p>
-                    <p>إذا لم يعمل الزر، يمكنك نسخ ولصق الرابط التالي في متصفحك:</p>
-                    <p>{reset_url}</p>
-                    <p>إذا لم تكن أنت من طلب هذا، يرجى تجاهل هذا البريد الإلكتروني ولن يتم إجراء أي تغييرات على حسابك.</p>
-                    <hr>
-                    <p>فريق مشروع جامعة القاهرة</p>
-                </body>
-                </html>
-                """
-
-                # Send the email
-                send_email(user.email, email_subject, email_body_html)
-                app.logger.info(f"Password reset email sent for user: {user.email}")
-            except Exception as e:
-                app.logger.error(f"Error sending password reset email for {email}: {e}", exc_info=True)
-                # Don't flash an error to the user, as that could be a security risk.
-                # The generic message below is sufficient.
-
-        # TRANSLATED flash message
-        flash('إذا كان هذا البريد الإلكتروني مسجلاً، فقد تم إرسال تعليمات إعادة تعيين كلمة المرور إليه.', 'info')
-        return redirect(url_for('login'))
-
-    return render_template('forgot_password_request.html', form=form)
-
-# --- NEW: Reset Password Route ---
-@app.route('/reset-password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('student_dashboard'))
-
-    try:
-        # Verify token, max_age is 1 hour (3600 seconds)
-        email = s.loads(token, salt='password-reset-salt', max_age=3600)
-    except Exception:
-        # TRANSLATED
-        flash('رابط إعادة تعيين كلمة المرور غير صالح أو انتهت صلاحيته.', 'danger')
-        return redirect(url_for('forgot_password_request'))
-
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        # TRANSLATED
-        flash('المستخدم غير موجود. الرابط قد يكون غير صالح.', 'danger')
-        return redirect(url_for('login'))
-
-    class ResetPasswordForm(FlaskForm):
-        pass # Empty form for CSRF
-    form = ResetPasswordForm()
-
-    if form.validate_on_submit():
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
-
-        if password != confirm_password:
-            # TRANSLATED
-            flash('كلمتا المرور غير متطابقتين.', 'danger')
-            # Re-render the form with the token
-            return render_template('reset_password.html', form=form, token=token)
-        
-        if not password or len(password) < 6:
-            # TRANSLATED
-            flash('كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل.', 'danger')
-            return render_template('reset_password.html', form=form, token=token)
-
-        user.set_password(password)
-        db.session.commit()
-
-        # TRANSLATED
-        flash('تم تغيير كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.', 'success')
-        return redirect(url_for('login'))
-
-    return render_template('reset_password.html', form=form, token=token)
 
 @app.route('/programs')
 def programs():
@@ -877,15 +770,57 @@ def admin_dashboard():
     # Get recent certificate requests
     recent_certificates = Certificate.query.order_by(Certificate.request_date.desc()).limit(3).all()
 
-    return render_template('admin/dashboard.html',
-                          applications_count=applications_count,
-                          payment_pending_count=payment_pending_count,
-                          certificate_requests=certificate_requests,
-                          open_tickets=open_tickets,
-                          recent_applications=recent_applications,
-                          recent_tickets=recent_tickets,
-                          recent_certificates=recent_certificates)
+    # --- New: Student statistics ---
+    from sqlalchemy import func
 
+    # Total students with student IDs (enrolled)
+    total_students = (
+        db.session.query(func.count(StudentID.id))
+        .join(Application, StudentID.application_id == Application.id)
+        .join(User, Application.user_id == User.id)
+        .filter(User.role == 'student')
+        .scalar()
+    )
+
+    # National students (Egyptian)
+    national_students = (
+        db.session.query(func.count(StudentID.id))
+        .join(Application, StudentID.application_id == Application.id)
+        .join(User, Application.user_id == User.id)
+        .filter(User.role == 'student', func.lower(User.nationality) == 'egyptian')
+        .scalar()
+    )
+    # International students = total - national
+    international_students = total_students - national_students if total_students is not None and national_students is not None else 0
+
+    # Top 3 registered courses (by enrollment count)
+    top_courses = (
+        db.session.query(Course.title, func.count(CourseEnrollment.id).label('enroll_count'))
+        .join(CourseEnrollment, Course.id == CourseEnrollment.course_id)
+        .group_by(Course.id)
+        .order_by(func.count(CourseEnrollment.id).desc())
+        .limit(3)
+        .all()
+    )
+
+    return render_template(
+        'admin/dashboard.html',
+        applications_count=applications_count,
+        payment_pending_count=payment_pending_count,
+        certificate_requests=certificate_requests,
+        open_tickets=open_tickets,
+        recent_applications=recent_applications,
+        recent_tickets=recent_tickets,
+        recent_certificates=recent_certificates,
+        # New stats:
+        total_students=total_students,
+        national_students=national_students,
+        international_students=international_students,
+        top_courses=top_courses
+    )
+
+
+# end of dashbord routes
 @app.route('/admin/certificates/update/<int:cert_id>', methods=['POST'])
 @login_required
 def admin_update_certificate(cert_id):
@@ -1552,7 +1487,7 @@ def get_required_documents_list(degree_type, nationality):
         base_docs.extend([
             {"name": "جواز السفر (ساري المفعول)", "type": "passport"},
             {"name": "تصديق شهادة المؤهل السابق", "type": "attested_cert"},
-            {"name": "شهادة إجادة اللغة الإنجليزية (إن وجدت)", "type": "english_ proficiency"}
+            {"name": "شهادة إجادة اللغة الإنجليزية (إن وجدت)", "type": "english_proficiency"}
         ])
 
     return base_docs
@@ -4037,4 +3972,3 @@ if __name__ == '__main__':
             db.session.rollback()
 
     app.run(debug=True)
-
