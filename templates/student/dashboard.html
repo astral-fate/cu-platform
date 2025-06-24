@@ -5,10 +5,10 @@
 {% block extra_css %}
 <style>
     /* ==================================================================
-      Dashboard Redesign (v2)
+      Dashboard Redesign (v2.1) - Style Specificity Fix
       ==================================================================
-      A complete visual overhaul for a more modern, clean, and 
-      professional user experience.
+      Corrected CSS specificity to prevent layout styles from overriding
+      card content styles, ensuring correct text colors.
     */
 
     :root {
@@ -122,41 +122,44 @@
     }
 
     /* Info Rows for 'Application Status' card */
-    .info-row {
+    .card .info-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 0.85rem 0;
         border-bottom: 1px dashed #e5e7eb;
     }
-    .info-row:first-of-type { padding-top: 0; }
-    .info-row:last-of-type { border-bottom: none; }
+    .card .info-row:first-of-type { padding-top: 0; }
+    .card .info-row:last-of-type { border-bottom: none; }
 
-    .info-label { color: var(--text-secondary); font-size: 0.9rem; }
-    .info-value, .document-item > span:first-child, .ticket-subject {
+    /* ** FIX ** Scoped card-specific text colors to override layout styles */
+    .card .info-label { color: var(--text-secondary) !important; font-size: 0.9rem; }
+    .card .info-value, 
+    .card .document-item > span:first-child, 
+    .card .ticket-subject {
         font-weight: 500;
-        color: var(--text-primary);
+        color: var(--text-primary) !important;
         font-size: 0.9rem;
     }
 
     /* List styling for 'Documents' & 'Tickets' */
-    .document-list, .ticket-list {
+    .card .document-list, .card .ticket-list {
         margin: 0;
         padding: 0;
         list-style-type: none;
         flex-grow: 1;
     }
 
-    .document-item, .ticket-item {
+    .card .document-item, .card .ticket-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 1rem 0.25rem;
         border-bottom: 1px solid #f3f4f6;
     }
-    .document-item:last-child, .ticket-item:last-child { border-bottom: none; }
-    .ticket-details { text-align: right; }
-    .ticket-date { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem; }
+    .card .document-item:last-child, .card .ticket-item:last-child { border-bottom: none; }
+    .card .ticket-details { text-align: right; }
+    .card .ticket-date { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem; }
 
     /* Empty State Styling */
     .empty-state {
