@@ -79,7 +79,9 @@ app = Flask(__name__)
 app.config.update(
     SECRET_KEY='your-secret-key-goes-here', # Keep secret key as is
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
-    SQLALCHEMY_DATABASE_URI='sqlite:///cu_project.db',  # Keep URI as is
+    # SQLALCHEMY_DATABASE_URI='sqlite:///cu_project.db',  for local usage
+    SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL'),
+    
     UPLOAD_FOLDER=os.path.join('static', 'uploads'), # Keep path as is
     # --- New Mail Configurations ---
     MAIL_SERVER='127.0.0.1',
