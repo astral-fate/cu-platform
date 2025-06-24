@@ -3,28 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> مستودع المشاريع    </title>
+  <title>الأخبار و الإعلانات</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* Custom Variables from index.html for consistency */
     :root {
-      --primary-color: #0D1D4E;
-      --secondary-color: #433AC8;
+      --primary-color: #0D1D4E; /* Dark Blue */
+      --secondary-color: #433AC8; /* Royal Purple */
+      --accent-color: #433AC8; /* Accent color for highlights */
       --dark-color: #1a1a1a;
       --light-color: #f8f9fa;
-      --transition: all 0.3s ease;
+      --transition: all 0.4s ease-in-out;
+      --border-radius-lg: 1rem;
+      --box-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --box-shadow-md: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
     
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Cairo', sans-serif;
       overflow-x: hidden;
-      text-align: right; /* Align text to the right */
+      line-height: 1.7;
+      color: #333;
+      background-color: var(--light-color);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+      color: var(--primary-color);
+      line-height: 1.3;
+    }
+
+    p {
+      color: #555;
     }
     
-    /* Navbar Styles */
+    section {
+      padding: 5rem 0;
+      position: relative;
+    }
+
+    .section-header {
+      margin-bottom: 4rem;
+      text-align: center;
+    }
+    
+    .section-header.text-start {
+      text-align: right !important;
+      width: 100%;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      position: relative;
+      display: inline-block;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(to left, var(--primary-color), var(--secondary-color));
+      border-radius: 2px;
+    }
+    
+    /* Buttons (from index.html) */
+    .btn {
+      padding: 0.8rem 1.8rem;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: var(--transition);
+      text-transform: capitalize;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border: none;
+      color: white;
+      box-shadow: var(--box-shadow-sm);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--box-shadow-md);
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+      color: white;
+    }
+
+    /* Navbar Styles (from index.html) */
     .navbar {
       background-color: var(--primary-color);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--box-shadow-md);
       padding: 0.8rem 1rem;
     }
     
@@ -34,32 +111,42 @@
       color: white !important;
     }
     
+    .navbar-toggler {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
     .nav-link {
       color: white !important;
-      margin: 0 0.3rem;
+      margin: 0 0.5rem;
       font-weight: 500;
       position: relative;
-      padding: 0.5rem 0.8rem !important;
+      padding: 0.6rem 1rem !important;
+      border-radius: 8px;
     }
     
     .nav-link::after {
       content: '';
       position: absolute;
       width: 0;
-      height: 2px;
+      height: 3px;
       bottom: 0;
-      right: 0; /* Change left to right */
+      right: 50%;
+      transform: translateX(50%);
       background-color: white;
       transition: var(--transition);
     }
     
-    .nav-link:hover::after {
-      width: 100%;
+    .nav-link:hover::after, .nav-link.active::after {
+      width: 60%;
     }
     
     .btn-login {
       background-color: transparent;
-      border: 1px solid white;
+      border: 2px solid white;
       color: white !important;
       transition: var(--transition);
     }
@@ -69,27 +156,18 @@
       color: var(--primary-color) !important;
     }
     
-    .btn-apply {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      border: none;
-      font-weight: 600;
-      box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11);
-      color: white; /* Ensure text is white */
-    }
-    
-    .btn-apply:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1);
-      color: white; /* Keep text white even on hover */
-    }
-    
-    /* Header Section */
+    /* Header Section (Specific to this page) */
     .header-section {
       background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
       color: white;
-      padding: 3rem 0;
+      padding: 4rem 0;
+      text-align: center;
       position: relative;
       overflow: hidden;
+    }
+    
+    .header-section h1 {
+        color: white;
     }
     
     .header-section::after {
@@ -98,528 +176,280 @@
       width: 200%;
       height: 200%;
       top: -50%;
-      right: -50%; /* Change left to right */
-      background: radial-gradient(rgba(255, 255, 255, 0.1), transparent);
+      right: -50%;
+      background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
       z-index: 1;
     }
     
     .header-content {
       position: relative;
       z-index: 2;
-      text-align: center;
-      color: white; /* Ensure all text is white */
+    }
+    
+    /* News and Announcements Styling (from index.html) */
+    .content-section {
+        padding: 4rem 0;
+        background-color: #f8f9fa;
     }
 
-    .header-content h1,
-    .header-content p,
-    .header-content .lead {
-      color: white; /* Explicitly set headings and paragraphs to white */
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Add text shadow for better readability */
+    .news-card {
+        background: white;
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        box-shadow: var(--box-shadow-sm);
+        margin-bottom: 2rem;
+        transition: var(--transition);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
-    
-    /* Program Categories */
-    .category-card {
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-      transition: var(--transition);
-      border: none;
+
+    .news-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--box-shadow-md);
+    }
+
+    .news-image-container {
       position: relative;
-      margin-bottom: 1.5rem;
-    }
-    
-    .category-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    }
-    
-    .category-img {
-      height: 180px;
-      object-fit: cover;
-    }
-    
-    .category-overlay {
-      position: absolute;
-      top: 0;
-      right: 0; /* Change left to right */
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
-      display: flex;
-      align-items: flex-end;
-    }
-    
-    .category-content {
-      padding: 1.5rem;
-      color: white;
-      width: 100%;
-    }
-    
-    .category-icon {
-      width: 50px;
-      height: 50px;
-      background-color: var(--primary-color);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-    
-    /* Program Cards */
-    .program-card {
-      border-radius: 12px;
+      height: 250px;
       overflow: hidden;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-      transition: var(--transition);
-      border: none;
-      margin-bottom: 1.5rem;
-    }
-    
-    .program-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    }
-    
-    .program-img {
-      height: 200px;
-      object-fit: cover;
-    }
-    
-    .program-tag {
-      position: absolute;
-      top: 10px;
-      left: 10px; /* Change right to left */
-      z-index: 2;
-    }
-    
-    .program-details {
-      padding: 0.5rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #f5f5f5;
-      font-size: 0.9rem;
-    }
-    
-    .program-details span {
-      display: flex;
-      align-items: center;
-    }
-    
-    .program-details i {
-      margin-left: 5px; /* Change margin-right to margin-left */
-      color: var(--primary-color);
-    }
-    
-    .program-title {
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: var(--dark-color);
-    }
-    
-    /* FAQ Section */
-    .faq-item {
-      margin-bottom: 1rem;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-    
-    .faq-header {
-      padding: 1rem;
-      background-color: #f5f5f5;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    
-    .faq-header:hover {
       background-color: #e9ecef;
     }
-    
-    .faq-header h5 {
-      margin: 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+
+    .news-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
     }
-    
-    .faq-icon {
-      transition: var(--transition);
+
+    .news-card:hover .news-image {
+        transform: scale(1.05);
     }
-    
-    .faq-body {
-      padding: 1rem;
-      display: none;
-    }
-    
-    .faq-header.active .faq-icon {
-      transform: rotate(180deg);
-    }
-    
-    .faq-header.active {
-      background-color: var(--primary-color);
-      color: white;
-    }
-    
-    /* Testimonials */
-    .testimonial-section {
-      background-color: #f5f5f5;
-    }
-    
-    .testimonial-card {
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-      transition: var(--transition);
-      border: none;
-      margin-bottom: 1.5rem;
-      padding: 2rem;
-    }
-    
-    .testimonial-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    }
-    
-    .testimonial-quote {
-      font-size: 3rem;
-      color: var(--primary-color);
-      opacity: 0.2;
+
+    .news-date {
       position: absolute;
-      top: 10px;
-      left: 20px; /* Change right to left */
+      top: 1.2rem;
+      left: 1.2rem;
+      background-color: var(--accent-color);
+      color: white;
+      padding: 0.4rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     }
-    
-    .testimonial-img {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid var(--primary-color);
-    }
-    
-    /* Application Process */
-    .process-step {
-      text-align: center;
-      position: relative;
-      padding-bottom: 2rem;
-    }
-    
-    .step-number {
-      width: 50px;
-      height: 50px;
+
+    .news-tag {
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      border-radius: 50px;
       background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
       color: white;
-      border-radius: 50%;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+    }
+
+    .news-card .news-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.75rem;
+    }
+    .news-card .card-body {
+        flex-grow: 1;
+    }
+
+    .announcement-card {
+        display: flex;
+        align-items: center;
+        background: white;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--box-shadow-sm);
+        margin-bottom: 1.5rem;
+        transition: var(--transition);
+        padding: 1.25rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .announcement-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--box-shadow-md);
+      border-color: var(--accent-color);
+    }
+
+    .date-block {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      min-width: 80px;
+      height: 80px;
+      border-radius: 12px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
+      align-items: center;
+      line-height: 1.2;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+      flex-shrink: 0;
+      margin-left: 1.5rem;
+    }
+
+    .date-block .day {
+      font-size: 2rem;
       font-weight: bold;
-      margin: 0 auto 1rem;
-      position: relative;
-      z-index: 2;
     }
-    
-    .process-step::before {
-      content: '';
-      position: absolute;
-      width: 2px;
-      height: 100%;
-      background-color: #e9ecef;
-      top: 0;
-      right: 50%; /* Change left to right */
-      transform: translateX(50%);
+
+    .date-block .month-year {
+      font-size: 0.85rem;
+      text-transform: uppercase;
     }
-    
-    .process-step:last-child::before {
-      display: none;
+
+    .announcement-title {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      font-size: 1.1rem;
     }
-    
-    /* Footer */
+
+    .announcement-card p {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 0;
+    }
+
+    /* Footer (from index.html) */
     .footer {
       background-color: var(--dark-color);
       color: white;
-      padding: 3rem 0 2rem;
+      padding: 5rem 0 2rem;
+      border-top: 5px solid var(--secondary-color);
     }
     
     .footer h5 {
       position: relative;
       padding-bottom: 1rem;
-      margin-bottom: 1.5rem;
-      font-weight: 600;
+      margin-bottom: 1.8rem;
+      font-weight: 700;
+      color: white;
+      font-size: 1.3rem;
     }
     
     .footer h5::after {
       content: '';
       position: absolute;
-      width: 50px;
+      width: 60px;
       height: 3px;
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      background: var(--accent-color);
       bottom: 0;
-      right: 0; /* Change left to right */
+      right: 0;
+      border-radius: 2px;
     }
     
     .footer a {
-      color: #a0aec0;
+      color: #b0c4de;
       text-decoration: none;
       transition: var(--transition);
-      display: block;
-      margin-bottom: 0.5rem;
+      display: inline-block;
+      margin-bottom: 0.6rem;
+      font-size: 1rem;
     }
     
     .footer a:hover {
       color: white;
-      transform: translateX(-5px); /* Change translateX(5px) to translateX(-5px) */
+      transform: translateX(5px);
     }
     
+    .footer .social-icons a {
+        margin-left: 1rem;
+    }
+
     .copyright {
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding-top: 1.5rem;
-      margin-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 1.8rem;
+      margin-top: 3rem;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.8);
     }
     
     /* Responsive Adjustments */
     @media (max-width: 992px) {
-      .category-card, .program-card {
-        margin-bottom: 1.5rem;
+      .navbar-collapse {
+        background-color: #0b1a44;
+        padding: 1.5rem;
+        margin-top: 0.5rem;
+        border-radius: var(--border-radius-lg);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
       }
-    }
-    
-    @media (max-width: 768px) {
-      .header-section {
-        padding: 2rem 0;
-      }
-      
-      .footer h5 {
-        margin-top: 1.5rem;
-      }
-      
-      .process-step::before {
-        right: 25px; /* Change left to right */
-        top: 50px;
-        height: calc(100% - 50px);
-      }
-      
-      .step-number {
-        margin: 0 0 1rem 0;
-      }
-      
-      .process-step {
-        text-align: right; /* Change text-align: left to text-align: right */
-        padding-right: 70px; /* Change padding-left to padding-right */
-      }
-    }
-
-    
-.accordion-button:not(.collapsed) {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-.accordion-item {
-  margin-bottom: 1rem;
-  border-radius: 8px !important;
-  overflow: hidden;
-  border: 1px solid rgba(0,0,0,.125);
-}
-
-.accordion-button:focus {
-  box-shadow: none;
-}
-
-.accordion-body {
-  background-color: #f8f9fa;
-}
-
-.accordion-body ul {
-  padding-left: 1.5rem; /* Change padding-right to padding-left */
-  margin-bottom: 0;
-}
-
-/* RTL support for Arabic text */
-.accordion-button::after {
-  margin-left: 0;
-  margin-right: auto;
-}
-
-[dir="rtl"] .accordion-button::after {
-  margin-right: 0;
-  margin-left: auto;
-}
-
-.news-section {
-    background-color: var(--light-color);
-}
-
-.news-card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: var(--transition);
-    height: 100%;
-}
-
-.news-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-}
-
-.news-image-container {
-    position: relative;
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    background-color: #f8f9fa;
-}
-
-.news-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.news-card:hover .news-image {
-    transform: scale(1.05);
-}
-
-.news-date {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background-color: white;
-    color: var(--primary-color);
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.news-tag {
-    display: inline-block;
-    padding: 0.25rem 1rem;
-    border-radius: 50px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    font-size: 0.875rem;
-}
-
-.news-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 1rem 0;
-    color: var(--dark-color);
-    line-height: 1.4;
-}
-
-.news-text {
-    color: #4a5568;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-}
-
-.section-title {
-    position: relative;
-    padding-right: 15px;
-    border-right: 4px solid var(--primary-color);
-    margin-bottom: 2rem;
-    font-size: 1.75rem;
-    font-weight: 600;
-}
-
-.date-block {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    min-width: 80px;
-    padding: 10px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-left: 0;
-    margin-right: 0; /* Remove right margin */
-}
-
-.date-block .day {
-    font-size: 1.8rem;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 2px;
-}
-
-.date-block .month-year {
-    font-size: 0.85rem;
-    opacity: 0.9;
-}
-
-.announcement-content {
-    display: flex;
-    flex-direction: row-reverse; /* Change to row-reverse for RTL */
-    justify-content: flex-start;
-    align-items: center;
-    padding: 1.5rem;
-}
-
-.announcement-text {
-    flex: 1;
-    padding-right: 1.5rem; /* Add padding to the right */
-    padding-left: 0;
-    text-align: right;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .news-card {
-        margin-bottom: 1.5rem;
-    }
-    
-    .news-image-container {
-        height: 180px;
-    }
-
-    .announcement-content {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .announcement-text {
-        padding-right: 0;
-        margin-top: 1rem;
-        text-align: center;
-    }
-    
-    .date-block {
-        margin-right: 0;
+      .navbar-nav {
         margin-bottom: 1rem;
+      }
+      .navbar-nav .nav-link {
+          padding: 0.8rem 0 !important;
+      }
+      .navbar .d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+      }
+      .navbar .btn {
+        width: 100%;
+        margin-top: 0.5rem;
+      }
+      .navbar .btn-login {
+          margin-right: 0 !important;
+      }
+       .footer .col-lg-3 {
+        margin-bottom: 2.5rem;
+      }
     }
-}
-
-    </style>
-
+    
+    @media (max-width: 576px) {
+      .footer {
+          text-align: center;
+      }
+      .footer h5::after {
+          right: 50%;
+          transform: translateX(50%);
+      }
+      .footer .social-icons {
+          justify-content: center;
+      }
+      .footer a:hover {
+          transform: none;
+      }
+      .date-block {
+        min-width: 70px;
+        height: 70px;
+        margin-left: 1rem;
+      }
+      .date-block .day {
+        font-size: 1.7rem;
+      }
+      .announcement-card {
+        padding: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- Navigation -->
+  <!-- Navigation (from index.html) -->
   <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
-      <!-- <a class="navbar-brand" href="index.html">بوابة جامعة القاهرة</a> -->
       <a class="navbar-brand" href="{{ url_for('index') }}">بوابة جامعة القاهرة</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-        
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">الرئيسية</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('programs') }}">البرامج</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">المشاريع</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('news') }}">الإعلانات</a></li>
-       
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">الرئيسية</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('programs') }}">البرامج</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">المشاريع</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{{ url_for('news') }}">الإعلانات</a></li>
         </ul>
-        <button class="btn btn-login ms-3" onclick="window.location.href='{{ url_for('login') }}'">تسجيل الدخول</button>
-        <button class="btn btn-apply btn-primary ms-2" onclick="window.location.href='{{ url_for('register') }}'">قدم الآن</button>
+        <div class="d-flex align-items-center">
+          <button class="btn btn-login ms-2" onclick="window.location.href='{{ url_for('login') }}'">تسجيل الدخول</button>
+          <button class="btn btn-primary" onclick="window.location.href='{{ url_for('register') }}'">قدم الآن</button>
+        </div>
       </div>
     </div>
   </nav>
@@ -627,134 +457,134 @@
     <!-- Header Section -->
     <section class="header-section">
         <div class="container">
-          <div class="header-content">
-            <h1 class="display-4 fw-bold mb-3">الإعلانات والأخبار </h1>
-            <!-- <p class="lead mb-4">اكتشف مجموعة متنوعة من برامج الدراسات العليا والمهنية</p>
-        -->
-          </div>
+            <div class="header-content">
+                <h1 class="display-4 fw-bold mb-3">الأخبار والإعلانات</h1>
+                <p class="lead">ابق على اطلاع بآخر المستجدات والأحداث الهامة في الكلية</p>
+            </div>
         </div>
-      </section>
+    </section>
 
-
-<section class="news-section py-5">
-    <div class="container">
-        <!-- News Section - Always shown -->
-        <div class="row mb-5">
-            <div class="col-12">
-                <h2 class="section-title mb-4">الأخبار</h2>
+    <!-- Main Content Section -->
+    <section class="content-section">
+        <div class="container">
+            <!-- News Section -->
+            <div class="mb-5">
+                <div class="section-header text-start">
+                    <h2 class="section-title">الأخبار</h2>
+                </div>
                 <div class="row g-4">
-                    {% set displayed_news = [] %}
-                    {% for news in news_items %}
-                        {% if news.type == 'news' %}
-                            {% set displayed_news = displayed_news + [1] %}
+                    {% set news_found = false %}
+                    {% for item in news_items %}
+                        {% if item.type == 'news' %}
+                            {% set news_found = true %}
                             <div class="col-lg-4 col-md-6">
-                                <div class="news-card h-100">
-                                    {% if news.image_path %}
+                                <div class="news-card">
                                     <div class="news-image-container">
-                                        <img src="{{ url_for('static', filename=news.image_path) }}" 
-                                             alt="{{ news.title }}" 
+                                        <img src="{{ url_for('static', filename=item.image_path) }}" 
+                                             alt="{{ item.title }}" 
                                              class="news-image"
-                                             onerror="this.src='{{ url_for('static', filename='img/default-news.jpg') }}'">
-                                        <div class="news-date">{{ news.date.strftime('%Y-%m-%d') }}</div>
+                                             onerror="this.src='https://placehold.co/700x300/433AC8/ffffff?text=News+Image'">
+                                        <div class="news-date">{{ item.date.strftime('%d %b %Y') }}</div>
                                     </div>
-                                    {% endif %}
                                     <div class="card-body p-4">
-                                        <div class="news-tag mb-2">أخبار</div>
-                                        <h3 class="news-title h5">{{ news.title }}</h3>
-                                        <p class="news-text">{{ news.description }}</p>
+                                        <span class="news-tag">أخبار</span>
+                                        <h3 class="news-title">{{ item.title }}</h3>
+                                        <p class="card-text text-muted">{{ item.description|truncate(120) }}</p>
                                     </div>
                                 </div>
                             </div>
                         {% endif %}
                     {% endfor %}
                     
-                    {% if displayed_news|length == 0 %}
+                    {% if not news_found %}
                     <div class="col-12">
-                      
+                        <p class="text-center text-muted">لا توجد أخبار متاحة حالياً.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Announcements Section -->
+            <div>
+                <div class="section-header text-start">
+                    <h2 class="section-title">الإعلانات</h2>
+                </div>
+                <div class="announcements-container">
+                    {% set announcements_found = false %}
+                    {% for item in news_items %}
+                        {% if item.type == 'announcement' %}
+                            {% set announcements_found = true %}
+                            <div class="announcement-card">
+                                <div class="date-block">
+                                    <div class="day">{{ item.date.strftime('%d') }}</div>
+                                    <div class="month-year">{{ item.date.strftime('%b %Y') }}</div>
+                                </div>
+                                <div class="announcement-text">
+                                    <h5 class="announcement-title">{{ item.title }}</h5>
+                                    <p>{{ item.description }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if not announcements_found %}
+                    <div class="col-12">
+                         <p class="text-center text-muted">لا توجد إعلانات متاحة حالياً.</p>
                     </div>
                     {% endif %}
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Announcements Section - Always shown -->
-        <div class="row">
-            <div class="col-12">
-                <h2 class="section-title mb-4">الإعلانات</h2>
-                <div class="announcements-container">
-                    {% set displayed_announcements = [] %}
-                    {% for announcement in news_items %}
-                        {% if announcement.type == 'announcement' %}
-                            {% set displayed_announcements = displayed_announcements + [1] %}
-                            <div class="announcement-card mb-3">
-                                <div class="announcement-content">
-                                    <div class="announcement-text">
-                                        <h5 class="announcement-title">{{ announcement.title }}</h5>
-                                        <p class="mb-0">{{ announcement.description }}</p>
-                                    </div>
-                                    <div class="date-block">
-                                        <div class="day">{{ announcement.date.strftime('%d') }}</div>
-                                        <div class="month-year">{{ announcement.date.strftime('%B') }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                    
-                    {% if displayed_announcements|length == 0 %}
-                   
-                    {% endif %}
-                </div>
+    <!-- Footer (from index.html) -->
+    <footer class="footer">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-4 col-md-12 text-center text-lg-end">
+            <h5>كلية الدراسات العليا للبحوث الإحصائية</h5>
+            <p class="px-lg-0 px-4">نحن نسعى لتطوير البحث والتعليم الإحصائي من خلال برامج مشكلة وأعضاء هيئة تدريس على مستوى عالي من الخبرة والكفاءة.</p>
+            <div class="mt-4 social-icons d-flex justify-content-center justify-content-lg-start">
+              <a href="#" class="ms-3"><i class="fab fa-facebook-f fa-lg"></i></a>
+              <a href="#" class="ms-3"><i class="fab fa-twitter fa-lg"></i></a>
+              <a href="#" class="ms-3"><i class="fab fa-instagram fa-lg"></i></a>
+              <a href="#" class="ms-3"><i class="fab fa-linkedin-in fa-lg"></i></a>
             </div>
-        </div>
-    </div>
-</section>
-
-
-
-  <!-- Footer Section -->
-  <footer class="footer">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-4">
-          <h5>جامعة القاهرة</h5>
-          <p>تقديم تعليم عالي الجودة منذ عام 1908. واحدة من أقدم وأعرق الجامعات في إفريقيا والشرق الأوسط.</p>
-        </div>
-        <div class="col-lg-2">
-          <h5>البرامج</h5>
-          <a href="#">المرحلة الجامعية</a>
-          <a href="#">الدراسات العليا</a>
-          <a href="#">البرامج المهنية</a>
-          <a href="#">الدورات عبر الإنترنت</a>
-        </div>
-        <div class="col-lg-2">
-          <h5>الموارد</h5>
-          <a href="#">المكتبة</a>
-          <a href="#">البحث العلمي</a>
-          <a href="#">المنشورات</a>
-          <a href="#">خدمات التوظيف</a>
-        </div>
-        <div class="col-lg-4">
-          <h5>اتصل بنا</h5>
-          <p>جامعة القاهرة، الجيزة، مصر<br>
-          الهاتف: +20 2 35676105<br>
-          البريد الإلكتروني: info@cu.edu.eg</p>
-          <div class="d-flex gap-3 mt-3">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+          <div class="col-lg-2 col-md-4">
+            <h5>روابط سريعة</h5>
+            <ul class="list-unstyled">
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> البرامج</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> القبول</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> بوابة الطالب</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> الأخبار</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-4">
+            <h5>الموارد</h5>
+            <ul class="list-unstyled">
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> مستودع المشاريع</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> الأسئلة الشائعة</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> دليل الطالب</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right me-2"></i> المكتبة</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-4">
+            <h5>اتصل بنا</h5>
+            <ul class="list-unstyled">
+              <li><i class="fas fa-map-marker-alt me-2"></i> جامعة القاهرة، الجيزة</li>
+              <li class="mt-2"><i class="fas fa-envelope me-2"></i> <a href="mailto:info@cu.edu.eg">info@cu.edu.eg</a></li>
+              <li class="mt-2"><i class="fas fa-phone me-2"></i> <a href="tel:+20123456789">+20 123 456 789</a></li>
+            </ul>
           </div>
         </div>
+        <div class="text-center copyright">
+          <p>&copy; 2024 كلية الدراسات العليا للبحوث الإحصائية. جميع الحقوق محفوظة.</p>
+        </div>
       </div>
-      <div class="text-center copyright">
-        <p>&copy; 2025 جامعة القاهرة. جميع الحقوق محفوظة.</p>
-      </div>
-    </div>
-  </footer>
+    </footer>
 
-    <!-- Add Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
