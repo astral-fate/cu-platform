@@ -112,45 +112,30 @@ migrate = Migrate(app, db)
 
 
 
-# --- MODIFIED DATABASE POPULATION LOGIC ---
-# إنشاء جداول قاعدة البيانات وملئها بالبيانات الأولية إذا لزم الأمر
+# Create database tables if they don't exist
+
+
 with app.app_context():
-    # يضمن هذا الجزء إنشاء قاعدة البيانات وملئها بالبيانات عند بدء تشغيل التطبيق.
-    # يتضمن آلية إعادة محاولة للتعامل مع مشاكل الاتصال المؤقتة بقاعدة البيانات،
-    # وهو أمر حيوي في البيئات عديمة الخوادم (serverless) حيث قد لا تكون اتصالات قاعدة البيانات
-    # متاحة على الفور عند البدء البارد (cold start).
-    for i in range(3):  # إعادة المحاولة حتى 3 مرات
-        try:
-            app.logger.info(f"Running startup DB check (Attempt {i+1}).")
-            db.create_all()  # التأكد من إنشاء جميع الجداول.
+    db.create_all()
 
-            # التحقق مما إذا كانت قاعدة البيانات تحتوي على أي برامج.
-            program_count = db.session.query(Program.id).count()
-            app.logger.info(f"Checking for programs in the database. Found: {program_count}")
+    # --- ADD THIS BLOCK TO CHECK AND POPULATE THE DATABASE ON STARTUP ---
+    try:
+        # Check if the database has any programs. This is a lightweight check.
+        program_count = db.session.query(Program.id).count()
+        app.logger.info(f"Checking for programs in the database. Found: {program_count}")
 
-            # إذا لم تكن هناك برامج، قم بتشغيل سكربت الملء.
-            if program_count == 0:
-                app.logger.info("Database appears empty. Running population script...")
-                from populate_db import populate_database
-                populate_database()  # This function MUST call db.session.commit()
-                app.logger.info("Database population script finished.")
+        # If there are no programs, run the population script.
+        if program_count == 0:
+            app.logger.info("Database is empty. Running population script...")
+            from populate_db import populate_database
+            populate_database()
+            app.logger.info("Database population script finished.")
+        else:
+            app.logger.info("Database already populated. Skipping script.")
 
-                # إعادة الفحص للتأكد من أن عملية الملء نجحت
-                final_count = db.session.query(Program.id).count()
-                app.logger.info(f"Verification check: Found {final_count} programs after population.")
-                if final_count == 0:
-                    app.logger.warning("Population script ran, but no programs were committed to the database. Check populate_db.py for db.session.commit().")
-
-            else:
-                app.logger.info("Database already populated. Skipping script.")
-
-            break  # نجاح، الخروج من حلقة إعادة المحاولة
-
-        except Exception as e:
-            app.logger.error(f"An error occurred during the database startup/population check (Attempt {i+1}): {e}", exc_info=True)
-            db.session.rollback()  # التراجع عن الجلسة في حالة حدوث خطأ
-            time.sleep(2)  # الانتظار لمدة ثانيتين قبل إعادة المحاولة
-# --- END OF MODIFIED BLOCK ---
+    except Exception as e:
+        app.logger.error(f"An error occurred during the database population check: {e}", exc_info=True)
+    # --- END OF THE NEW BLOCK ---
 
 
 # Initialize Flask-Login
