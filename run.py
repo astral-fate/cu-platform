@@ -118,24 +118,7 @@ migrate = Migrate(app, db)
 with app.app_context():
     db.create_all()
 
-    # --- ADD THIS BLOCK TO CHECK AND POPULATE THE DATABASE ON STARTUP ---
-    try:
-        # Check if the database has any programs. This is a lightweight check.
-        program_count = db.session.query(Program.id).count()
-        app.logger.info(f"Checking for programs in the database. Found: {program_count}")
-
-        # If there are no programs, run the population script.
-        if program_count == 0:
-            app.logger.info("Database is empty. Running population script...")
-            from populate_db import populate_database
-            populate_database()
-            app.logger.info("Database population script finished.")
-        else:
-            app.logger.info("Database already populated. Skipping script.")
-
-    except Exception as e:
-        app.logger.error(f"An error occurred during the database population check: {e}", exc_info=True)
-    # --- END OF THE NEW BLOCK ---
+  
 
 
 # Initialize Flask-Login
