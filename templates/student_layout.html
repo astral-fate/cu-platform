@@ -31,8 +31,8 @@
                 </div>
                 {% if cumulative_gpa %}
                 <div class="info-item">
+                    <span class="info-label">المعدل التراكمي:</span>
                     <span class="info-value"><span class="gpa-badge">{{ cumulative_gpa }}</span></span>
-                    <span class="info-label">:GPA</span>
                 </div>
                 {% endif %}
             </div>
@@ -46,7 +46,6 @@
                 <span class="nav-text">الرئيسية</span>
             </a>
             
-            <!-- Add this new nav item for Profile -->
             <a href="{{ url_for('student_profile') }}" class="nav-item {% if request.endpoint == 'student_profile' %}active{% endif %}">
                 <i class="fas fa-user"></i>
                 <span class="nav-text">الملف الشخصي</span>
@@ -175,7 +174,7 @@ document.getElementById('toggle-sidebar')?.addEventListener('click', function() 
 
 // Note: The mark-all-read logic is now inside notifications.js
 </script>
-{% block page_scripts %}{% endblock %} <!-- Add a block for page-specific scripts -->
+{% block page_scripts %}{% endblock %}
 {% endblock %}
 
 {% block styles %}
@@ -183,143 +182,157 @@ document.getElementById('toggle-sidebar')?.addEventListener('click', function() 
 <style>
     /*
       ==================================================================
-      Custom Styles for Sidebar Profile (v5) - Overriding External Files
+      Improved Styles for Student Dashboard (v6)
       ==================================================================
+      These styles are designed to override existing stylesheets to 
+      provide a cleaner, more modern, and visually consistent UI.
     */
 
-    /*
-     * By targeting `.sidebar .sidebar-profile`, we create a more specific
-     * selector. This ensures these styles take priority over the conflicting
-     * rules in the `student-styles.css` file.
-    */
+    :root {
+        --sidebar-bg-color: #4f46e5;
+        --sidebar-profile-bg: #4338ca; /* A slightly darker shade for contrast */
+        --sidebar-text-color: #ffffff;
+        --sidebar-active-link-bg: #312e81;
+        --gpa-badge-bg: #22c55e; /* A vibrant green */
+        --gpa-badge-text: #ffffff;
+        --main-bg-color: #f3f4f6; /* Light grey for the main content area */
+        --card-bg-color: #ffffff;
+        --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+    }
+
+    /* === Main Layout === */
+    .dashboard-container {
+        background-color: var(--main-bg-color);
+    }
+    
+    .sidebar {
+        background-color: var(--sidebar-bg-color);
+    }
+
+    .main-content .header {
+        background-color: var(--card-bg-color);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .main-content .content {
+        padding: 1.5rem; /* Add consistent padding */
+    }
+
+    /* === Sidebar Profile Card === */
     .sidebar .sidebar-profile {
-        /* == Resetting Conflicting Styles from External CSS == */
-        
-        /* Reset flexbox properties to prevent it from becoming a flexible column */
+        /* Resetting conflicting styles from external CSS */
         flex: none; 
         align-self: auto;
-        
-        /* Reset positioning and sizing to behave like a normal element */
         position: relative;
         top: auto;
         width: auto;
-        min-width: 0; /* Reset minimum width constraint */
+        min-width: 0;
         
-        /* == Applying Correct Visual Styles == */
-        margin: 15px; /* Creates space from the sidebar edges */
-        padding: 20px; /* Provides internal spacing for the content */
-        background-color: #312e81; /* A deep blue that matches the active navigation item */
-        border-radius: 15px; /* Gives the card soft, modern corners */
-        text-align: center; /* Centers the avatar and name */
-        box-sizing: border-box; /* CRITICAL FIX: Ensures padding and border don't cause overflow */
+        /* New, improved styles */
+        box-sizing: border-box; /* Ensures padding doesn't break layout */
+        margin: 1rem; /* Consistent margin */
+        padding: 1.5rem; /* More spacious padding */
+        background-color: var(--sidebar-profile-bg);
+        border-radius: var(--border-radius-lg);
+        text-align: center;
+        color: var(--sidebar-text-color); /* Ensures all text inside is white */
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); /* Inner shadow for depth */
     }
 
-    /* Avatar circle */
+    /* Profile Avatar */
     .sidebar-avatar {
-        width: 60px;
-        height: 60px;
+        width: 72px;
+        height: 72px;
         border-radius: 50%;
-        background-color: #ffffff;
-        color: #000000; /* Changed to black */
-        font-size: 1.75rem;
-        font-weight: bold;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: var(--sidebar-bg-color);
+        font-size: 2rem;
+        font-weight: 600;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 10px;
+        margin: 0 auto 1rem;
+        border: 2px solid var(--sidebar-text-color);
     }
 
-    /* Student's name */
+    /* Student's Name */
     .sidebar-name {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         font-weight: 600;
-        color: #000000; /* Changed to black */
-        margin-bottom: 20px;
+        color: var(--sidebar-text-color);
+        margin-bottom: 1.5rem;
     }
 
-    /* Container for the info items like ID, Program, GPA */
+    /* Container for info items */
     .sidebar-info {
         display: flex;
         flex-direction: column;
-        gap: 10px; /* Creates vertical space between each info item */
+        gap: 0.75rem; /* Space between each info item */
+        text-align: right; /* Align text to the right for RTL */
     }
 
     /* Individual info item row (ID, Program, GPA) */
     .info-item {
         display: flex;
-        flex-direction: column; /* Stack items vertically */
-        align-items: center; /* Center items horizontally */
-        padding: 10px 12px;
-        background-color: rgba(0, 0, 0, 0.25); /* Darker transparent background for contrast and depth */
-        border-radius: 10px;
-        gap: 4px; /* Add a small gap between the label and value */
+        justify-content: space-between; /* Pushes label and value to opposite ends */
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-item:last-child {
+        border-bottom: none; /* Remove border from the last item */
     }
 
     /* Label for info (e.g., 'ID:', 'البرنامج:') */
     .info-label {
-        color: #000000; /* Changed to black */
-        font-size: 0.9rem;
-        font-weight: 500;
+        color: rgba(255, 255, 255, 0.8); /* Slightly transparent white for labels */
+        font-size: 0.875rem;
     }
 
-    /* Value for info (e.g., the student's ID number) */
+    /* Value for info (e.g., student's ID number) */
     .info-value {
-        color: #000000; /* Changed to black */
+        color: var(--sidebar-text-color);
         font-weight: 500;
         font-size: 0.9rem;
     }
-
-    /* Specific style for small text values like the program name */
+    
     .info-value.small {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
+        max-width: 150px; /* Prevent long text from breaking layout */
+        white-space: normal;
+        text-align: left;
     }
 
     /* Badge for GPA */
     .gpa-badge {
-        background-color: #38A169;
-        color: #000000; /* Changed to black */
-        padding: 4px 12px;
-        border-radius: 16px;
+        background-color: var(--gpa-badge-bg);
+        color: var(--gpa-badge-text);
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px; /* Pill-shaped badge */
         font-size: 0.9rem;
-        font-weight: bold;
-    }
-
-    /* The divider line below the profile box */
-    .sidebar-divider {
-        margin: 20px 15px; /* Aligns the divider with the profile box's horizontal margins */
-        border-color: rgba(255, 255, 255, 0.15); /* A slightly more visible divider */
-    }
-
-    /* Styles for Document Upload Status Section */
-    .document-upload-status {
-        margin: 20px;
-        padding: 15px;
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .document-upload-status h3 {
-        font-size: 1.2rem;
         font-weight: 600;
-        margin-bottom: 15px;
-        color: #333;
     }
 
-    .document-upload-status div {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px 0;
-        border-bottom: 1px solid #e0e0e0;
+    /* Divider line below the profile box */
+    .sidebar-divider {
+        margin: 1.5rem 1rem; /* Consistent margins */
+        border-color: rgba(255, 255, 255, 0.1);
     }
 
-    .document-upload-status div:last-child {
-        border-bottom: none;
+    /* === General Card Enhancement === */
+    .content .card {
+        border-radius: var(--border-radius-md);
+        border: none;
+        box-shadow: var(--card-shadow);
+        overflow: hidden; /* Ensures content respects the border radius */
     }
 
-    .document-upload-status span {
-        font-size: 0.9rem;
-        color: #555;
+    .card-header {
+        background-color: #f9fafb; /* A very light grey for headers */
     }
+
 </style>
 {% endblock %}
