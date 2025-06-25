@@ -220,6 +220,28 @@ def delete_file_from_s3(bucket_name, object_name):
         return False
     return True
 
+# --- NEW S3 HELPER: Generate Presigned URL ---
+def generate_presigned_url(bucket_name, object_key, expiration=3600):
+    """
+    Generate a presigned URL to share an S3 object.
+    The URL will be valid for a set number of seconds (default 1 hour).
+    """
+    if not BOTO3_AVAILABLE or s3_client is None:
+        app.logger.error("Boto3/S3 client is not available. Cannot generate presigned URL.")
+        return "#"
+    
+    try:
+        url = s3_client.generate_presigned_url('get_object',
+                                              Params={'Bucket': bucket_name,
+                                                      'Key': object_key},
+                                              ExpiresIn=expiration)
+    except ClientError as e:
+        app.logger.error(f"S3 Presigned URL Generation Error: {e}")
+        return "#"
+    
+    return url
+
+
 # --- END S3 HELPERS ---
 
 
@@ -259,20 +281,19 @@ def send_email(to_email, subject, body):
 # --- S3 INTEGRATION: REMOVED route to serve files from /tmp ---
 # @app.route('/uploads/<path:filename>') ... # DELETED
 
-# --- S3 INTEGRATION: New template filter to generate S3 URLs ---
+# --- S3 INTEGRATION: MODIFIED template filter to generate Presigned S3 URLs ---
 @app.template_filter('s3_url')
 def s3_url_filter(object_key):
-    """Generate a public URL for an S3 object key."""
+    """Generate a presigned URL for an S3 object key."""
     if not object_key or not BOTO3_AVAILABLE:
         # Return a placeholder or empty string if no key or S3 is not configured
         return "#"
     
     bucket_name = app.config.get('S3_BUCKET_NAME')
-    region = app.config.get('S3_REGION')
     
-    # Standard URL format
-    url = f"https://{bucket_name}.s3.{region}.amazonaws.com/{object_key}"
-    return url
+    # Generate a temporary, secure URL instead of a public one.
+    # Expiration is in seconds (e.g., 3600 = 1 hour).
+    return generate_presigned_url(bucket_name, object_key, expiration=3600)
 
 
 @app.template_filter('time_ago')
@@ -3198,19 +3219,17 @@ def student_application_details(application_id):
     # Get documents for this application
     documents = Document.query.filter_by(application_id=application.id).all()
 
-    # --- S3 INTEGRATION: Format documents for JSON with S3 URL ---
+    # --- S3 INTEGRATION: Format documents for JSON with Presigned URL ---
     formatted_documents = []
     for doc in documents:
         status_display = doc.status # Keep original if no translation needed yet
         if doc.status == 'Uploaded': status_display = 'تم الرفع'
         
-        # Generate full public S3 URL
-        full_s3_url = s3_url_filter(doc.file_path)
-
         formatted_documents.append({
             'id': doc.id,
             'name': doc.name,
-            'file_path': full_s3_url, # Use the full S3 URL
+            'view_url': s3_url_filter(doc.file_path), # Use filter for presigned URL
+            's3_key': doc.file_path,                  # Pass the raw key for any backend processing
             'status': status_display,
             'uploaded_at': doc.uploaded_at.strftime('%Y-%m-%d %H:%M')
         })
@@ -3765,7 +3784,7 @@ def admin_application_details(application_id):
         application = Application.query.options(joinedload(Application.user)).get_or_404(application_id)
         documents = Document.query.filter_by(application_id=application.id).all()
 
-        # --- S3 INTEGRATION: Format documents with S3 URLs ---
+        # --- S3 INTEGRATION: Format documents with Presigned URLs and S3 Keys ---
         formatted_documents = []
         for doc in documents:
              status_display = doc.status
@@ -3776,7 +3795,8 @@ def admin_application_details(application_id):
              formatted_documents.append({
                  'id': doc.id,
                  'name': doc.name,
-                 'file_path': s3_url_filter(doc.file_path), # Generate full public URL
+                 'view_url': s3_url_filter(doc.file_path), # Generate presigned URL
+                 's3_key': doc.file_path,                   # Pass the raw key for backend operations
                  'status': status_display,
                  'uploaded_at': doc.uploaded_at.strftime('%Y-%m-%d %H:%M')
              })
