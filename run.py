@@ -598,6 +598,118 @@ def verify_email(token):
 
     return redirect(url_for('login'))
 
+# --- START: NEW PASSWORD RESET ROUTES ---
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password_request():
+    """Handles the request to begin the password reset process."""
+    if current_user.is_authenticated:
+        return redirect(url_for('student_dashboard'))
+    
+    # Use a simple form for CSRF protection
+    class ForgotPasswordForm(FlaskForm):
+        pass
+    form = ForgotPasswordForm()
+
+    if form.validate_on_submit():
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+
+        # To prevent email enumeration attacks, we don't reveal if the email was found.
+        # We only send an email if the user exists and is verified.
+        if user and user.is_verified:
+            try:
+                # Generate a time-sensitive token with a different "salt" for security
+                token = s.dumps(user.email, salt='password-reset-salt')
+                
+                # Create the full reset URL
+                reset_url = url_for('reset_password', token=token, _external=True)
+
+                # Prepare the email content
+                email_subject = 'طلب إعادة تعيين كلمة المرور لمشروع جامعة القاهرة'
+                email_body_html = f"""
+                <html dir="rtl" lang="ar">
+                <head><meta charset="UTF-8"></head>
+                <body>
+                    <p>مرحباً {user.full_name},</p>
+                    <p>لقد تلقينا طلبًا لإعادة تعيين كلمة المرور لحسابك. يرجى الضغط على الرابط التالي لإكمال العملية:</p>
+                    <p style="text-align: center;">
+                        <a href="{reset_url}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                            إعادة تعيين كلمة المرور
+                        </a>
+                    </p>
+                    <p>هذا الرابط صالح لمدة ساعة واحدة فقط.</p>
+                    <p>إذا لم تطلب إعادة تعيين كلمة المرور، يرجى تجاهل هذا البريد الإلكتروني. لن يتم إجراء أي تغييرات على حسابك.</p>
+                    <hr>
+                    <p>شكراً لك،</p>
+                    <p>فريق مشروع جامعة القاهرة</p>
+                </body>
+                </html>
+                """
+
+                # Send the email using the helper function
+                send_email(user.email, email_subject, email_body_html)
+            
+            except Exception as e:
+                app.logger.error(f"Error sending password reset email for {email}: {e}", exc_info=True)
+                # Fail silently to the user, but log the error for admins
+        
+        # Flash a generic success message regardless of whether the email was found or not
+        flash('إذا كان هذا البريد الإلكتروني مسجلاً لدينا، فسيتم إرسال تعليمات إعادة تعيين كلمة المرور إليه.', 'info')
+        return redirect(url_for('login'))
+
+    return render_template('forgot_password_request.html', form=form)
+
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    """Handles the actual password reset after the user clicks the email link."""
+    if current_user.is_authenticated:
+        return redirect(url_for('student_dashboard'))
+        
+    try:
+        # Verify the token's validity (max_age is in seconds, e.g., 1 hour = 3600)
+        email = s.loads(token, salt='password-reset-salt', max_age=3600)
+    except Exception as e:
+        app.logger.warning(f"Password reset failed. Token: {token}, Error: {e}")
+        flash('رابط إعادة تعيين كلمة المرور غير صالح أو انتهت صلاحيته.', 'danger')
+        return redirect(url_for('forgot_password_request'))
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        # This is an edge case, as the token should not be valid if the user was deleted
+        flash('المستخدم المرتبط بهذا الرابط لم يعد موجوداً.', 'danger')
+        return redirect(url_for('forgot_password_request'))
+
+    # Use a simple form for CSRF protection
+    class ResetPasswordForm(FlaskForm):
+        pass
+    form = ResetPasswordForm()
+
+    if form.validate_on_submit():
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if not password or len(password) < 6:
+            flash('كلمة المرور يجب أن تكون 6 أحرف على الأقل.', 'danger')
+            return render_template('reset_password.html', form=form, token=token)
+
+        if password != confirm_password:
+            flash('كلمتا المرور غير متطابقتين.', 'danger')
+            return render_template('reset_password.html', form=form, token=token)
+        
+        # If all checks pass, set the new password and save to DB
+        user.set_password(password)
+        db.session.commit()
+        
+        flash('تم تحديث كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول.', 'success')
+        return redirect(url_for('login'))
+
+    # For a GET request, just show the password reset form
+    return render_template('reset_password.html', form=form, token=token)
+
+# --- END: NEW PASSWORD RESET ROUTES ---
+
 
 @app.route('/programs')
 def programs():
