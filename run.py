@@ -120,6 +120,13 @@ app.config.update(
 )
 
 # --- S3 INTEGRATION: Initialize S3 client ---
+# --- S3 INTEGRATION: New S3 Configurations ---
+app.config.update(
+    S3_BUCKET_NAME=os.environ.get('S3_BUCKET_NAME'),
+    S3_REGION=os.environ.get('S3_REGION', 'us-east-1'), # Default to us-east-1 if not set
+    # UPLOAD_FOLDER=UPLOAD_DIR, # REMOVED
+
+# --- S3 INTEGRATION: Initialize S3 client ---
 s3_client = None
 if BOTO3_AVAILABLE and app.config['S3_BUCKET_NAME']:
     try:
