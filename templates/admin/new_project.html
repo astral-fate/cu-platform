@@ -67,7 +67,6 @@
                                 </div>
                                 <label for="image" class="form-label d-block">رفع صورة</label>
                                 <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                                <input type="hidden" name="image_path" id="image_path">
                                 <div class="form-text text-muted mt-2">
                                     <small>الحجم الموصى به: 800×600 بكسل<br>الحجم الأقصى: 2 ميجابايت<br>الصيغ: JPG, PNG, GIF</small>
                                 </div>
@@ -136,54 +135,22 @@ document.getElementById('image').addEventListener('change', function(e) {
     }
 });
 
-// Form validation and S3 upload
-document.getElementById('new-project-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
+// Form validation
+document.getElementById('new-project-form').addEventListener('submit', function(e) {
+    // Additional validation can be added here
     const title = document.getElementById('title').value.trim();
     const description = document.getElementById('description').value.trim();
     
     if (title.length < 3) {
+        e.preventDefault();
         alert('يجب أن يكون عنوان المشروع 3 أحرف على الأقل');
         return;
     }
     
     if (description.length < 10) {
+        e.preventDefault();
         alert('يرجى تقديم وصف أكثر تفصيلاً للمشروع');
         return;
-    }
-
-    const fileInput = document.getElementById('image');
-    if (fileInput.files.length > 0) {
-        const file = fileInput.files[0];
-        
-        // Get presigned URL
-        const response = await fetch('/admin/s3/presigned-url?filename=' + encodeURIComponent(file.name) + '&contentType=' + encodeURIComponent(file.type));
-        const data = await response.json();
-
-        if (!data.success) {
-            alert('Could not get presigned URL from server.');
-            return;
-        }
-
-        // Upload to S3
-        const uploadResponse = await fetch(data.url, {
-            method: 'PUT',
-            body: file,
-            headers: {
-                'Content-Type': file.type
-            }
-        });
-
-        if (uploadResponse.ok) {
-            document.getElementById('image_path').value = data.key;
-            this.submit();
-        } else {
-            alert('Failed to upload image to S3.');
-        }
-
-    } else {
-        this.submit();
     }
 });
 </script>
