@@ -481,7 +481,12 @@
                 <div class="col-lg-4 col-md-6 project-item" data-category="{{ project.category }}">
                     <div class="project-card">
                         <div class="project-img-container">
-                            <img src="{{ url_for('static', filename=project.image_path if project.image_path else 'img/default-project.jpg') }}" 
+
+                                <img src="{{ project.image_path | s3_url if project.image_path else url_for('static', filename='img/default-project.jpg') }}"
+                               class="project-img"
+                               alt="{{ project.title }}"
+                               onerror="this.src='{{ url_for('static', filename='img/default-project.jpg') }}'">
+                          
                                  class="project-img" 
                                  alt="{{ project.title }}"
                                  onerror="this.src='https://placehold.co/400x220/0D1D4E/ffffff?text=Project+Image'">
