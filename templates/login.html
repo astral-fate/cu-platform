@@ -47,7 +47,7 @@
                     <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
                     <label class="form-check-label" for="rememberMe">تذكرني</label>
                 </div>
-                {# <a href="{{ url_for('forgot_password_request') }}" class="text-primary text-decoration-none">نسيت كلمة المرور؟</a> #}
+                <a href="{{ url_for('forgot_password_request') }}" class="text-primary text-decoration-none">نسيت كلمة المرور؟</a>
                 
             </div>
             
@@ -67,7 +67,6 @@
 {% endblock %}
 
 {% block styles %}
-    {# THIS LINE IS NOW REMOVED TO FIX THE ERROR #}
     <style>
         /* Reset and full-page styles */
         html, body {
