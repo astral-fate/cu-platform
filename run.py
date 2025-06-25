@@ -1185,7 +1185,28 @@ def admin_tickets():
         return redirect(url_for('student_dashboard'))
 
     tickets = Ticket.query.order_by(Ticket.created_at.desc()).all()
-    return render_template('admin/tickets.html', tickets=tickets)
+
+    # --- NEW: Calculate stats in the backend for robustness ---
+    open_count = 0
+    in_progress_count = 0
+    closed_count = 0
+
+    for ticket in tickets:
+        # Check for both English and Arabic statuses to handle any legacy data
+        if ticket.status == 'Open':
+            open_count += 1
+        elif ticket.status == 'In Progress':
+            in_progress_count += 1
+        elif ticket.status == 'Closed':
+            closed_count += 1
+
+    return render_template(
+        'admin/tickets.html',
+        tickets=tickets,
+        open_count=open_count,
+        in_progress_count=in_progress_count,
+        closed_count=closed_count
+    )
 
 @app.route('/admin/tickets/<int:ticket_id>')
 @login_required
