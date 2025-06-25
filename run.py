@@ -835,8 +835,8 @@ def admin_send_note():
             ticket_id=ticket_id_str,
             user_id=student.id,
             subject=subject,
-            # TRANSLATED status
-            status='مفتوحة'
+            # *** FIX: Use English status ***
+            status='Open'
         )
         db.session.add(new_ticket)
         db.session.flush()
@@ -1041,7 +1041,8 @@ def admin_dashboard():
     applications_count = Application.query.filter_by(status='قيد المراجعة').count()
     payment_pending_count = Application.query.filter_by(status='مقبول مبدئياً', payment_status='بانتظار الدفع').count()
     certificate_requests = Certificate.query.count()
-    open_tickets = Ticket.query.filter_by(status='مفتوحة').count()
+    # *** FIX: Use English status for query ***
+    open_tickets = Ticket.query.filter_by(status='Open').count()
 
     # Get recent applications and tickets
     recent_applications = Application.query.order_by(Application.date_submitted.desc()).limit(3).all()
@@ -1219,10 +1220,9 @@ def admin_ticket_reply(ticket_id):
             created_at=datetime.now(UTC)
         )
 
-        # Update ticket status to In Progress if it's Open
-        # TRANSLATED statuses
-        if ticket.status == 'مفتوحة':
-            ticket.status = 'قيد المعالجة' # In Progress
+        # *** FIX: Use English status for logic ***
+        if ticket.status == 'Open':
+            ticket.status = 'In Progress'
 
         # Create notification for student
         # TRANSLATED notification message
@@ -1277,27 +1277,31 @@ def admin_ticket_reply(ticket_id):
 @app.route('/admin/tickets/update_status/<int:ticket_id>', methods=['POST'])
 @login_required
 def admin_update_ticket_status(ticket_id):
+    """
+    Handles updating the status of a ticket.
+    Receives and stores status in English ('Open', 'In Progress', 'Closed').
+    """
     if not current_user.is_admin():
-        # TRANSLATED
-        return jsonify({'success': False, 'message': 'الوصول مرفوض'})
+        return jsonify({'success': False, 'message': 'الوصول مرفوض'}), 403
 
     ticket = Ticket.query.get_or_404(ticket_id)
     new_status = request.form.get('status')
 
-    # TRANSLATED statuses for check and notification
-    valid_statuses = ['مفتوحة', 'قيد المعالجة', 'مغلقة'] # Open, In Progress, Closed
-    status_map = {
-        'Open': 'مفتوحة',
-        'In Progress': 'قيد المعالجة',
-        'Closed': 'مغلقة'
-    }
-    new_status_arabic = status_map.get(new_status, new_status) # Get Arabic or keep original if not found
+    # Statuses are now sent and stored in English
+    valid_statuses = ['Open', 'In Progress', 'Closed']
 
-    if new_status_arabic in valid_statuses:
-        ticket.status = new_status_arabic
+    if new_status in valid_statuses:
+        ticket.status = new_status  # Save the English status
+
+        # Translate for notification message
+        status_map_arabic = {
+            'Open': 'مفتوحة',
+            'In Progress': 'قيد المعالجة',
+            'Closed': 'مغلقة'
+        }
+        new_status_arabic = status_map_arabic.get(new_status, new_status)
 
         # Notify student of status change
-        # TRANSLATED notification message
         notification = Notification(
             user_id=ticket.user_id,
             message=f'تم تحديث حالة تذكرتك {ticket.ticket_id} إلى {new_status_arabic}.',
@@ -1306,9 +1310,11 @@ def admin_update_ticket_status(ticket_id):
         db.session.add(notification)
         db.session.commit()
 
-        return jsonify({'success': True})
-    # TRANSLATED error message
-    return jsonify({'success': False, 'message': 'حالة غير صالحة'})
+        return jsonify({'success': True, 'message': f'Status updated to {new_status}'})
+    
+    # Return an error if the status is not valid
+    return jsonify({'success': False, 'message': f'حالة غير صالحة: {new_status}'}), 400
+
 
 @app.route('/admin/settings')
 @login_required
@@ -2006,8 +2012,8 @@ def student_new_ticket():
             ticket_id=ticket_id,
             user_id=current_user.id,
             subject=subject,
-            # TRANSLATED status
-            status='مفتوحة' # Open
+            # *** FIX: Use English status ***
+            status='Open'
         )
 
         db.session.add(new_ticket)
@@ -2086,11 +2092,9 @@ def student_ticket_reply(ticket_id):
 
         db.session.add(new_message)
 
-        # Update ticket status if it was closed by student? Maybe set to 'In Progress' or keep 'Open'?
-        # Let's set it back to 'In Progress' if the student replies to a closed ticket.
-        # TRANSLATED statuses
-        if ticket.status == 'مغلقة':
-             ticket.status = 'قيد المعالجة' # Re-open to In Progress
+        # *** FIX: Use English status for logic ***
+        if ticket.status == 'Closed':
+             ticket.status = 'In Progress'
 
         db.session.commit()
         # TRANSLATED success message
@@ -2325,8 +2329,8 @@ def student_close_ticket(ticket_id):
         flash('الوصول مرفوض', 'danger')
         return redirect(url_for('student_support'))
 
-    # TRANSLATED status
-    ticket.status = 'مغلقة' # Closed
+    # *** FIX: Use English status ***
+    ticket.status = 'Closed'
     db.session.commit()
     # TRANSLATED
     flash('تم إغلاق التذكرة بنجاح', 'success')
@@ -3984,8 +3988,8 @@ def admin_send_message():
             ticket_id=ticket_id_str,
             user_id=student.id,
             subject=subject,
-            # TRANSLATED status
-            status='مفتوحة', # Start as Open
+            # *** FIX: Use English status ***
+            status='Open',
             created_at=datetime.now(UTC)
         )
         db.session.add(new_ticket)
