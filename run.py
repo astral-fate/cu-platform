@@ -1,6 +1,6 @@
 import os
 import json
-import sys 
+import sys
 import traceback
 import logging
 import time
@@ -8,7 +8,7 @@ from datetime import datetime, UTC, date
 import click
 from functools import wraps
 import base64
-import io # --- S3 INTEGRATION: For in-memory file handling ---
+import io  # --- S3 INTEGRATION: For in-memory file handling ---
 
 # --- New Imports for Email Verification ---
 from itsdangerous import URLSafeTimedSerializer
@@ -81,7 +81,7 @@ logging.basicConfig(
 class NewApplicationForm(FlaskForm):
     # TRANSLATED choices
     degree_type = SelectField('نوع الدرجة', validators=[DataRequired()],
-                            choices=[('Diploma', 'دبلوم'), ('Master', 'ماجستير'), ('PhD', 'دكتوراه')])
+                              choices=[('Diploma', 'دبلوم'), ('Master', 'ماجستير'), ('PhD', 'دكتوراه')])
     program = SelectField('البرنامج', validators=[DataRequired()], choices=[])  # Initialize with empty list
     academic_year = SelectField('العام الدراسي', validators=[DataRequired()], choices=[])  # Initialize with empty list
     # TRANSLATED choices
@@ -93,44 +93,40 @@ class NewApplicationForm(FlaskForm):
 # Initialize Flask app
 app = Flask(__name__)
 
-# --- S3 INTEGRATION: REMOVED Vercel /tmp fix ---
-# UPLOAD_DIR = os.path.join('/tmp', 'uploads') # REMOVED
 
-# Configure app with proper paths
+# --- MODIFIED & CONSOLIDATED APP CONFIGURATION ---
+# All application configurations are now in a single block to avoid redundancy and conflicts.
 app.config.update(
-    SECRET_KEY='your-secret-key-goes-here', # Keep secret key as is
+    SECRET_KEY=os.environ.get('SECRET_KEY', 'a-fallback-secret-key-for-development'), # It's better to fail if not set in production
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL'),
-    
-    # Add these lines to fix serverless connection issues
+
+    # Add these lines to fix serverless connection issues with databases
     SQLALCHEMY_ENGINE_OPTIONS={
         "pool_recycle": 280,
         "pool_pre_ping": True
     },
-    
-    # --- S3 INTEGRATION: New S3 Configurations ---
-    S3_BUCKET_NAME=os.environ.get('S3_BUCKET_NAME'),
-    S3_REGION=os.environ.get('S3_REGION', 'us-east-1'), # Default to us-east-1 if not set
-    # UPLOAD_FOLDER=UPLOAD_DIR, # REMOVED
 
-    # --- New Mail Configurations for Mailtrap ---
+    # S3 Bucket Configuration
+    # IMPORTANT: Ensure S3_REGION is set to 'eu-north-1' in your Vercel environment variables.
+    S3_BUCKET_NAME=os.environ.get('S3_BUCKET_NAME'),
+    S3_REGION=os.environ.get('S3_REGION', 'us-east-1'), # This default is a fallback for local dev. Production MUST have the correct region set.
+
+    # Mailtrap Email Configuration
     MAILTRAP_API_TOKEN=os.environ.get('MAILTRAP_API_TOKEN'),
-    ### FINAL DOMAIN FIX: Use the new custom domain for the sender email ###
-    MAIL_DEFAULT_SENDER=os.environ.get('MAIL_DEFAULT_SENDER', 'noreply@cu-platform.com')
+    MAIL_DEFAULT_SENDER=os.environ.get('MAIL_DEFAULT_SENDER', 'noreply@cu-platform.com'),
+
+    # Gemini API Key
+    GEMINI_API_KEY=os.environ.get('GEMINI_API_KEY')
 )
 
-# --- S3 INTEGRATION: Initialize S3 client ---
-# --- S3 INTEGRATION: New S3 Configurations ---
-app.config.update(
-    S3_BUCKET_NAME=os.environ.get('S3_BUCKET_NAME'),
-    S3_REGION=os.environ.get('S3_REGION', 'us-east-1'), # Default to us-east-1 if not set
-    # UPLOAD_FOLDER=UPLOAD_DIR, # REMOVED
 
 # --- S3 INTEGRATION: Initialize S3 client ---
 s3_client = None
 if BOTO3_AVAILABLE and app.config['S3_BUCKET_NAME']:
     try:
         # Boto3 will automatically use AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from env vars
+        # The region_name is now correctly fetched from the single configuration block above.
         s3_client = boto3.client(
             "s3",
             region_name=app.config['S3_REGION']
@@ -145,9 +141,6 @@ else:
         print("تحذير: متغير البيئة S3_BUCKET_NAME غير معين. سيتم تعطيل وظائف S3.")
     BOTO3_AVAILABLE = False # Ensure it's false if bucket name is missing
 
-# --- S3 INTEGRATION: REMOVED /tmp directory creation ---
-# with app.app_context():
-#     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True) # REMOVED
 
 # --- New: Serializer for generating secure tokens ---
 s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
@@ -177,7 +170,6 @@ def load_user(user_id):
 
 
 # --- S3 INTEGRATION: S3 Helper Functions ---
-
 def upload_file_to_s3(file, bucket_name, object_name=None):
     """
     Upload a file to an S3 bucket.
