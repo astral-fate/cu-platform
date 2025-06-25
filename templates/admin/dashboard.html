@@ -1,3 +1,5 @@
+--- START OF FILE dashboard.html ---
+
 {% extends "admin_layout.html" %}
 
 {% block page_title %}لوحة تحكم مسؤول الشؤون الطلابية{% endblock %}
@@ -131,8 +133,17 @@
                                 <td style="padding: 0.75rem 1rem;">{{ ticket.ticket_id }}</td>
                                 <td style="padding: 0.75rem 1rem;">{{ ticket.subject }}</td>
                                 <td style="padding: 0.75rem 1rem;">
-                                    <span class="status-badge {{ ticket.status|lower|replace(' ', '-') }}" style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 500;">
-                                        {{ ticket.status }}
+                                    <span class="status-badge 
+                                        {% if ticket.status == 'Open' %}red
+                                        {% elif ticket.status == 'In Progress' %}yellow
+                                        {% elif ticket.status == 'Closed' %}green
+                                        {% endif %}" 
+                                        style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 500;">
+                                        {% if ticket.status == 'Open' %}مفتوحة
+                                        {% elif ticket.status == 'In Progress' %}قيد المعالجة
+                                        {% elif ticket.status == 'Closed' %}مغلقة
+                                        {% else %}{{ ticket.status }}
+                                        {% endif %}
                                     </span>
                                 </td>
                             </tr>
