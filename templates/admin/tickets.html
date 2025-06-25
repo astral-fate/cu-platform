@@ -1,8 +1,11 @@
+--- START OF FILE tickets.html ---
+
 {% extends "admin_layout.html" %}
 
 {% block page_title %}تذاكر الدعم{% endblock %}
 
 {% block main_content %}
+<input type="hidden" id="csrf_token" value="{{ csrf_token() }}">
 <div class="card">
     <div class="card-header-with-actions">
         <h3>إدارة تذاكر الدعم</h3>
@@ -187,59 +190,60 @@
 {% block scripts %}
 {{ super() }}
 <script>
+document.addEventListener('DOMContentLoaded', function() {
     // Search functionality
-    document.getElementById('search-input').addEventListener('keyup', function() {
-        const searchValue = this.value.toLowerCase();
-        const rows = document.querySelectorAll('tbody tr');
-        
-        rows.forEach(row => {
-            const ticketId = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
-            const student = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-            const subject = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+    const searchInput = document.getElementById('search-input');
+    if(searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
             
-            if (ticketId.includes(searchValue) || 
-                student.includes(searchValue) || 
-                subject.includes(searchValue)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
-    
-    // Status filter
-    document.getElementById('status-filter').addEventListener('change', function() {
-        const filterValue = this.value;
-        const rows = document.querySelectorAll('tbody tr');
-        
-        rows.forEach(row => {
-            if (!filterValue) {
-                row.style.display = '';
-                return;
-            }
-            
-            const statusCell = row.querySelector('td:nth-child(6)');
-            if (statusCell) {
-                const statusBadge = statusCell.querySelector('.status-badge');
-                const statusText = statusBadge ? statusBadge.textContent.trim() : '';
+            rows.forEach(row => {
+                if (row.children.length < 3) return; // Skip "no tickets" row
+                const ticketId = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                const student = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const subject = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
                 
-                // Map filter value to Arabic status text for comparison
-                let filterText = filterValue;
-                if (filterValue === 'Open') filterText = 'مفتوحة';
-                else if (filterValue === 'In Progress') filterText = 'قيد المعالجة';
-                else if (filterValue === 'Closed') filterText = 'مغلقة';
-
-                if (statusText === filterText) {
+                if (ticketId.includes(searchValue) || 
+                    student.includes(searchValue) || 
+                    subject.includes(searchValue)) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
                 }
-            }
+            });
         });
-    });
+    }
+    
+    // Status filter
+    const statusFilter = document.getElementById('status-filter');
+    if(statusFilter) {
+        statusFilter.addEventListener('change', function() {
+            const filterValue = this.value; // This is 'Open', 'In Progress', 'Closed'
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                if (row.children.length < 6) return; // Skip "no tickets" row
+                if (!filterValue) {
+                    row.style.display = '';
+                    return;
+                }
+                
+                const statusSelect = row.querySelector('.ticket-status-select');
+                const currentStatus = statusSelect ? statusSelect.value : '';
+
+                if (currentStatus === filterValue) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
     
     // Update ticket status
     const ticketStatusSelects = document.querySelectorAll('.ticket-status-select');
+    const csrfToken = document.getElementById('csrf_token').value; // Get CSRF token
     
     ticketStatusSelects.forEach(select => {
         select.addEventListener('change', function() {
@@ -249,19 +253,26 @@
             
             const formData = new FormData();
             formData.append('status', newStatus);
+            formData.append('csrf_token', csrfToken); // *** FIX: Add CSRF token to request ***
             
             fetch(`/admin/tickets/update_status/${ticketId}`, {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    // Handle non-2xx responses
+                    return response.json().then(err => { throw new Error(err.message || 'Server error'); });
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     // Update status badge
                     const statusCell = row.querySelector('td:nth-child(6)');
                     
                     let statusClass = '';
-                    let statusText = newStatus; // Default to English value
+                    let statusText = '';
                     switch(newStatus) {
                         case 'Open':
                             statusClass = 'red';
@@ -279,18 +290,20 @@
                     
                     statusCell.innerHTML = `<span class="status-badge ${statusClass}">${statusText}</span>`;
                     
-                    // Update analytics (in a real app, you'd reload the page or update the counts dynamically)
-                    
                     // Show success message
-                    alert(`تم تحديث حالة التذكرة إلى ${statusText}`); // Translate alert message
+                    alert(`تم تحديث حالة التذكرة إلى ${statusText}`);
+                } else {
+                    // Show error message from server
+                    alert(data.message || 'فشل تحديث الحالة.');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('حدث خطأ. يرجى المحاولة مرة أخرى.'); // Translate error message
+                alert('حدث خطأ في الشبكة أو الخادم. يرجى المحاولة مرة أخرى.');
             });
         });
     });
+});
 </script>
 <style>
     .rtl-stat {
