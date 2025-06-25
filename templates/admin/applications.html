@@ -1,3 +1,4 @@
+
 {% extends "admin_layout.html" %}
 
 {% block page_title %}التقديمات{% endblock %}
@@ -368,7 +369,7 @@
                                                 <span class="document-date">تم الرفع: ${doc.uploaded_at}</span>
                                             </div>
                                             <div class="document-actions">
-                                                <button class="action-btn view-document" data-url="${doc.file_path}" data-name="${translatedName}"><i class="fas fa-eye"></i> عرض</button>
+                                                <button class="action-btn view-document" data-view-url="${doc.view_url}" data-s3-key="${doc.s3_key}" data-name="${translatedName}"><i class="fas fa-eye"></i> عرض</button>
                                             </div>
                                         </li>
                                     `;
@@ -400,19 +401,20 @@
         document.body.addEventListener('click', function(e) {
             if (e.target.closest('.view-document')) {
                 const button = e.target.closest('.view-document');
-                openDocumentViewer(button.dataset.url, button.dataset.name);
+                openDocumentViewer(button.dataset.viewUrl, button.dataset.s3Key, button.dataset.name);
             }
         });
 
-        function openDocumentViewer(docUrl, docName) {
+        function openDocumentViewer(viewUrl, s3Key, docName) {
             document.getElementById('document-viewer-title').textContent = docName;
             const downloadBtn = document.getElementById('download-document-btn');
-            downloadBtn.href = docUrl;
+            downloadBtn.href = viewUrl;
             downloadBtn.setAttribute('download', docName);
 
             const frame = document.getElementById('document-viewer-frame');
             const fallback = document.getElementById('preview-fallback');
-            const fileExt = docUrl.split('.').pop().toLowerCase();
+            // Get extension from URL before any query parameters from presigned URL
+            const fileExt = (viewUrl.split('?')[0]).split('.').pop().toLowerCase();
             const previewableTypes = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'txt'];
             const canPreview = previewableTypes.includes(fileExt);
 
@@ -420,8 +422,9 @@
             frame.style.display = canPreview ? 'block' : 'none';
             fallback.classList.toggle('hidden', canPreview);
             if (canPreview) {
-                // Add cache-buster to force reload of iframe content
-                frame.src = `${docUrl}?t=${new Date().getTime()}`;
+                // The pre-signed URL is unique and bypasses cache, so no cache-buster is needed.
+                // Adding parameters would invalidate the signature.
+                frame.src = viewUrl;
             }
 
             // More robust transcript detection using keywords
@@ -432,8 +435,8 @@
 
             aiBtn.style.display = isTranscript ? 'block' : 'none';
             if (isTranscript) {
-                // The docUrl is a full URL, we need to extract the relative path for the API
-                aiBtn.dataset.docPath = docUrl.replace(window.location.origin, '').replace('/static/', '');
+                // Pass the raw S3 key to the AI button's dataset
+                aiBtn.dataset.docPath = s3Key;
                 aiBtn.dataset.appId = currentApplicationId;
             }
             docViewerModal.classList.remove('hidden');
