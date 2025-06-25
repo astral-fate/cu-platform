@@ -1,3 +1,4 @@
+
 {% extends "admin_layout.html" %}
 
 {% block page_title %}التقديمات{% endblock %}
@@ -273,6 +274,7 @@
                     row.style.display = '';
                     return;
                 }
+                // Compare with the text inside the status badge
                 const status = row.querySelector('td:nth-child(5) .status-badge').textContent.trim();
                 row.style.display = (status === filterValue) ? '' : 'none';
             });
@@ -333,6 +335,7 @@
                         if (data.success) {
                             const app = data.application;
                             
+                            // Determine badge colors based on Arabic status from backend
                             let statusClass;
                             if (app.status === 'قيد المراجعة') statusClass = 'yellow';
                             else if (app.status === 'مقبول مبدئياً') statusClass = 'green';
@@ -359,7 +362,6 @@
                                 let docsHtml = '<ul class="document-list">';
                                 data.documents.forEach(doc => {
                                     const translatedName = getTranslatedDocName(doc.name);
-                                    // *** CHANGE HERE: Pass both view_url and s3_key to the button ***
                                     docsHtml += `
                                         <li class="document-item">
                                             <div class="document-info">
@@ -367,12 +369,7 @@
                                                 <span class="document-date">تم الرفع: ${doc.uploaded_at}</span>
                                             </div>
                                             <div class="document-actions">
-                                                <button class="action-btn view-document" 
-                                                        data-view-url="${doc.view_url}" 
-                                                        data-s3-key="${doc.s3_key}" 
-                                                        data-name="${translatedName}">
-                                                    <i class="fas fa-eye"></i> عرض
-                                                </button>
+                                                <button class="action-btn view-document" data-view-url="${doc.view_url}" data-s3-key="${doc.s3_key}" data-name="${translatedName}"><i class="fas fa-eye"></i> عرض</button>
                                             </div>
                                         </li>
                                     `;
@@ -404,12 +401,10 @@
         document.body.addEventListener('click', function(e) {
             if (e.target.closest('.view-document')) {
                 const button = e.target.closest('.view-document');
-                // *** CHANGE HERE: Pass the correct data attributes ***
                 openDocumentViewer(button.dataset.viewUrl, button.dataset.s3Key, button.dataset.name);
             }
         });
 
-        // *** CHANGE HERE: Function now accepts s3Key for AI analysis ***
         function openDocumentViewer(viewUrl, s3Key, docName) {
             document.getElementById('document-viewer-title').textContent = docName;
             const downloadBtn = document.getElementById('download-document-btn');
@@ -418,6 +413,7 @@
 
             const frame = document.getElementById('document-viewer-frame');
             const fallback = document.getElementById('preview-fallback');
+            // Get extension from URL before any query parameters from presigned URL
             const fileExt = (viewUrl.split('?')[0]).split('.').pop().toLowerCase();
             const previewableTypes = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'txt'];
             const canPreview = previewableTypes.includes(fileExt);
@@ -426,10 +422,12 @@
             frame.style.display = canPreview ? 'block' : 'none';
             fallback.classList.toggle('hidden', canPreview);
             if (canPreview) {
-                // *** CHANGE HERE: Do NOT add any extra parameters. Use the presigned URL as is. ***
+                // The pre-signed URL is unique and bypasses cache, so no cache-buster is needed.
+                // Adding parameters would invalidate the signature.
                 frame.src = viewUrl;
             }
 
+            // More robust transcript detection using keywords
             const aiBtn = document.getElementById('ai-advisor-btn');
             const docNameLower = (docName || '').toLowerCase();
             const transcriptKeywords = ['transcript', 'academic record', 'grades', 'سجل', 'كشف', 'بيان درجات'];
@@ -437,8 +435,8 @@
 
             aiBtn.style.display = isTranscript ? 'block' : 'none';
             if (isTranscript) {
-                // *** CHANGE HERE: Use the raw s3Key for the AI analysis endpoint ***
-                aiBtn.dataset.docPath = s3Key; 
+                // Pass the raw S3 key to the AI button's dataset
+                aiBtn.dataset.docPath = s3Key;
                 aiBtn.dataset.appId = currentApplicationId;
             }
             docViewerModal.classList.remove('hidden');
@@ -451,6 +449,7 @@
             if (typeof text !== 'string') return '';
             const lines = text.split('\n');
             let html = '';
+
             lines.forEach(line => {
                 line = line.trim();
                 if (line.startsWith('# ')) {
@@ -459,8 +458,11 @@
                     const parts = line.split('**');
                     let pLine = '';
                     for (let i = 0; i < parts.length; i++) {
-                        if (i % 2 === 1) { pLine += `<strong>${escapeHtml(parts[i])}</strong>`; } 
-                        else { pLine += escapeHtml(parts[i]); }
+                        if (i % 2 === 1) {
+                            pLine += `<strong>${escapeHtml(parts[i])}</strong>`;
+                        } else {
+                            pLine += escapeHtml(parts[i]);
+                        }
                     }
                     html += `<p>${pLine}</p>`;
                 }
@@ -472,8 +474,7 @@
             aiAnalysisContent.innerHTML = `<div class="loading-spinner"><i class="fas fa-spinner fa-spin fa-2x"></i><p style="margin-top: 15px;">جاري تحليل السجل الأكاديمي...</p></div>`;
             aiModal.classList.remove('hidden');
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            
-            // This fetch call is now correct because `this.dataset.docPath` holds the s3Key
+
             fetch('/admin/analyze_transcript_pdf', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
@@ -538,11 +539,11 @@
         function escapeHtml(unsafe) {
             if (typeof unsafe !== 'string') return '';
             return unsafe
-                .replace(/&/g, "&")
-                .replace(/</g, "<")
-                .replace(/>/g, ">")
-                .replace(/"/g, """)
-                .replace(/'/g, "'");
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
     });
 </script>
